@@ -1,0 +1,9 @@
+name = "allsports-chat"
+main = "worker.js"
+compatibility_date = "2026-11-11"
+
+[ai]
+binding = "AI"
+
+[vars]
+ALLOWED_ORIGIN = "https://dandy62013.github.io"
