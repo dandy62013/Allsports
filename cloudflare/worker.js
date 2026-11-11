@@ -1,4 +1,4 @@
-const MODEL = "@cf/meta/llama-3.1-8b-instruct";
+const MODEL = "@cf/google/gemma-4-26b-a4b-it";
 
 function corsHeaders(origin, allowedOrigin) {
   const allowed = allowedOrigin || "https://dandy62013.github.io";
