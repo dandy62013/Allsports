@@ -26,10 +26,10 @@ def clean(value):
 def category_for(title, fallback):
     t = title.lower()
     rules = [
-        ("motor", ("fórmula 1", "formula 1", "f1", "motogp", "rally", "moto gp")),
-        ("baloncesto", ("baloncesto", "nba", "euroliga", "acb", "basket")),
-        ("tenis", ("tenis", "atp", "wta", "alcaraz", "sinner", "swiatek")),
-        ("fútbol", ("fútbol", "laliga", "champions", "liga", "selección", "mundial", "premier league")),
+        ("Motor", ("fórmula 1", "formula 1", "f1", "motogp", "rally", "moto gp")),
+        ("Baloncesto", ("baloncesto", "nba", "euroliga", "acb", "basket")),
+        ("Tenis", ("tenis", "atp", "wta", "alcaraz", "sinner", "swiatek")),
+        ("Fútbol", ("fútbol", "laliga", "champions", "liga", "selección", "mundial", "premier league")),
     ]
     for category, words in rules:
         if any(word in t for word in words):
