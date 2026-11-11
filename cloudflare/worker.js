@@ -49,7 +49,7 @@ export default {
       const text = answer?.response || answer?.result || "No he podido preparar una respuesta. Prueba otra vez.";
       return Response.json({ answer: String(text) }, { headers });
     } catch (error) {
-      return Response.json({ error: "Ahora mismo no puedo responder. Inténtalo de nuevo más tarde." }, { status: 500, headers });
+      return Response.json({ error: String(error?.message || error || "Error desconocido") }, { status: 500, headers });
     }
   }
 };
