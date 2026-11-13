@@ -2,6 +2,7 @@
 """Build a small, attributed sports-news feed from Google News RSS."""
 import json
 import re
+import html
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -22,6 +23,31 @@ HEADERS = {"User-Agent": "ALLSPORTS-NewsBot/1.0 (+https://github.com/dandy62013/
 def clean(value):
     value = re.sub(r"<[^>]+>", " ", value or "")
     return re.sub(r"\s+", " ", unescape(value)).strip()
+
+def extract_image(node):
+    # RSS image metadata, or an image embedded in the RSS description.
+    candidates = []
+    for element in node.iter():
+        local = element.tag.rsplit("}", 1)[-1].lower()
+        if local in ("content", "thumbnail", "enclosure"):
+            url = element.attrib.get("url") or element.attrib.get("href")
+            mime = element.attrib.get("type", "").lower()
+            if url and (local != "enclosure" or mime.startswith("image/")):
+                candidates.append(url)
+    raw_description = node.findtext("description") or ""
+    for match in re.findall(r"""(?i)<img[^>]+(?:src|data-src)=["']([^"']+)["']""", raw_description):
+        candidates.append(html.unescape(match))
+    for candidate in candidates:
+        parsed = urllib.parse.urlparse(candidate.strip())
+        if parsed.scheme in ("http", "https") and parsed.netloc:
+            return candidate.strip()
+    return ""
+
+def clean_title(title, source):
+    title = clean(title)
+    if source:
+        title = re.sub(r"\s*(?:-|–|—|\|)\s*" + re.escape(source) + r"\s*$", "", title, flags=re.I)
+    return title.strip(" -–—|")
 
 def category_for(title, fallback):
     t = title.lower()
@@ -49,11 +75,13 @@ for query, fallback in QUERIES:
         continue
 
     for node in root.findall("./channel/item"):
-        title = clean(node.findtext("title"))
+        raw_title = clean(node.findtext("title"))
         link = (node.findtext("link") or "").strip()
         source_node = node.find("source")
         source = clean(source_node.text if source_node is not None else "Google News")
+        title = clean_title(raw_title, source)
         description = clean(node.findtext("description"))
+        image = extract_image(node)
         pub_date = node.findtext("pubDate") or ""
         try:
             published = parsedate_to_datetime(pub_date).astimezone(timezone.utc).isoformat()
@@ -68,6 +96,7 @@ for query, fallback in QUERIES:
             "source": source,
             "published": published,
             "description": description[:240],
+            "image": image,
             "category": category_for(title, fallback),
         }
 
