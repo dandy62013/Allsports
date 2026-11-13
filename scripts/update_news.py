@@ -122,7 +122,7 @@ def resolve_google_news_url(url):
         with opener.open(page_request, timeout=15) as response:
             page = response.read(900_000).decode("utf-8", errors="replace")
         signature = re.search(r'data-n-a-sg="([^"]+)"', page)
-        timestamp = re.search(r'data-n-a-ts="(\\d+)"', page)
+        timestamp = re.search(r'data-n-a-ts="(\d+)"', page)
         if not signature or not timestamp:
             return ""
         inner = [
@@ -151,7 +151,7 @@ def resolve_google_news_url(url):
         )
         with opener.open(post_request, timeout=15) as response:
             raw = response.read().decode("utf-8", errors="replace")
-        payload_text = raw.split("\\n\\n", 1)[-1]
+        payload_text = raw.split("\n\n", 1)[-1]
         frames = json.loads(payload_text)
         frame = next((entry for entry in frames if isinstance(entry, list) and len(entry) > 2 and entry[0] == "wrb.fr" and entry[1] == "Fbv4je"), None)
         if not frame or not frame[2]:
