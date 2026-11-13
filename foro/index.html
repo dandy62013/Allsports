@@ -189,8 +189,13 @@ const forumStructure={
  'Baloncesto':['General','NBA','ACB','Euroliga','Baloncesto internacional'],
  'Motor':['General','Fórmula 1','MotoGP','Rally','Otras competiciones'],
  'Tenis':['General','ATP','WTA','Grand Slam'],
- 'Otros':['General','Ciclismo','Atletismo','Balonmano','Otros deportes'],
- 'Mundial':['General','Copa del Mundo','Clasificación y eliminatorias','Selecciones nacionales','Mundial de Clubes'],
+ 'Ciclismo':['General','Tour de Francia','Giro de Italia','Vuelta a España','Clásicas','Ciclismo en pista y MTB'],
+ 'Balonmano':['General','Liga ASOBAL','Competiciones europeas','Selecciones'],
+ 'Atletismo':['General','Pista y campo','Maratón y ruta','Cross y trail'],
+ 'Rugby':['General','Rugby XV','Rugby 7','Selecciones'],
+ 'Golf':['General','PGA Tour','DP World Tour','Majors'],
+ 'Natación':['General','Natación en piscina','Aguas abiertas','Saltos y waterpolo'],
+ 'Mundial de fútbol 2030':['General','Copa del Mundo','Clasificación y eliminatorias','Selecciones nacionales','Mundial de Clubes'],
  'Juegos Olímpicos':['General','Los Ángeles 2028','Deportes olímpicos','Debate olímpico','Archivo histórico'],
  'Comunidad':['General','Presentaciones','Debate general','Sugerencias']
 };
@@ -279,7 +284,7 @@ function getCommunityMessageCount(userId){return data.filter(p=>p.user_id===user
 function getBotBody(content){const lines=String(content||'').split('\n');const title=(lines.shift()||'').trim();if((lines[0]||'').trim()===title)lines.shift();return lines.join('\n').replace('\n\n— ALLSPORTS Bot · Datos: ESPN','').trim();}
 function renderForumTopics(){
  forumTopics.replaceChildren();
- const chosen=data.filter(x=>(forumSport==='Todos'||x.sport===forumSport)&&(forumSubforum==='Todos'||x.subforum===forumSubforum));
+ const chosen=data.filter(x=>(forumSport==='Todos'||x.sport===forumSport||(forumSport==='Mundial de fútbol 2030'&&x.sport==='Mundial'))&&(forumSubforum==='Todos'||x.subforum===forumSubforum));
  if(!activeThreadId){
   if(!chosen.length){const p=document.createElement('p');p.className='empty';p.textContent='Todavía no hay temas en este subforo. ¡Puedes abrir el primero!';forumTopics.append(p);return;}
   chosen.forEach(x=>{const row=document.createElement('article');row.className='forum-topic-row';const isBot=/— ALLSPORTS Bot · Datos: ESPN/.test(x.content||'');const username=isBot?'Informador':(x.profiles?.username||'Aficionado ALLSPORTS');row.append(createForumAvatar(x.profiles?.avatar_url,username));const main=document.createElement('div');main.className='forum-topic-main';const open=document.createElement('button');open.type='button';open.className='forum-topic-open';open.textContent=(x.content||'').split(/\n/)[0].slice(0,100)||'Nuevo tema';open.addEventListener('click',()=>{activeThreadId=x.id;renderForumTopics();window.scrollTo({top:0,behavior:'smooth'});});const meta=document.createElement('div');meta.className='forum-topic-meta';meta.textContent=(x.sport||'')+' · '+(x.subforum||'General')+' · '+username+' · '+getCommunityMessageCount(x.user_id)+' mensajes en la comunidad · '+(x.created_at?new Date(x.created_at).toLocaleString('es-ES',{dateStyle:'medium',timeStyle:'short'}):'Fecha no disponible');main.append(open,meta);row.append(main);const count=document.createElement('span');count.className='forum-topic-count';const n=forumReplies.filter(r=>r.post_id===x.id).length;count.textContent=n+' '+(n===1?'respuesta':'respuestas');row.append(count);forumTopics.append(row);});return;
