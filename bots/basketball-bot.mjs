@@ -88,13 +88,17 @@ for (const event of (scoreboard.events || [])) {
 
 const newsData = await json("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/news?limit=12");
 let publishedNews = 0;
-for (const article of (newsData.articles || []).slice(0, 8)) {
-  if (publishedNews >= 2) break;
+const lastNewsPost = recent.find(p => (p.content || "").startsWith("📰 NBA |"));
+const newsCooldownActive = lastNewsPost && now - new Date(lastNewsPost.created_at).getTime() < 24 * 60 * 60 * 1000;
+const importantNewsPattern = /trade|traded|transfer|signs|signed|waiv|release|injur|surgery|out for (the )?season|suspend|fired|resign|retires|retirement|record|mvp|playoff|finals|champion|all-star|all star|coach|star player|superstar|franchise|deal|contract extension/i;
+for (const article of (newsData.articles || []).slice(0, 12)) {
+  if (publishedNews >= 1 || newsCooldownActive) break;
   const publishedAt = new Date(article.published || article.lastModified || 0).getTime();
-  if (!publishedAt || now - publishedAt > 18 * 60 * 60 * 1000 || publishedAt > now + 5 * 60 * 1000) continue;
+  if (!publishedAt || now - publishedAt > 24 * 60 * 60 * 1000 || publishedAt > now + 5 * 60 * 1000) continue;
   const originalTitle = article.headline?.trim();
   const url = article.links?.web?.href || article.links?.api?.self?.href;
   if (!originalTitle || !url) continue;
+  if (!importantNewsPattern.test(originalTitle + " " + (article.description || ""))) { console.log("Noticia descartada por no parecer relevante:", originalTitle); continue; }
   const originalDescription = (article.description || "ESPN informa de una novedad en la actualidad de la NBA.").trim();
   async function translateToSpanish(value) {
     const endpoint = "https://api.mymemory.translated.net/get?q=" + encodeURIComponent(value) + "&langpair=en|es";
