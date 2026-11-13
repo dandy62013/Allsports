@@ -10,7 +10,10 @@ const headers = { apikey: SUPABASE_KEY, "Content-Type": "application/json" };
 async function json(url, options = {}) {
   const response = await fetch(url, { ...options, headers: { ...headers, ...(options.headers || {}) } });
   if (!response.ok) throw new Error(`HTTP ${response.status} en ${url}: ${(await response.text()).slice(0, 300)}`);
-  return response.status === 204 ? null : response.json();
+  const text = await response.text();
+  if (!text.trim()) return null;
+  try { return JSON.parse(text); }
+  catch { throw new Error(`Respuesta no válida de ${url}: ${text.slice(0, 300)}`); }
 }
 
 const session = await json(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
