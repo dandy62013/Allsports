@@ -222,16 +222,16 @@ let activeThreadId=null;
 const FORUM_MESSAGES_PER_PAGE=20;
 function renderBotTemplate(target,value){
  const source=String(value||'');
- const type=(source.match(/\\[\\[ASB2:([A-Z]+):/)||[])[1]||'PREVIA';
- const clean=source.replace(/\\[\\[ASB2:[^\\]]+\\]\\]/g,'').replace(/\\n\\n— ALLSPORTS Bot · Datos: ESPN/g,'').trim();
- const lines=clean.split('\\n').map(x=>x.trim()).filter(Boolean);
+ const type=(source.match(/\[\[ASB2:([A-Z]+):/)||[])[1]||'PREVIA';
+ const clean=source.replace(/\[\[ASB2:[^\]]+\]\]/g,'').replace(/\n\n— ALLSPORTS Bot · Datos: ESPN/g,'').trim();
+ const lines=clean.split('\n').map(x=>x.trim()).filter(Boolean);
  const pick=label=>lines.find(x=>x.startsWith(label+' |'))?.slice(label.length+3)||'';
  target.replaceChildren();
  const card=document.createElement('section');card.className='asbot-card asbot-'+type.toLowerCase();
  const kicker=document.createElement('div');kicker.className='asbot-kicker';kicker.textContent=type==='ALINEACIONES'?'⚽ ALINEACIONES OFICIALES':type==='RESULTADO'?'🏁 RESULTADO FINAL':'⚽ PREVIA DEL PARTIDO';card.append(kicker);
  if(type==='PREVIA'){
   const match=document.createElement('div');match.className='asbot-match';
-  const teams=pick('ENCUENTRO').split(/\\s+vs\\s+/i);
+  const teams=pick('ENCUENTRO').split(/\s+vs\s+/i);
   const home=document.createElement('div');home.className='asbot-team';home.textContent=teams[0]||'Equipo local';
   const vs=document.createElement('div');vs.className='asbot-vs';vs.textContent='VS';
   const away=document.createElement('div');away.className='asbot-team';away.textContent=teams[1]||'Equipo visitante';match.append(home,vs,away);card.append(match);
@@ -249,7 +249,7 @@ function renderBotTemplate(target,value){
   const note=document.createElement('p');note.className='asbot-note';note.textContent=lines.find(x=>x.startsWith('El encuentro ha terminado'))||'';card.append(note);
  }else{
   const teams=[];let current=null;
-  for(const line of lines){if(line.startsWith('EQUIPO |')){current={name:line.slice(9),rows:[]};teams.push(current)}else if(current&&/^(SISTEMA|TITULARES|SUPLENTES) \\|/.test(line)){const idx=line.indexOf('|');current.rows.push([line.slice(0,idx).trim(),line.slice(idx+1).trim()])}}
+  for(const line of lines){if(line.startsWith('EQUIPO |')){current={name:line.slice(9),rows:[]};teams.push(current)}else if(current&&/^(SISTEMA|TITULARES|SUPLENTES) \|/.test(line)){const idx=line.indexOf('|');current.rows.push([line.slice(0,idx).trim(),line.slice(idx+1).trim()])}}
   const grid=document.createElement('div');grid.className='asbot-lineups';
   teams.forEach(team=>{const box=document.createElement('section');box.className='asbot-lineup-team';const h=document.createElement('h6');h.textContent=team.name;box.append(h);team.rows.forEach(([label,value])=>{const p=document.createElement('p');const b=document.createElement('b');b.textContent=label+' · ';p.append(b,document.createTextNode(value||'No facilitado'));box.append(p)});grid.append(box)});
   if(!teams.length){const p=document.createElement('p');p.className='asbot-note';p.textContent=clean;grid.append(p)}
