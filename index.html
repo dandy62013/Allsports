@@ -192,7 +192,7 @@ function updateForumSubforums(){
  (forumStructure[sport]||['General']).forEach(sub=>{const option=document.createElement('option');option.value=sub;option.textContent=sub;select.append(option)});
 }
 function selectForum(sport,subforum){
- forumSport=sport;forumSubforum=subforum;renderForumCategories();
+ activeThreadId=null;forumSport=sport;forumSubforum=subforum;renderForumCategories();
  document.getElementById('forumCurrentTitle').textContent=sport==='Todos'?'Todos los debates':sport+(subforum!=='Todos'?' · '+subforum:'');
  document.getElementById('forumCurrentDescription').textContent=sport==='Todos'?'Todos los temas publicados en ALLSPORTS.':'Conversaciones y temas de '+(subforum==='Todos'?sport:subforum)+'.';
  renderForumTopics();
