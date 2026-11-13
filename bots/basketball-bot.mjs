@@ -106,7 +106,7 @@ for (const article of (newsData.articles || []).slice(0, 8)) {
     console.log("Noticia omitida:", error.message);
     continue;
   }
-  const sentence = descriptionEs.replace(/\s+/g, " ").replace(/[.!?]+$/, "") + ".";
+  const sentence = (descriptionEs.replace(/\s+/g, " ").match(/^[^.!?]+[.!?]?/)?.[0] || "ESPN informa de una novedad en la NBA.").trim().replace(/[.!?]+$/, "") + ".";
   if (await publish({ title: "📰 NBA | " + titleEs, content: sentence, link_url: url })) publishedNews++;
 }
 
