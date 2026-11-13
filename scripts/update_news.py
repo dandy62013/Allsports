@@ -9,6 +9,7 @@ import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
 from html import unescape
+from html.parser import HTMLParser
 from pathlib import Path
 
 QUERIES = [
@@ -42,6 +43,36 @@ def extract_image(node):
         if parsed.scheme in ("http", "https") and parsed.netloc:
             return candidate.strip()
     return ""
+
+class OpenGraphImageParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.image = ""
+
+    def handle_starttag(self, tag, attrs):
+        if tag.lower() != "meta" or self.image:
+            return
+        data = {key.lower(): value for key, value in attrs if value}
+        key = (data.get("property") or data.get("name") or "").lower()
+        value = data.get("content", "")
+        if key in ("og:image", "og:image:url", "twitter:image", "twitter:image:src"):
+            parsed = urllib.parse.urlparse(value)
+            if parsed.scheme in ("http", "https") and parsed.netloc:
+                self.image = value
+
+def fetch_article_image(url):
+    try:
+        request = urllib.request.Request(url, headers=HEADERS)
+        with urllib.request.urlopen(request, timeout=7) as response:
+            content_type = response.headers.get("Content-Type", "").lower()
+            if "html" not in content_type:
+                return ""
+            page = response.read(600_000).decode("utf-8", errors="replace")
+        parser = OpenGraphImageParser()
+        parser.feed(page)
+        return parser.image
+    except Exception:
+        return ""
 
 def clean_title(title, source):
     title = clean(title)
@@ -81,7 +112,7 @@ for query, fallback in QUERIES:
         source = clean(source_node.text if source_node is not None else "Google News")
         title = clean_title(raw_title, source)
         description = clean(node.findtext("description"))
-        image = extract_image(node)
+        image = extract_image(node) or fetch_article_image(link)
         pub_date = node.findtext("pubDate") or ""
         try:
             published = parsedate_to_datetime(pub_date).astimezone(timezone.utc).isoformat()
