@@ -24,6 +24,11 @@ const userId = session.user?.id;
 if (!session.access_token || !userId) throw new Error("Supabase no devolvió una sesión válida para el usuario bot.");
 
 const authHeaders = { Authorization: `Bearer ${session.access_token}` };
+const profileRename = await json(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${userId}`, {
+  method: "PATCH",
+  headers: { ...authHeaders, Prefer: "return=minimal" },
+  body: JSON.stringify({ username: "Informador" })
+}).catch(error => { console.log("No se pudo actualizar el nombre del perfil:", error.message); return null; });
 const since = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString();
 const existing = await json(
   `${SUPABASE_URL}/rest/v1/posts?select=id,content,link_url,created_at&user_id=eq.${userId}&created_at=gte.${encodeURIComponent(since)}&order=created_at.desc&limit=250`,
@@ -106,8 +111,25 @@ for (const article of (newsData.articles || []).slice(0, 8)) {
     console.log("Noticia omitida:", error.message);
     continue;
   }
-  const sentence = (descriptionEs.replace(/\s+/g, " ").match(/^[^.!?]+[.!?]?/)?.[0] || "ESPN informa de una novedad en la NBA.").trim().replace(/[.!?]+$/, "") + ".";
-  if (await publish({ title: "📰 NBA | " + titleEs, content: sentence, link_url: url })) publishedNews++;
+  const sentence = (descriptionEs.replace(/\s+/g, " ").match(/^[^.!?]+[.!?]?/)?.[0] || "").trim().replace(/[.!?]+$/, "") + ".";
+  if (!sentence || sentence.length < 25 || sentence.toLowerCase().includes(titleEs.toLowerCase().slice(0, 35))) {
+    console.log("Noticia omitida: resumen vacío, demasiado corto o repetido.");
+    continue;
+  }
+  const engagementPrompts = [
+    "¿Cómo valoráis esta noticia y qué consecuencias puede tener para los equipos implicados?",
+    "Os leemos: ¿creéis que este movimiento cambiará el rumbo de la temporada?",
+    "¿Quién sale más beneficiado de esta situación? Contadnos vuestro punto de vista.",
+    "La pregunta queda abierta: ¿estáis de acuerdo con esta decisión? ¿Por qué?",
+    "¿Qué haríais vosotros en el lugar de los protagonistas? Os leemos.",
+    "¿Esto puede marcar un antes y un después en la NBA? Queremos conocer vuestra opinión.",
+    "Turno para la grada: ¿qué detalle de esta noticia os parece más importante?",
+    "¿Esperabais que ocurriera algo así? Compartid vuestro análisis con la comunidad."
+  ];
+  let promptHash = 0;
+  for (const char of originalTitle) promptHash = (promptHash * 31 + char.charCodeAt(0)) >>> 0;
+  const prompt = engagementPrompts[promptHash % engagementPrompts.length];
+  if (await publish({ title: "📰 NBA | " + titleEs, content: sentence + "\\n\\n" + prompt, link_url: url })) publishedNews++;
 }
 
 console.log(`Proceso terminado. Temas de partidos: ${publishedGames}. Temas de actualidad: ${publishedNews}.`);
