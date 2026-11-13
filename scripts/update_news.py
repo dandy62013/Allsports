@@ -101,9 +101,7 @@ def read_article_page(url):
 
 
 def resolve_google_news_url(url):
-    """Resolve current Google News RSS article IDs to the publisher URL.
-    Uses an undocumented Google endpoint; failures are handled as missing images.
-    """
+    """Resolve Google News RSS links using its current signed batchexecute endpoint."""
     try:
         article_id = urllib.parse.urlparse(url).path.rstrip("/").split("/")[-1]
         if not article_id:
@@ -112,19 +110,24 @@ def resolve_google_news_url(url):
         opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookies))
         headers = {
             **HEADERS,
-            "Cookie": "CONSENT=PENDING+987",
+            "Cookie": "CONSENT=YES+cb; SOCS=CAI",
             "Accept-Language": "es-ES,es;q=0.9,en;q=0.8",
         }
         page_request = urllib.request.Request(
             "https://news.google.com/rss/articles/" + article_id,
             headers=headers,
         )
-        with opener.open(page_request, timeout=15) as response:
+        with opener.open(page_request, timeout=20) as response:
             page = response.read(900_000).decode("utf-8", errors="replace")
         signature = re.search(r'data-n-a-sg="([^"]+)"', page)
-        timestamp = re.search(r'data-n-a-ts="(\d+)"', page)
+        timestamp = re.search(r'data-n-a-ts="(\\d+)"', page)
+        id_match = re.search(r'data-n-a-id="([^"]+)"', page)
         if not signature or not timestamp:
+            print("Google News no proporcionó firma para resolver una noticia.")
             return ""
+        if id_match:
+            article_id = id_match.group(1)
+
         inner = [
             "garturlreq",
             [["X", "X", ["X", "X"], None, None, 1, 1, "ES:es", None, 1,
@@ -134,32 +137,40 @@ def resolve_google_news_url(url):
             int(timestamp.group(1)),
             signature.group(1),
         ]
-        outer = [[["Fbv4je", json.dumps(inner, separators=(",", ":"))]]]
-        body = urllib.parse.urlencode({"f.req": json.dumps(outer, separators=(",", ":"))}).encode()
+        rpc_payload = [[["Fbv4je", json.dumps(inner, separators=(",", ":")), None, "generic"]]]
+        body = urllib.parse.urlencode({
+            "f.req": json.dumps(rpc_payload, separators=(",", ":"))
+        }).encode()
+        endpoint = "https://news.google.com/_/DotsSplashUi/data/batchexecute?rpcids=Fbv4je"
         post_headers = {
-            **HEADERS,
+            **headers,
             "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
             "Origin": "https://news.google.com",
             "Referer": "https://news.google.com/",
             "X-Same-Domain": "1",
         }
         post_request = urllib.request.Request(
-            "https://news.google.com/_/DotsSplashUi/data/batchexecute",
-            data=body,
-            headers=post_headers,
-            method="POST",
+            endpoint, data=body, headers=post_headers, method="POST"
         )
-        with opener.open(post_request, timeout=15) as response:
+        with opener.open(post_request, timeout=20) as response:
             raw = response.read().decode("utf-8", errors="replace")
-        payload_text = raw.split("\n\n", 1)[-1]
+        payload_text = raw.split("\\n\\n", 1)[-1].strip()
         frames = json.loads(payload_text)
-        frame = next((entry for entry in frames if isinstance(entry, list) and len(entry) > 2 and entry[0] == "wrb.fr" and entry[1] == "Fbv4je"), None)
+        frame = next(
+            (entry for entry in frames
+             if isinstance(entry, list) and len(entry) > 2
+             and entry[0] == "wrb.fr" and entry[1] == "Fbv4je"),
+            None,
+        )
         if not frame or not frame[2]:
+            print("Google News devolvió una respuesta sin URL de origen.")
             return ""
         result = json.loads(frame[2])
         resolved = result[1] if len(result) > 1 else ""
         parsed = urllib.parse.urlparse(resolved)
-        return resolved if parsed.scheme in ("http", "https") and parsed.netloc and "news.google.com" not in (parsed.hostname or "") else ""
+        if parsed.scheme in ("http", "https") and parsed.netloc and "news.google.com" not in (parsed.hostname or ""):
+            return resolved
+        return ""
     except Exception as exc:
         print(f"No se pudo resolver el enlace de Google News: {exc}")
         return ""
