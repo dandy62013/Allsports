@@ -73,7 +73,7 @@ for (const event of (scoreboard.events || [])) {
     const winner = Number(homeScore) > Number(awayScore) ? homeName : Number(awayScore) > Number(homeScore) ? awayName : "Empate";
     const title = `🏁 RESULTADO NBA | ${awayName} ${awayScore} - ${homeScore} ${homeName}`;
     const content = `**Resultado final:** ${awayName} ${awayScore} – ${homeScore} ${homeName}.\n\n${winner === "Empate" ? "El encuentro terminó igualado." : `Victoria de **${winner}**.`}\n\n**¿Qué os ha parecido el partido?**\n- ¿Quién ha sido el jugador más determinante?\n- ¿Qué ha decidido el encuentro?\n- ¿Qué consecuencias puede tener este resultado?`;
-    if (await publish({ title, content, link_url: gameUrl.replace("game?", "game?result=") })) publishedGames++;
+    if (await publish({ title, content, link_url: gameUrl + "#resultado" })) publishedGames++;
   }
 }
 
