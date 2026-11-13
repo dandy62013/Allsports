@@ -120,7 +120,7 @@ def resolve_google_news_url(url):
         with opener.open(page_request, timeout=20) as response:
             page = response.read(900_000).decode("utf-8", errors="replace")
         signature = re.search(r'data-n-a-sg="([^"]+)"', page)
-        timestamp = re.search(r'data-n-a-ts="(\\d+)"', page)
+        timestamp = re.search(r'data-n-a-ts="(\d+)"', page)
         id_match = re.search(r'data-n-a-id="([^"]+)"', page)
         if not signature or not timestamp:
             print("Google News no proporcionó firma para resolver una noticia.")
@@ -154,7 +154,7 @@ def resolve_google_news_url(url):
         )
         with opener.open(post_request, timeout=20) as response:
             raw = response.read().decode("utf-8", errors="replace")
-        payload_text = raw.split("\\n\\n", 1)[-1].strip()
+        payload_text = raw.split("\n\n", 1)[-1].strip()
         frames = json.loads(payload_text)
         frame = next(
             (entry for entry in frames
