@@ -34,7 +34,8 @@ const recent = Array.isArray(existing) ? existing : [];
 async function publish({ title, content, subforum = "NBA", link_url = null }) {
   if (link_url && recent.some(p => p.link_url === link_url)) return false;
   if (recent.some(p => (p.content || "").includes(title))) return false;
-  const body = { user_id: userId, sport: "Baloncesto", subforum, content: `**${title}**\n\n${content}\n\n— ALLSPORTS Bot · Datos: ESPN`, link_url };
+  const clean = String(content || "").replace(/\*\*/g, "").trim();
+  const body = { user_id: userId, sport: "Baloncesto", subforum, content: title + "\n" + clean + "\n\n— ALLSPORTS Bot · Datos: ESPN", link_url };
   await json(`${SUPABASE_URL}/rest/v1/posts`, {
     method: "POST",
     headers: { ...authHeaders, Prefer: "return=minimal" },
@@ -86,12 +87,27 @@ for (const article of (newsData.articles || []).slice(0, 8)) {
   if (publishedNews >= 2) break;
   const publishedAt = new Date(article.published || article.lastModified || 0).getTime();
   if (!publishedAt || now - publishedAt > 18 * 60 * 60 * 1000 || publishedAt > now + 5 * 60 * 1000) continue;
-  const title = article.headline?.trim();
+  const originalTitle = article.headline?.trim();
   const url = article.links?.web?.href || article.links?.api?.self?.href;
-  if (!title || !url) continue;
-  const description = (article.description || "La actualidad de la NBA deja un nuevo asunto para debatir.").trim();
-  const discussion = `**La noticia:** ${description}\n\n**Queremos leer a la comunidad:**\n- ¿Cómo valoráis esta información?\n- ¿Qué impacto puede tener en el equipo o en la competición?\n- ¿Estáis de acuerdo?\n\nFuente original: ESPN.`;
-  if (await publish({ title: `📰 NBA | ${title}`, content: discussion, link_url: url })) publishedNews++;
+  if (!originalTitle || !url) continue;
+  const originalDescription = (article.description || "ESPN informa de una novedad en la actualidad de la NBA.").trim();
+  async function translateToSpanish(value) {
+    const endpoint = "https://api.mymemory.translated.net/get?q=" + encodeURIComponent(value) + "&langpair=en|es";
+    const result = await json(endpoint);
+    const translated = result?.responseData?.translatedText?.replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, "&").trim();
+    if (result?.responseStatus !== 200 || !translated) throw new Error("No se pudo traducir al español.");
+    return translated;
+  }
+  let titleEs, descriptionEs;
+  try {
+    titleEs = await translateToSpanish(originalTitle);
+    descriptionEs = await translateToSpanish(originalDescription);
+  } catch (error) {
+    console.log("Noticia omitida:", error.message);
+    continue;
+  }
+  const sentence = descriptionEs.replace(/\s+/g, " ").replace(/[.!?]+$/, "") + ".";
+  if (await publish({ title: "📰 NBA | " + titleEs, content: sentence, link_url: url })) publishedNews++;
 }
 
 console.log(`Proceso terminado. Temas de partidos: ${publishedGames}. Temas de actualidad: ${publishedNews}.`);
