@@ -185,7 +185,7 @@ document.querySelectorAll('[data-sport]').forEach(c=>c.addEventListener('click',
 
 /* Navegación y temas del foro */
 const forumStructure={
- 'Fútbol':['General','La Liga','Segunda División','Premier League','Champions League','Fútbol internacional'],
+ 'Fútbol':['General','La Liga','Segunda División','Premier League','Champions League','Selecciones','Fútbol internacional'],
  'Baloncesto':['General','NBA','ACB','Euroliga','Baloncesto internacional'],
  'Motor':['General','Fórmula 1','MotoGP','Rally','Otras competiciones'],
  'Tenis':['General','ATP','WTA','Grand Slam'],
@@ -238,7 +238,7 @@ function renderBotTemplate(target,value){
   const meta=document.createElement('div');meta.className='asbot-meta';
   [['FECHA Y HORA','📅'],['ESTADIO','🏟️']].forEach(([label,emoji])=>{const value=pick(label);if(value){const chip=document.createElement('div');chip.className='asbot-chip';chip.textContent=emoji+' '+value;meta.append(chip)}});
   card.append(meta);
-  const note=document.createElement('p');note.className='asbot-note';note.textContent=lines.find(x=>x.startsWith('LaLiga Hypermotion'))||'Abrimos el debate antes del encuentro. ¡Os leemos!';card.append(note);
+  const note=document.createElement('p');note.className='asbot-note';note.textContent=pick('CONTEXTO')||lines.find(x=>x.startsWith('LaLiga Hypermotion'))||'Abrimos el debate antes del encuentro. ¡Os leemos!';card.append(note);
  }else if(type==='RESULTADO'){
   const parts=pick('MARCADOR').split('|').map(x=>x.trim());
   const match=document.createElement('div');match.className='asbot-match';
