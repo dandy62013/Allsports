@@ -216,9 +216,9 @@ function renderForumAttachments(post,container){
  if(post.link_url){
   const url=post.link_url;let parsed;try{parsed=new URL(url);}catch{return;}
   if(!['http:','https:'].includes(parsed.protocol))return;
-  const host=parsed.hostname.replace(/^www\\./,'').toLowerCase();let videoId='';
+  const host=parsed.hostname.replace(/^www\./,'').toLowerCase();let videoId='';
   if(host==='youtu.be')videoId=parsed.pathname.split('/').filter(Boolean)[0]||'';
-  if(host==='youtube.com'||host==='m.youtube.com'||host==='youtube-nocookie.com')videoId=parsed.searchParams.get('v')||((parsed.pathname.match(/^\\/(?:embed|shorts)\\/([^/?]+)/)||[])[1]||'');
+  if(host==='youtube.com'||host==='m.youtube.com'||host==='youtube-nocookie.com')videoId=parsed.searchParams.get('v')||((parsed.pathname.match(/^\/(?:embed|shorts)\/([^/?]+)/)||[])[1]||'');
   if(videoId&&/^[A-Za-z0-9_-]{6,20}$/.test(videoId)){const frame=document.createElement('iframe');frame.className='forum-video';frame.src='https://www.youtube-nocookie.com/embed/'+videoId;frame.title='Vídeo compartido';frame.loading='lazy';frame.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';frame.allowFullscreen=true;frame.referrerPolicy='strict-origin-when-cross-origin';container.append(frame);}
   else{const a=document.createElement('a');a.className='forum-link-card';a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='↗ Abrir enlace compartido · '+host;container.append(a);}
  }
@@ -233,7 +233,7 @@ document.getElementById('forumPublish').addEventListener('click',async()=>{
  button.disabled=true;button.textContent='Publicando…';status.textContent='Preparando el tema…';
  let media_url=null,media_type=null;
  if(file){const safeName=file.name.toLowerCase().replace(/[^a-z0-9._-]/g,'-');const path=currentUser.id+'/'+Date.now()+'-'+safeName;const {error:uploadError}=await supabaseClient.storage.from('forum-media').upload(path,file,{upsert:false,contentType:file.type});if(uploadError){button.disabled=false;button.textContent='Publicar tema ↗';status.textContent='No se pudo subir la foto: '+uploadError.message;return;}const {data:publicData}=supabaseClient.storage.from('forum-media').getPublicUrl(path);media_url=publicData.publicUrl;media_type='image';}
- else if(link_url){const h=new URL(link_url).hostname.toLowerCase();media_type=/youtube|youtu\\.be|vimeo|tiktok|instagram|twitch|x\\.com|twitter/.test(h)?'video':'link';}
+ else if(link_url){const h=new URL(link_url).hostname.toLowerCase();media_type=/youtube|youtu\.be|vimeo|tiktok|instagram|twitch|x\.com|twitter/.test(h)?'video':'link';}
  const {error}=await supabaseClient.from('posts').insert({user_id:currentUser.id,sport,subforum,content:content||'Contenido compartido',media_url,media_type,link_url});
  button.disabled=false;button.textContent='Publicar tema ↗';
  if(error){status.textContent='No se pudo publicar: '+error.message;return;}
