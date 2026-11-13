@@ -160,7 +160,9 @@ for query, fallback in QUERIES:
         source = clean(source_node.text if source_node is not None else "Google News")
         title = clean_title(raw_title, source)
         description = clean(node.findtext("description"))
-        image = extract_image(node)\n        if not image:\n            image = fetch_article_image(link, source_node.attrib.get("url", "") if source_node is not None else "")
+        image = extract_image(node)
+        if not image:
+            image = fetch_article_image(link, source_node.attrib.get("url", "") if source_node is not None else "")
         pub_date = node.findtext("pubDate") or ""
         try:
             published = parsedate_to_datetime(pub_date).astimezone(timezone.utc).isoformat()
