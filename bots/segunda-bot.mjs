@@ -44,7 +44,7 @@ return[format(hn,h),format(vn,v)].join("\n")}
 function goals(s){const a=s.keyEvents||s.scoringPlays||[];return [...new Set(a.map(x=>x.text||x.shortText||x.description||"").filter(x=>/gol|goal|penalt/i.test(x)).map(x=>x.replace(/\s+/g," ").trim()))].slice(0,12)}
 let previews=0,lineups=0,results=0;
 for(const e of events){const t=teams(e);if(!t)continue;const kick=new Date(e.date).getTime();if(!Number.isFinite(kick))continue;
-let post=findPost(e.id);if(madridDate(new Date(kick))===tomorrow&&kick>now&&!post){const id=await openThread(e,t);if(id){previews++;post=posts.find(p=>p.id===id)}}
+let post=findPost(e.id);const matchDay=madridDate(new Date(kick)),today=madridDate(new Date(now));const missingTodayPreview=matchDay===today&&kick>now&&kick-now<=3*3600000;if(((matchDay===tomorrow&&kick>now)||missingTodayPreview)&&!post){const id=await openThread(e,t);if(id){previews++;post=posts.find(p=>p.id===id)}}
 if(!post)continue;const state=e.status?.type?.state,checkXI=state==="pre"&&kick>now&&kick-now<=3*3600000,checkFinal=state==="post"&&now-kick<=18*3600000;if(!checkXI&&!checkFinal)continue;
 const summary=await json(`https://site.api.espn.com/apis/site/v2/sports/soccer/${LEAGUE}/summary?event=${e.id}`).catch(err=>{console.log("Resumen no disponible",e.id,err.message);return null});if(!summary)continue;
 if(checkXI&&!hasReply(post.id,"ALINEACIONES",e.id)){const xi=getLineups(summary,t.h.team?.id,t.v.team?.id,t.hn,t.vn);if(xi&&await updateThread(post.id,"ALINEACIONES",e.id,["ALINEACIONES OFICIALES",`PARTIDO | ${t.hn} vs ${t.vn}`,xi,"Fuente: ESPN"].join("\n\n")))lineups++}
