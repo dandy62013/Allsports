@@ -36,6 +36,8 @@ section.content{padding:82px 0}.section-top{display:flex;justify-content:space-b
 .forum-compose textarea,.forum-compose select{width:100%;background:#090f15;border:1px solid #35414c;color:white;padding:11px;margin-bottom:9px}
 .forum-compose textarea{min-height:85px;resize:vertical}
 .forum-compose-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px}
+.app-view{display:none}.app-view.active{display:block}
+.media-label{display:block;color:var(--muted);font-size:11px;font-weight:700;margin:10px 0 6px}.media-input,.media-link{display:block;width:100%;background:#090f15;border:1px solid #35414c;color:white;padding:10px;margin-bottom:10px}.media-input{font-size:12px}.forum-media-image{display:block;width:auto;max-width:100%;max-height:460px;object-fit:contain;margin:12px 0;border:1px solid var(--line)}.forum-link-card{display:block;padding:12px;margin:12px 0;background:#17232d;border:1px solid #34414d;color:var(--lime);overflow-wrap:anywhere}.forum-video{width:100%;max-width:680px;aspect-ratio:16/9;border:0;margin:12px 0;background:#000}
 .forum-post{border-top:1px solid var(--line);padding:16px 0}
 .forum-post h4{font:700 21px 'Barlow Condensed',sans-serif;margin:7px 0;color:#f5f7f8}
 .forum-post p{white-space:pre-wrap;overflow-wrap:anywhere;color:#d8dfe4;margin:8px 0}
@@ -52,8 +54,9 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
 </style>
 </head>
 <body>
-<header><div class="wrap top"><a class="logo" href="#"><i>◆</i> ALLSPORTS</a><nav aria-label="Navegación"><button class="active" data-filter="Todos">INICIO</button><button data-filter="Fútbol">FÚTBOL</button><button data-filter="Baloncesto">BASKET</button><button data-filter="Tenis">TENIS</button><button data-filter="Motor">MOTOR</button><button data-filter="Otros">OTROS</button><a href="#noticias" class="news-nav">NOTICIAS</a><a href="#foro" class="news-nav">FORO</a><a class="nav-cta" href="#comunidad">ÚNETE ↗</a></nav></div></header>
+<header><div class="wrap top"><a class="logo" href="#inicio" data-page="inicio"><i>◆</i> ALLSPORTS</a><nav aria-label="Navegación"><button class="active" data-page="inicio" type="button">INICIO</button><button data-page="foro" type="button">FORO</button><a href="#noticias" class="news-nav" data-page="inicio">NOTICIAS</a><a href="#comunidad" class="nav-cta" data-page="inicio">ÚNETE ↗</a></nav></div></header>
 <main>
+<div id="homeView" class="app-view active">
 <section class="hero"><div class="wrap hero-inner"><div class="kicker">La casa de todos los deportes</div><h1>NO SOLO<br>LO MIRES.<br><span>VÍVELO.</span></h1><p class="hero-copy">La pasión no entiende de disciplinas. El lugar donde la afición se encuentra, las opiniones cuentan y cada deporte tiene su sitio.</p><div class="hero-actions"><a class="btn primary" href="#deportes">Explora los deportes ↘</a><a class="btn" href="#comunidad">Entra en la comunidad</a></div><div class="hero-stamp">ALLSPORTS · DESDE LA GRADA HASTA LA CANCHA</div></div></section>
 <div class="ticker"><span>FÚTBOL <b>✳</b> BALONCESTO <b>✳</b> TENIS <b>✳</b> MOTOR <b>✳</b> Y TODO LO QUE TE APASIONA <b>✳</b></span></div>
 <section class="content news-section" id="noticias"><div class="wrap">
@@ -100,6 +103,8 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
 <div class="panel sidebox"><h3>Esto acaba de empezar.</h3><p>Noticias, perfiles, resultados y nuevas funciones llegarán en las próximas fases.</p></div>
 </aside></div>
 </section>
+</div>
+<div id="forumView" class="app-view">
 <section class="content forum-section" id="foro">
  <div class="wrap">
   <div class="section-top"><div><div class="overline">La comunidad ALLSPORTS</div><h2>El foro de la afición.</h2></div><p>Entra en cada deporte, elige un subforo y abre un tema para compartir tu opinión.</p></div>
@@ -110,6 +115,10 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
     <div class="forum-compose">
      <h3>Crear un nuevo tema</h3>
      <textarea id="forumMessage" maxlength="1000" placeholder="¿Qué quieres debatir?"></textarea>
+     <label class="media-label" for="forumImage">Añadir una foto (JPG, PNG, WEBP o GIF · máximo 10 MB)</label>
+     <input id="forumImage" class="media-input" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
+     <label class="media-label" for="forumLink">Enlace a vídeo, noticia o red social</label>
+     <input id="forumLink" class="media-link" type="url" inputmode="url" placeholder="https://…">
      <div class="forum-compose-row">
       <select id="forumSport" aria-label="Categoría del foro"></select>
       <select id="forumSubforum" aria-label="Subforo"></select>
@@ -122,6 +131,7 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
   </div>
  </div>
 </section>
+</div>
 </main>
 
 <button class="chat-launch" id="chatLaunch" aria-expanded="false">💬 Pregunta a ALLSPORTS</button>
@@ -139,8 +149,11 @@ const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_gZ8cx30ZlxlVjlb00vo1nw_LyDC0yGH
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 const CHAT_API_URL = "https://allsports-chat.dandy62013.workers.dev/api/chat"; // Añade aquí la URL del Worker de Cloudflare cuando esté desplegado.
 let data=[];let filter='Todos';const posts=document.getElementById('posts');
+function showPage(page,scrollTarget){const home=page!=='foro';document.getElementById('homeView').classList.toggle('active',home);document.getElementById('forumView').classList.toggle('active',!home);document.querySelectorAll('nav [data-page]').forEach(el=>el.classList.toggle('active',el.dataset.page===(home?'inicio':'foro')));if(home&&scrollTarget){setTimeout(()=>document.querySelector(scrollTarget)?.scrollIntoView({behavior:'smooth',block:'start'}),30);}else{window.scrollTo({top:0,behavior:'smooth'});}history.replaceState(null,'',home?'#inicio':'#foro');}
+document.querySelectorAll('nav [data-page]').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();const page=el.dataset.page;const target=el.getAttribute('href');showPage(page,page==='inicio'&&target&&target.startsWith('#')?target:null);}));
+
 function draw(){const visible=data.filter(x=>filter==='Todos'||x.sport===filter).slice(0,3);posts.replaceChildren();if(!visible.length){const p=document.createElement('p');p.className='empty';p.textContent='Aún no hay debates destacados. Visita el foro para abrir el primero.';posts.append(p);return}visible.forEach(x=>{const a=document.createElement('article');a.className='post';const top=document.createElement('div');top.className='post-top';const author=document.createElement('strong');author.textContent=x.profiles?.username||'Aficionado ALLSPORTS';const tag=document.createElement('span');tag.className='post-tag';tag.textContent=x.sport+(x.subforum&&x.subforum!=='General'?' · '+x.subforum:'');top.append(author,tag);const p=document.createElement('p');p.textContent=x.content;const meta=document.createElement('div');meta.className='post-meta';const date=x.created_at?new Date(x.created_at).toLocaleString('es-ES',{dateStyle:'medium',timeStyle:'short'}):'Debate de la comunidad';meta.textContent=date;a.append(top,p,meta);posts.append(a)})}
-async function loadPosts(){posts.textContent='Cargando debates…';const {data:rows,error}=await supabaseClient.from('posts').select('id,user_id,sport,subforum,content,created_at,profiles(username)').order('created_at',{ascending:false});if(error){posts.textContent='No se pudieron cargar los debates: '+error.message;return;}data=rows||[];draw();renderForumTopics();}
+async function loadPosts(){posts.textContent='Cargando debates…';const {data:rows,error}=await supabaseClient.from('posts').select('id,user_id,sport,subforum,content,created_at,media_url,media_type,link_url,profiles(username)').order('created_at',{ascending:false});if(error){posts.textContent='No se pudieron cargar los debates: '+error.message;return;}data=rows||[];draw();renderForumTopics();}
 function setFilter(v){filter=v;document.querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter===v));draw()}
 document.getElementById('send').addEventListener('click',async()=>{const field=document.getElementById('msg'),value=field.value.trim();if(!value){field.focus();return;}if(!currentUser){authMessage('Inicia sesión para publicar un debate.',true);document.getElementById('loginEmail').focus();return;}const button=document.getElementById('send');button.disabled=true;button.textContent='Publicando…';const {error}=await supabaseClient.from('posts').insert({user_id:currentUser.id,sport:document.getElementById('sport').value,content:value});button.disabled=false;button.textContent='Publicar debate ↗';if(error){authMessage('No se pudo publicar: '+error.message,true);return;}field.value='';authMessage('¡Debate publicado! Ya es visible para la comunidad.');await loadPosts();setFilter('Todos');});
 document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>setFilter(b.dataset.filter)));
@@ -190,22 +203,41 @@ function renderForumTopics(){
   const tag=document.createElement('div');tag.className='forum-post-tag';tag.textContent=x.sport+' · '+(x.subforum||'General');
   const title=document.createElement('h4');title.textContent=(x.content||'').split(/\n/)[0].slice(0,100)||'Nuevo tema';
   const body=document.createElement('p');body.textContent=x.content;
+  article.append(tag,title,body);renderForumAttachments(x,article);
   const meta=document.createElement('div');meta.className='forum-post-meta';meta.textContent=(x.profiles?.username||'Aficionado ALLSPORTS')+' · '+(x.created_at?new Date(x.created_at).toLocaleString('es-ES',{dateStyle:'medium',timeStyle:'short'}):'Fecha no disponible');
-  article.append(tag,title,body,meta);forumTopics.append(article);
+  article.append(meta);forumTopics.append(article);
  });
 }
 document.getElementById('forumSport').innerHTML=Object.keys(forumStructure).map(s=>'<option value="'+s+'">'+s+'</option>').join('');
 document.getElementById('forumSport').addEventListener('change',updateForumSubforums);
 updateForumSubforums();renderForumCategories();renderForumTopics();
+function renderForumAttachments(post,container){
+ if(post.media_type==='image'&&post.media_url){const img=document.createElement('img');img.className='forum-media-image';img.src=post.media_url;img.alt='Imagen adjunta al debate';img.loading='lazy';container.append(img);}
+ if(post.link_url){
+  const url=post.link_url;let parsed;try{parsed=new URL(url);}catch{return;}
+  if(!['http:','https:'].includes(parsed.protocol))return;
+  const host=parsed.hostname.replace(/^www\\./,'').toLowerCase();let videoId='';
+  if(host==='youtu.be')videoId=parsed.pathname.split('/').filter(Boolean)[0]||'';
+  if(host==='youtube.com'||host==='m.youtube.com'||host==='youtube-nocookie.com')videoId=parsed.searchParams.get('v')||((parsed.pathname.match(/^\\/(?:embed|shorts)\\/([^/?]+)/)||[])[1]||'');
+  if(videoId&&/^[A-Za-z0-9_-]{6,20}$/.test(videoId)){const frame=document.createElement('iframe');frame.className='forum-video';frame.src='https://www.youtube-nocookie.com/embed/'+videoId;frame.title='Vídeo compartido';frame.loading='lazy';frame.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';frame.allowFullscreen=true;frame.referrerPolicy='strict-origin-when-cross-origin';container.append(frame);}
+  else{const a=document.createElement('a');a.className='forum-link-card';a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='↗ Abrir enlace compartido · '+host;container.append(a);}
+ }
+}
+
 document.getElementById('forumPublish').addEventListener('click',async()=>{
- const field=document.getElementById('forumMessage'),content=field.value.trim(),sport=document.getElementById('forumSport').value,subforum=document.getElementById('forumSubforum').value,status=document.getElementById('forumStatus'),button=document.getElementById('forumPublish');
- if(!content){field.focus();status.textContent='Escribe el contenido del tema antes de publicarlo.';return;}
+ const field=document.getElementById('forumMessage'),content=field.value.trim(),sport=document.getElementById('forumSport').value,subforum=document.getElementById('forumSubforum').value,status=document.getElementById('forumStatus'),button=document.getElementById('forumPublish'),file=document.getElementById('forumImage').files[0],linkRaw=document.getElementById('forumLink').value.trim();
+ if(!content&&!file&&!linkRaw){field.focus();status.textContent='Escribe algo o añade una foto o un enlace.';return;}
  if(!currentUser){status.textContent='Inicia sesión en el apartado de cuenta para publicar.';return;}
- button.disabled=true;button.textContent='Publicando…';
- const {error}=await supabaseClient.from('posts').insert({user_id:currentUser.id,sport,subforum,content});
+ let link_url=null; if(linkRaw){try{const u=new URL(linkRaw);if(!['http:','https:'].includes(u.protocol))throw new Error();link_url=u.href;}catch{status.textContent='El enlace no parece válido. Debe empezar por https:// o http://';return;}}
+ if(file){const allowed=['image/jpeg','image/png','image/webp','image/gif'];if(!allowed.includes(file.type)){status.textContent='Ese formato de imagen no está permitido.';return;}if(file.size>10*1024*1024){status.textContent='La imagen supera el máximo de 10 MB.';return;}}
+ button.disabled=true;button.textContent='Publicando…';status.textContent='Preparando el tema…';
+ let media_url=null,media_type=null;
+ if(file){const safeName=file.name.toLowerCase().replace(/[^a-z0-9._-]/g,'-');const path=currentUser.id+'/'+Date.now()+'-'+safeName;const {error:uploadError}=await supabaseClient.storage.from('forum-media').upload(path,file,{upsert:false,contentType:file.type});if(uploadError){button.disabled=false;button.textContent='Publicar tema ↗';status.textContent='No se pudo subir la foto: '+uploadError.message;return;}const {data:publicData}=supabaseClient.storage.from('forum-media').getPublicUrl(path);media_url=publicData.publicUrl;media_type='image';}
+ else if(link_url){const h=new URL(link_url).hostname.toLowerCase();media_type=/youtube|youtu\\.be|vimeo|tiktok|instagram|twitch|x\\.com|twitter/.test(h)?'video':'link';}
+ const {error}=await supabaseClient.from('posts').insert({user_id:currentUser.id,sport,subforum,content:content||'Contenido compartido',media_url,media_type,link_url});
  button.disabled=false;button.textContent='Publicar tema ↗';
  if(error){status.textContent='No se pudo publicar: '+error.message;return;}
- field.value='';status.textContent='Tema publicado. Ya está disponible en el foro.';await loadPosts();selectForum(sport,subforum);
+ field.value='';document.getElementById('forumImage').value='';document.getElementById('forumLink').value='';status.textContent='Tema publicado. Ya está disponible en el foro.';await loadPosts();selectForum(sport,subforum);
 });
 
 // Registro, inicio de sesión y perfil de ALLSPORTS
