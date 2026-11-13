@@ -1,0 +1,25 @@
+name: ALLSPORTS Bots
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/30 * * * *"
+permissions:
+  contents: read
+concurrency:
+  group: allsports-bots
+  cancel-in-progress: false
+jobs:
+  basketball:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+      - name: Ejecutar bot de baloncesto
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node bots/basketball-bot.mjs
+        env:
+          BOT_EMAIL: ${{ secrets.BOT_EMAIL }}
+          BOT_PASSWORD: ${{ secrets.BOT_PASSWORD }}
