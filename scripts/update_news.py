@@ -167,7 +167,8 @@ def resolve_google_news_url(url):
 def fetch_article_image(url, source_home=""):
     # First follow Google's RSS redirect. If Google serves an intermediate page,
     # locate the publisher's article link and read that page's Open Graph image.
-    article_url = resolve_google_news_url(url) or url\n    image, final_url, page = read_article_page(article_url)
+    article_url = resolve_google_news_url(url) or url
+    image, final_url, page = read_article_page(article_url)
     final_host = urllib.parse.urlparse(final_url).hostname or ""
     if image and not final_host.endswith("news.google.com"):
         return image
