@@ -1,13 +1,22 @@
 {
-  "updatedAt": "2026-11-13T23:12:55.537545+00:00",
+  "updatedAt": "2026-11-13T23:17:55.520261+00:00",
   "items": [
+    {
+      "title": "El juego puro",
+      "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE9ScGZyLUtQS1pScXVYR0dJbUN6UjlaLS0xRHZJOWtmbVNvTkxfSTh3YzJHeGFBX2VWVkt1ZTBDQnhUWkdyd25Tek5XVjhWYkEyWEE5bVVmLWNaRmlQZFFWT1VGZW1lLWxxWF9ja1BGb1MtSVVKZlQxcERB0gF_QVVfeXFMTnJEd2JhNHJQeFdPcVRfczRUTmZ4MlprMV9USDNsd3AtMmRBRFl5N0dYZEs3YjNVY2ZyUjdzT0dnVUpMZXBFVlVLVmhjMTZPNWliR3FzQThLbTdzRG0xUE81NXdoSlpwbnZOYWR4dVU5SVY3YVI4Y1ZUOTNNcEk2Yw?oc=5",
+      "source": "La Vanguardia",
+      "published": "2026-11-13T23:07:36+00:00",
+      "description": "El juego puro La Vanguardia",
+      "image": "",
+      "category": "deportes"
+    },
     {
       "title": "Resumen del Taylor Fritz - Thiago Tirante",
       "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxQWHNuVEhyUFh5bkk3cGFOYnp1N2Q2R1c1ejQzVlJRckdwZk5KRjdkeFNzcTBtMkV1aDJmWHJtMU9jUXMyNWhKQ0ZSbW42UVhNVmMxbHNzQW9GVjdBbXRMQlNtOGMzNVdod0JwS3JsaXR0NVdJb010M1VlMENNd2trbDZ2VXpLdXVPWVFCMUE0cU1EcHhWcmhoSUhGTFN1RVNPMWg2TlZjUEE?oc=5",
       "source": "Eurosport",
       "published": "2026-11-13T23:05:36+00:00",
       "description": "Resumen del Taylor Fritz - Thiago Tirante Eurosport",
-      "image": "https://lh3.googleusercontent.com/J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc=s0-w300",
+      "image": "",
       "category": "tenis"
     },
     {
@@ -16,7 +25,34 @@
       "source": "Eurosport",
       "published": "2026-11-13T23:04:08+00:00",
       "description": "Noruega - Gales en directo - UEFA Nations League: Resultados y resúmenes de Fútbol - 14/11/2026 Eurosport",
-      "image": "https://lh3.googleusercontent.com/J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc=s0-w300",
+      "image": "",
+      "category": "Fútbol"
+    },
+    {
+      "title": "Valladolid - Castellón en directo - SEGUNDA: Resultados y resúmenes de Fútbol - 14/11/2026",
+      "url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxOT29NbVVYcnVIUXZpRHo3N0hoaGpWLTEtQW44T3hsZHBGWGFEbTBQNFROOHQ0MnFfU1lVblRiZ3gzMTJFX1gxbUV3aVprNnVENGlhUjYwbUp2cGY3Z2h4X3JGZU5LR0dLdjVwaUU1Rnc4VURaVy1IY19pNXF4cEs0dmFkbFU2WTYtY1ZlYUZlQ3JpYzVEQ3NKTDgwb2Y4Z2M?oc=5",
+      "source": "Eurosport",
+      "published": "2026-11-13T23:04:08+00:00",
+      "description": "Valladolid - Castellón en directo - SEGUNDA: Resultados y resúmenes de Fútbol - 14/11/2026 Eurosport",
+      "image": "",
+      "category": "Fútbol"
+    },
+    {
+      "title": "Real Sociedad B - Sporting en directo - SEGUNDA: Resultados y resúmenes de Fútbol - 14/11/2026",
+      "url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxNbWxmamY5eHRCdG1GM2RVb2Z4OTQ3OTVUZWxaZmJfd0FCWGgwZUk5czQwNFVLTTBXUjVrSUcya05XaXNYM1B0blBvMndtTnlJUHk2cktIRUxJU2gzYTdRZnE3OUE2a3ZKRUhGSE9wVVA0RzZBMW9lSDlSUmNmWm9jTS1Za292SHBnTGQ1d0VUVjR5RmRsZndZSVRfZnZITDN0VWk3Rw?oc=5",
+      "source": "Eurosport",
+      "published": "2026-11-13T23:04:08+00:00",
+      "description": "Real Sociedad B - Sporting en directo - SEGUNDA: Resultados y resúmenes de Fútbol - 14/11/2026 Eurosport",
+      "image": "",
+      "category": "Fútbol"
+    },
+    {
+      "title": "Mallorca - Córdoba en directo - SEGUNDA: Resultados y resúmenes de Fútbol - 14/11/2026",
+      "url": "https://news.google.com/rss/articles/CBMimgFBVV95cUxObkNCN1ZzVTZRbldsdUlORzV4YUxQQzRsZko5dWlhb1J0MXdEZnc4YURLQWZmZEUwcUk0Sy1UQnBtYV8zQjZsbFF2TmZRMEQ5c3B6N2hPdWZ6MDZWeldzUkZTcjFkMzl0dlhSejROZS0ybU9kSmFDLVRJV3JHb0d2cGxheTFkV1pjLUxQYmYzY0JOZnVoaUt1aXpB?oc=5",
+      "source": "Eurosport",
+      "published": "2026-11-13T23:04:08+00:00",
+      "description": "Mallorca - Córdoba en directo - SEGUNDA: Resultados y resúmenes de Fútbol - 14/11/2026 Eurosport",
+      "image": "",
       "category": "Fútbol"
     },
     {
@@ -25,7 +61,7 @@
       "source": "La Nueva España",
       "published": "2026-11-13T22:59:23+00:00",
       "description": "Vicente Álvarez, mejor entrenador de baloncesto de Asturias: \"es un premio de todo el club\" La Nueva España",
-      "image": "https://lh3.googleusercontent.com/J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc=s0-w300",
+      "image": "",
       "category": "Baloncesto"
     },
     {
@@ -34,7 +70,7 @@
       "source": "ANSA Latina",
       "published": "2026-11-13T22:46:00+00:00",
       "description": "Alemania ganó y respira ANSA Latina",
-      "image": "https://lh3.googleusercontent.com/J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc=s0-w300",
+      "image": "",
       "category": "deportes"
     },
     {
@@ -43,7 +79,7 @@
       "source": "Eurosport",
       "published": "2026-11-13T22:44:00+00:00",
       "description": "Zverev, antes de medirse a Jódar en Turín: \"No pienso en Alcaraz ahora\" Eurosport",
-      "image": "https://lh3.googleusercontent.com/J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc=s0-w300",
+      "image": "",
       "category": "Tenis"
     },
     {
@@ -52,7 +88,7 @@
       "source": "La Provincia",
       "published": "2026-11-13T22:39:56+00:00",
       "description": "Pedri, Yeremy Pino y Eusebio Ledesma encabezan los Premios al Deporte Canario 2026 La Provincia",
-      "image": "https://lh3.googleusercontent.com/J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc=s0-w300",
+      "image": "",
       "category": "deportes"
     },
     {
@@ -61,7 +97,7 @@
       "source": "Mundo Deportivo",
       "published": "2026-11-13T22:39:28+00:00",
       "description": "'Justin Time': el rey absoluto del clutch es Robinson, con unos números que desafían la lógica Mundo Deportivo",
-      "image": "https://lh3.googleusercontent.com/J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc=s0-w300",
+      "image": "",
       "category": "baloncesto"
     },
     {
@@ -70,7 +106,7 @@
       "source": "RTVE.es",
       "published": "2026-11-13T22:35:53+00:00",
       "description": "El Celta se impone en el Helmántico y firma una manita ante el Salamanca para avanzar en la Copa RTVE.es",
-      "image": "https://lh3.googleusercontent.com/J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc=s0-w300",
+      "image": "",
       "category": "deportes"
     },
     {
@@ -79,7 +115,7 @@
       "source": "MARCA",
       "published": "2026-11-13T22:34:36+00:00",
       "description": "El Barceloneta aplasta al Mladost y se refuerza en la Champions MARCA",
-      "image": "https://lh3.googleusercontent.com/J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc=s0-w300",
+      "image": "",
       "category": "Fútbol"
     },
     {
@@ -88,7 +124,7 @@
       "source": "Cadena SER",
       "published": "2026-11-13T22:34:26+00:00",
       "description": "Los errores defensivos hunden al Burgos en Leganés (3-1) Cadena SER",
-      "image": "https://lh3.googleusercontent.com/J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc=s0-w300",
+      "image": "",
       "category": "fútbol"
     },
     {
@@ -97,7 +133,7 @@
       "source": "EL PAÍS",
       "published": "2026-11-13T22:32:43+00:00",
       "description": "El Celta golea al Salamanca de Muniain y avanza en la Copa (0-5) EL PAÍS",
-      "image": "https://lh3.googleusercontent.com/J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc=s0-w300",
+      "image": "",
       "category": "deportes"
     },
     {
@@ -106,7 +142,7 @@
       "source": "El Mundo",
       "published": "2026-11-13T22:30:00+00:00",
       "description": "Magic - Bucks en directo El Mundo",
-      "image": "https://lh3.googleusercontent.com/J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc=s0-w300",
+      "image": "",
       "category": "baloncesto"
     },
     {
@@ -115,7 +151,7 @@
       "source": "MARCA",
       "published": "2026-11-13T22:30:00+00:00",
       "description": "Pacers - Knicks en directo | Última hora de NBA en vivo hoy MARCA",
-      "image": "https://lh3.googleusercontent.com/J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc=s0-w300",
+      "image": "",
       "category": "Baloncesto"
     },
     {
@@ -124,7 +160,7 @@
       "source": "Diario AS",
       "published": "2026-11-13T22:24:35+00:00",
       "description": "Sekulic: “Estoy orgulloso del equipo porque no es fácil ganar aquí” Diario AS",
-      "image": "https://lh3.googleusercontent.com/J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc=s0-w300",
+      "image": "",
       "category": "baloncesto"
     },
     {
@@ -133,7 +169,16 @@
       "source": "SPORT",
       "published": "2026-11-13T22:20:46+00:00",
       "description": "Sekulic, pletórico tras la victoria del Barça ante Panathinaikos: \"Siento mucho orgullo por estos jugadores\" SPORT",
-      "image": "https://lh3.googleusercontent.com/J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc=s0-w300",
+      "image": "",
+      "category": "baloncesto"
+    },
+    {
+      "title": "¿Necesitas un base? Llama a Dejounte Murray",
+      "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxNY1g2bVoyZnNYU2JVaXpoTzgyME01N1lMVy1kVGgyNVBDZHNIdExjazh2QkdOLUJrb0FGN2ZUbTFCb2g3YzE2cmhzZEJUdnExcmRXN0g4X0RHeXFJS0UxSEE0c0t4djNITWhtM2lPQjZqOTNncVhfNTlLZUR1UjNYR3pWU1NVMXBG0gGcAUFVX3lxTFBuWEcwQ0xZU1FSekhEcTA1TnF6YzM3VmxJN1NNRjFIM3BrT3p4Q1NPYURDWHBWeWlqMXd4SFk5Y29OVW11LWMyVEJ0QS1vbE16eTZxbGNzSVJpbnhvRFAzWjd0YzdwX1FkTFQ1ZkFPellEWm9KbVFVLVpGZXFKeWt5S2JTQ2pkZnM5bXlyWlZ0Q1ppbEhOYlU3X040Mw?oc=5",
+      "source": "Diario AS",
+      "published": "2026-11-13T22:19:07+00:00",
+      "description": "¿Necesitas un base? Llama a Dejounte Murray Diario AS",
+      "image": "",
       "category": "baloncesto"
     },
     {
@@ -142,7 +187,7 @@
       "source": "EL PAÍS",
       "published": "2026-11-13T22:15:27+00:00",
       "description": "Justin Robinson enmudece al Panathinaikos y aúpa al Barcelona EL PAÍS",
-      "image": "https://lh3.googleusercontent.com/J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc=s0-w300",
+      "image": "",
       "category": "baloncesto"
     },
     {
@@ -151,7 +196,7 @@
       "source": "ANSA Latina",
       "published": "2026-11-13T22:11:00+00:00",
       "description": "Pena máxima para Owono ANSA Latina",
-      "image": "https://lh3.googleusercontent.com/J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc=s0-w300",
+      "image": "",
       "category": "deportes"
     },
     {
@@ -160,7 +205,7 @@
       "source": "MUNDIARIO",
       "published": "2026-11-13T22:10:36+00:00",
       "description": "Las cinco claves de un Celta que resolvió la Copa antes del descanso MUNDIARIO",
-      "image": "https://lh3.googleusercontent.com/J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc=s0-w300",
+      "image": "",
       "category": "deportes"
     },
     {
@@ -169,52 +214,7 @@
       "source": "Diario AS",
       "published": "2026-11-13T22:07:40+00:00",
       "description": "¡Así se silencia a toda Atenas! El triple espectacular de Robinson para ganar el partido Diario AS",
-      "image": "https://lh3.googleusercontent.com/J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc=s0-w300",
-      "category": "baloncesto"
-    },
-    {
-      "title": "El fútbol balear premia a los mejores de la temporada",
-      "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxPUk5QVXJvTTV4eThxRjNWZHF5NnJtUmtiNEVQMUVmYVJVRkR3RDMxeVlaT2dFRk01UnRNUXdZU1pFRWVzZFdXYlQ2NVV4X0xlUkxySFVMZmRabUF3bHlnUXpRdGJHUDk4YzdTTWItN3JDUzdjWTYxaGxmcEF4OE9vLXppdzZLaGVaWUowbUsxYlh1VGptLWF1NEw1alVIUVJWUWtySTlxbEPSAa4BQVVfeXFMUDdZaTliOTNRTnozV0dSZHdZc2tuWENlSFFXTEhMNUZ4X00wRVdocUVfNEhhTTZnbzFtZGtMdEVkSUtxQUNrUGpyb3htNFdZd0tWRURsc0wtNFE4TG1tVjBWLUpsaGVEN1FqSFlybkVpQjVndjUxNldremcyWVJ0dlZPS3dGU21zaFdrVzNMY2dGSWRRc2Jlc3U1R05mWjhkdW02dGl0azlJTDR0cVJR?oc=5",
-      "source": "Diario de Mallorca",
-      "published": "2026-11-13T22:05:45+00:00",
-      "description": "El fútbol balear premia a los mejores de la temporada Diario de Mallorca",
-      "image": "https://lh3.googleusercontent.com/J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc=s0-w300",
-      "category": "Fútbol"
-    },
-    {
-      "title": "Todos los premiados en la Gala del Fútbol Balear 2026",
-      "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxOZXRHZ29FcTBwZjlpRVVGSFRwSlpzeVZzMlhxaERocDdUbEM2M2RUbl81WUVvRWVaVl9OWXR4aTFCbWdKT1dMemRnX1JwbERzNS0xSW94UXBqRndid0JieHlzbEFEbUFVOUxWSUxfdHN6d1lKRkZRMEpWX1gtTDV1VEg5cXlGUkFXa3JpT3dvZkNIMTJYak51ZFItUG02M29xSFFKVkdNRXE5Zw?oc=5",
-      "source": "Diario de Mallorca",
-      "published": "2026-11-13T22:04:35+00:00",
-      "description": "Todos los premiados en la Gala del Fútbol Balear 2026 Diario de Mallorca",
-      "image": "https://lh3.googleusercontent.com/J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc=s0-w300",
-      "category": "Fútbol"
-    },
-    {
-      "title": "Euroliga. Gesta del Barcelona en la cueva del Panathinaikos",
-      "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxNeFpoQjQ1X0tkUmdwSDlaMjBGSUlmekFxaVA1ck1BM2xGV3FXOThHMTNOeWFxNFFyN0FyZnNzWVZJaTR0MnZtdFBJYjU0c25kYjdwNFdCNEpydUxlUVVyVThfUGFLQXRCZkljQVZsYUhlVnBGS3NTWlRfLVdJeWF6dV9pbkg2TVVtZlM3MEdEQWtka0FIV0JacmRFMEJ4aWNDOEt5MWdPamVkRkRNWC1Kd0w0T1I2UQ?oc=5",
-      "source": "El Imparcial - Diario liberal e independiente",
-      "published": "2026-11-13T22:03:00+00:00",
-      "description": "Euroliga. Gesta del Barcelona en la cueva del Panathinaikos El Imparcial - Diario liberal e independiente",
-      "image": "https://lh3.googleusercontent.com/J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc=s0-w300",
-      "category": "Baloncesto"
-    },
-    {
-      "title": "Valtteri Bottas, en vilo para seguir como compañero de Checo Pérez tras última charla con Cadillac",
-      "url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxPY1prUFpYNWI2bGZyZ1ZmUUpZeWoxd2NlVDR4VXRmXzJTTndHT09lNkdvZGN3ZU5FRGVaNHJDZ0cwWWRabkVic0lvQXZJTy1VV3BOODRpakhFLURuR1pOM09oZnVmb2pRd19jWnUtU2NPUldNem1QX0JEMVlGQl8ycnBTM3JYZ2QzUmQtT2ZqMXAtSGQ5X1lhWDB1VUdoODRnckItazNkTmRYV1NrTlJkQ2xsMElJM19JM3VaQmhqX2RlbHB6YUtnM9IByAFBVV95cUxPemZVWW9jYzVLdWFqYVczWUNNX25tS0lJUmZkZkdrVUZIbUdVRlpjNV9KSGVqdnBseFRoZlhuTkhxazlmbTlRVGF0WnJIVUltTVdDWjlyX0p2bHJhZUVoM216WE44SXZpTVc1ajN1eGNZWTQzQnVHc044Rm80Y0hQcUl5Q2RvV0szOTExWmllTnVCdmtQUlNScE9Zc2QxT2xpWkQyeXBiWjJnbk1MdUdpMDdvZXVRbUEtNEZ2dlhPVi1VZlFITklicQ?oc=5",
-      "source": "MARCA",
-      "published": "2026-11-13T22:01:40+00:00",
-      "description": "Valtteri Bottas, en vilo para seguir como compañero de Checo Pérez tras última charla con Cadillac MARCA",
-      "image": "https://lh3.googleusercontent.com/J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc=s0-w300",
-      "category": "motor"
-    },
-    {
-      "title": "El 1x1 del Barça en Atenas",
-      "url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxPQ0M0YS1MMHJMQ0Z1YU05TTljeDJxSy11ZGQ2NV9YR0Itd2gwZ2VfNVpEeWd2bVIxdTBMaHJtUkZIcEFkaXpLekNCLXdJWDdpSURieF9Zc1ZDV0lTamMydm9NRXNwVXhTR3p3MEtQRDF3Z2tFMDNRb2JDajZNdC01c2I5YmdQcFFySWdRMjM5c0k3M05LbmN30gGkAUFVX3lxTE1CTGdXbXVld1R3cVJkaFZEajUxNlNldlVWYmhBV3VyaHJya1dndWluMl9mRnVhRU1RNFlDOTc4eE4zbFU2dmhaNE4tdTFnd0daSThLUU4xcHdkaXZZZm1ZNWNQeW56bzVBOUhMSEJwNGVtTmU5R08wRHdMeDgzTllLWlpGa1o5bmVYSFR1RncyUXNBM2dEUV9Gdm55MldGNnJUYlhF?oc=5",
-      "source": "Mundo Deportivo",
-      "published": "2026-11-13T22:01:14+00:00",
-      "description": "El 1x1 del Barça en Atenas Mundo Deportivo",
-      "image": "https://lh3.googleusercontent.com/J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc=s0-w300",
+      "image": "",
       "category": "baloncesto"
     }
   ]
