@@ -25,7 +25,7 @@ if(!scoreboard||!Array.isArray(scoreboard.events))throw new Error("ESPN no ha de
 const events=scoreboard.events;
 const mark=(k,id)=>`[[ASB2:${k}:${id}]]`;
 function teams(e){const c=e.competitions?.[0],a=c?.competitors||[],h=a.find(x=>x.homeAway==="home"),v=a.find(x=>x.homeAway==="away");if(!h||!v)return null;return{c,h,v,hn:h.team?.displayName||h.team?.name||"Local",vn:v.team?.displayName||v.team?.name||"Visitante"}}
-function findPost(id){return posts.find(p=>String(p.link_url||"").includes(`gameId=${id}")||(p.content||"").includes(mark("PREVIA",id)))}
+function findPost(id){return posts.find(p=>String(p.link_url||"").includes(`gameId=${id}`)||(p.content||"").includes(mark("PREVIA",id)))}
 function hasReply(postId,k,id){return replies.some(r=>r.post_id===postId&&(r.content||"").includes(mark(k,id)))}
 async function openThread(e,t){const date=new Date(e.date),title=`⚽ SEGUNDA | ${t.hn} vs ${t.vn}`,venue=t.c?.venue?.fullName||"Estadio por confirmar";
 const body=[mark("PREVIA",e.id),"PREVIA DE LA JORNADA",`ENCUENTRO | ${t.hn} vs ${t.vn}`,`FECHA Y HORA | ${madridTime(date)} (hora peninsular)`,`ESTADIO | ${venue}`,"","LaLiga Hypermotion nos trae este enfrentamiento. Abrimos el hilo para comentar cómo llegan ambos equipos y compartir pronósticos.","¿Quién se llevará los tres puntos? Os leemos.","",FOOTER].join("\n");
