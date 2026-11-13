@@ -129,7 +129,7 @@ for (const article of (newsData.articles || []).slice(0, 8)) {
   let promptHash = 0;
   for (const char of originalTitle) promptHash = (promptHash * 31 + char.charCodeAt(0)) >>> 0;
   const prompt = engagementPrompts[promptHash % engagementPrompts.length];
-  if (await publish({ title: "📰 NBA | " + titleEs, content: sentence + "\\n\\n" + prompt, link_url: url })) publishedNews++;
+  if (await publish({ title: "📰 NBA | " + titleEs, content: sentence + "\n\n" + prompt, link_url: url })) publishedNews++;
 }
 
 console.log(`Proceso terminado. Temas de partidos: ${publishedGames}. Temas de actualidad: ${publishedNews}.`);
