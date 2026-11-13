@@ -20,9 +20,9 @@ const dateKey=d=>madridDate(d).replaceAll("-","");
 const madridTime=d=>d.toLocaleString("es-ES",{timeZone:ZONE,dateStyle:"full",timeStyle:"short"});
 const now=Date.now(), from=new Date(now-86400000), to=new Date(now+9*86400000);
 const tomorrow=new Date(Date.parse(madridDate(new Date(now))+"T12:00:00Z")+86400000).toISOString().slice(0,10);
-const scoreboard=await json(`https://site.api.espn.com/apis/site/v2/sports/soccer/${LEAGUE}/scoreboard?dates=${dateKey(from)}-${dateKey(to)}`);
-if(!scoreboard||!Array.isArray(scoreboard.events))throw new Error("ESPN no ha devuelto el calendario de Segunda División.");
-const events=scoreboard.events;
+const monthKeys=new Set();for(let d=new Date(from);d<=to;d.setUTCDate(d.getUTCDate()+1))monthKeys.add(dateKey(d).slice(0,6));
+const scoreboards=await Promise.all([...monthKeys].map(month=>json(`https://site.api.espn.com/apis/site/v2/sports/soccer/${LEAGUE}/scoreboard?dates=${month}`)));
+const events=[...new Map(scoreboards.flatMap(s=>Array.isArray(s?.events)?s.events:[]).map(e=>[String(e.id),e])).values()].filter(e=>{const d=new Date(e.date).getTime();return Number.isFinite(d)&&d>=from.getTime()&&d<=to.getTime()});
 const mark=(k,id)=>`[[ASB2:${k}:${id}]]`;
 function teams(e){const c=e.competitions?.[0],a=c?.competitors||[],h=a.find(x=>x.homeAway==="home"),v=a.find(x=>x.homeAway==="away");if(!h||!v)return null;return{c,h,v,hn:h.team?.displayName||h.team?.name||"Local",vn:v.team?.displayName||v.team?.name||"Visitante"}}
 function findPost(id){return posts.find(p=>String(p.link_url||"").includes(`gameId=${id}`)||(p.content||"").includes(mark("PREVIA",id)))}
