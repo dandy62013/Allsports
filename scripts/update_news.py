@@ -25,8 +25,21 @@ def clean(value):
     value = re.sub(r"<[^>]+>", " ", value or "")
     return re.sub(r"\s+", " ", unescape(value)).strip()
 
+GENERIC_GOOGLE_IMAGE_ID = "J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc"
+
+def valid_image_url(value):
+    if not value:
+        return False
+    parsed = urllib.parse.urlparse(value.strip())
+    if parsed.scheme not in ("http", "https") or not parsed.netloc:
+        return False
+    # Google News can return its own colourful placeholder as if it were an article photo.
+    if GENERIC_GOOGLE_IMAGE_ID in parsed.path:
+        return False
+    return True
+
 def extract_image(node):
-    # RSS image metadata, or an image embedded in the RSS description.
+    # Prefer publisher-provided media, but reject Google's shared placeholder artwork.
     candidates = []
     for element in node.iter():
         local = element.tag.rsplit("}", 1)[-1].lower()
@@ -39,10 +52,22 @@ def extract_image(node):
     for match in re.findall(r"""(?i)<img[^>]+(?:src|data-src)=["']([^"']+)["']""", raw_description):
         candidates.append(html.unescape(match))
     for candidate in candidates:
-        parsed = urllib.parse.urlparse(candidate.strip())
-        if parsed.scheme in ("http", "https") and parsed.netloc:
-            return candidate.strip()
+        candidate = candidate.strip()
+        if valid_image_url(candidate):
+            return candidate
     return ""
+
+class ArticleLinksParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.links = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag.lower() == "a":
+            data = dict(attrs)
+            href = data.get("href", "")
+            if href:
+                self.links.append(urllib.parse.urljoin("https://news.google.com/", href))
 
 class OpenGraphImageParser(HTMLParser):
     def __init__(self):
@@ -55,24 +80,47 @@ class OpenGraphImageParser(HTMLParser):
         data = {key.lower(): value for key, value in attrs if value}
         key = (data.get("property") or data.get("name") or "").lower()
         value = data.get("content", "")
-        if key in ("og:image", "og:image:url", "twitter:image", "twitter:image:src"):
-            parsed = urllib.parse.urlparse(value)
-            if parsed.scheme in ("http", "https") and parsed.netloc:
-                self.image = value
+        if key in ("og:image", "og:image:url", "twitter:image", "twitter:image:src") and valid_image_url(value):
+            self.image = value
 
-def fetch_article_image(url):
+def read_article_page(url):
     try:
         request = urllib.request.Request(url, headers=HEADERS)
-        with urllib.request.urlopen(request, timeout=7) as response:
+        with urllib.request.urlopen(request, timeout=10) as response:
             content_type = response.headers.get("Content-Type", "").lower()
             if "html" not in content_type:
-                return ""
-            page = response.read(600_000).decode("utf-8", errors="replace")
+                return "", "", ""
+            final_url = response.geturl()
+            page = response.read(900_000).decode("utf-8", errors="replace")
         parser = OpenGraphImageParser()
         parser.feed(page)
-        return parser.image
+        return parser.image, final_url, page
     except Exception:
-        return ""
+        return "", "", ""
+
+def fetch_article_image(url, source_home=""):
+    # First follow Google's RSS redirect. If Google serves an intermediate page,
+    # locate the publisher's article link and read that page's Open Graph image.
+    image, final_url, page = read_article_page(url)
+    final_host = urllib.parse.urlparse(final_url).hostname or ""
+    if image and not final_host.endswith("news.google.com"):
+        return image
+
+    source_host = urllib.parse.urlparse(source_home).hostname or ""
+    if page and source_host:
+        links = ArticleLinksParser()
+        links.feed(page)
+        for candidate in links.links:
+            host = urllib.parse.urlparse(candidate).hostname or ""
+            if host == source_host or host.endswith("." + source_host):
+                image, _, _ = read_article_page(candidate)
+                if image:
+                    return image
+
+    # A Google News logo/placeholder is never presented as a real news photo.
+    if image and GENERIC_GOOGLE_IMAGE_ID not in image:
+        return image
+    return ""
 
 def clean_title(title, source):
     title = clean(title)
@@ -112,7 +160,7 @@ for query, fallback in QUERIES:
         source = clean(source_node.text if source_node is not None else "Google News")
         title = clean_title(raw_title, source)
         description = clean(node.findtext("description"))
-        image = extract_image(node) or fetch_article_image(link)
+        image = extract_image(node)\n        if not image:\n            image = fetch_article_image(link, source_node.attrib.get("url", "") if source_node is not None else "")
         pub_date = node.findtext("pubDate") or ""
         try:
             published = parsedate_to_datetime(pub_date).astimezone(timezone.utc).isoformat()
