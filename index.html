@@ -146,7 +146,7 @@ document.getElementById('saveProfile').addEventListener('click',async()=>{
  if(error){authMessage('No se pudo guardar el perfil: '+error.message,true);return;}
  authMessage('Perfil guardado correctamente.');
 });
-supabaseClient.auth.onAuthStateChange((_event,session)=>{refreshAccount(session?.user||null);});
+supabaseClient.auth.onAuthStateChange((_event,session)=>{queueMicrotask(()=>refreshAccount(session?.user||null));});
 supabaseClient.auth.getSession().then(({data,error})=>{if(error)authMessage(error.message,true);else refreshAccount(data.session?.user||null);});
 
 
