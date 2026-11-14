@@ -264,8 +264,11 @@ function renderBotTemplate(target,value){
  if(/\[\[NBA_RESUMEN:(\d{4}-\d{2}-\d{2})\]\]/.test(source)){
   const day=(source.match(/\[\[NBA_RESUMEN:(\d{4}-\d{2}-\d{2})\]\]/)||[])[1]||'';
   const dateLabel=day?new Date(day+'T12:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'}):'';
-  const rows=source.split('\n').filter(line=>line.startsWith('RESULTADO |')).map(line=>line.slice(12).split('|'));
-  const question=(source.split('\n').find(line=>line.startsWith('PREGUNTA |'))||'').slice(11).trim();
+  const sourceLines=source.split('\n');
+  let rows=sourceLines.filter(line=>line.startsWith('RESULTADO |')).map(line=>line.slice(12).split('|'));
+  if(!rows.length){rows=sourceLines.map(line=>{const m=line.match(/^•\\s*(.+?)\\s+(\\d+)\\s+[–-]\\s+(\\d+)\\s+(.+?)(?:\\s+\\((.*?)\\))?$/);return m?[m[1],m[2],m[3],m[4],m[5]||'']:null;}).filter(Boolean);}
+  const questionLine=sourceLines.find(line=>line.startsWith('PREGUNTA |'));
+  const question=questionLine?questionLine.slice(11).trim():sourceLines.find(line=>line.startsWith('¿')||line.startsWith('Mirando ')||line.startsWith('Balance '))||'';
   target.replaceChildren();
   const card=document.createElement('section');card.className='nba-recap-card';
   const eyebrow=document.createElement('div');eyebrow.className='nba-recap-eyebrow';eyebrow.textContent='🏀 ALLSPORTS · NBA';card.append(eyebrow);
