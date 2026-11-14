@@ -46,6 +46,8 @@ const spanishClubs = new Set(["real madrid","barcelona","atletico madrid","atlet
 function normalizeTeamName(value){return String(value||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim()}
 function isSpanishClub(team){const name=normalizeTeamName(team?.displayName||team?.name||team?.shortDisplayName);return spanishClubs.has(name)||[...spanishClubs].some(club=>name.startsWith(club+" "))}
 
+const spanishClubs=["real madrid","barcelona","atletico madrid","atletico de madrid","girona","athletic club","real sociedad","villarreal","real betis","sevilla","celta vigo","valencia","osasuna","getafe","mallorca","alaves","espanyol","rayo vallecano","levante","elche","real oviedo","granada","las palmas","leganes","cadiz","sporting gijon","real zaragoza","tenerife","burgos","racing santander","almeria","eibar","huesca","valladolid"];
+function isSpanishClub(team){const n=String(team?.displayName||team?.name||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9 ]/g," ").trim();return spanishClubs.some(x=>n===x||n.startsWith(x+" "));}
 let previews=0,lineups=0,results=0;
 for(const e of events){const t=teams(e);if(!t||(!isSpanishClub(t.h.team)&&!isSpanishClub(t.v.team)))continue;const kick=new Date(e.date).getTime();if(!Number.isFinite(kick))continue;
 let post=findPost(e.id);const matchDay=madridDate(new Date(kick)),today=madridDate(new Date(now));const missingTodayPreview=matchDay===today&&kick>now&&kick-now<=3*3600000;if(((matchDay===tomorrow&&kick>now)||missingTodayPreview)&&!post){const id=await openThread(e,t);if(id){previews++;post=posts.find(p=>p.id===id)}}
