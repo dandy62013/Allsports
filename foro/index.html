@@ -201,8 +201,10 @@ document.querySelectorAll('[data-sport]').forEach(c=>c.addEventListener('click',
 
 
 /* Navegación y temas del foro */
+const laLigaTeams=["Athletic Club","Atlético de Madrid","CA Osasuna","Celta","Deportivo Alavés","Elche CF","FC Barcelona","Getafe CF","Levante UD","Málaga CF","Racing de Santander","Rayo Vallecano","RC Deportivo","RCD Espanyol","Real Betis","Real Madrid","Real Sociedad","Sevilla FC","Valencia CF","Villarreal CF"];
+function forumSubforumLabel(sub){return laLigaTeams.includes(sub)?'La Liga · '+sub:sub}
 const forumStructure={
- 'Fútbol':['General','La Liga','Segunda División','Premier League','Champions League','Europa League','Conference League','Selecciones','Fútbol internacional'],
+ 'Fútbol':['General','La Liga',...laLigaTeams,'Segunda División','Premier League','Champions League','Europa League','Conference League','Selecciones','Fútbol internacional'],
  'Baloncesto':['General','NBA','ACB','Euroliga','EuroCup','Basketball Champions League (BCL)','Baloncesto internacional'],
  'Motor':['General','Fórmula 1','MotoGP','Rally','Otras competiciones'],
  'Tenis':['General','ATP','WTA','Grand Slam'],
@@ -243,18 +245,18 @@ function renderForumCategories(){
  Object.entries(forumStructure).forEach(([sport,subs])=>{
   const group=document.createElement('div');
   const button=document.createElement('button');button.className='forum-category'+(forumSport===sport?' active':'');button.textContent=sport;button.addEventListener('click',()=>selectForum(sport,'Todos'));group.append(button);
-  if(forumSport===sport){const sublist=document.createElement('div');sublist.className='forum-subforums';subs.forEach(sub=>{const sb=document.createElement('button');sb.textContent='↳ '+sub;sb.className=forumSubforum===sub?'active':'';sb.addEventListener('click',()=>selectForum(sport,sub));sublist.append(sb)});group.append(sublist);}
+  if(forumSport===sport){const sublist=document.createElement('div');sublist.className='forum-subforums';subs.forEach(sub=>{const sb=document.createElement('button');sb.textContent='↳ '+forumSubforumLabel(sub);sb.className=forumSubforum===sub?'active':'';sb.addEventListener('click',()=>selectForum(sport,sub));sublist.append(sb)});group.append(sublist);}
   forumCategoryList.append(group);
  });
 }
 function updateForumSubforums(){
  const sport=document.getElementById('forumSport').value,select=document.getElementById('forumSubforum');select.replaceChildren();
- (forumStructure[sport]||['General']).forEach(sub=>{const option=document.createElement('option');option.value=sub;option.textContent=sub;select.append(option)});
+ (forumStructure[sport]||['General']).forEach(sub=>{const option=document.createElement('option');option.value=sub;option.textContent=forumSubforumLabel(sub);select.append(option)});
 }
 function selectForum(sport,subforum){
  activeThreadId=null;forumSport=sport;forumSubforum=subforum;renderForumCategories();
- document.getElementById('forumCurrentTitle').textContent=sport==='Todos'?'Todos los debates':sport+(subforum!=='Todos'?' · '+subforum:'');
- document.getElementById('forumCurrentDescription').textContent=sport==='Todos'?'Todos los temas publicados en ALLSPORTS.':'Conversaciones y temas de '+(subforum==='Todos'?sport:subforum)+'.';
+ document.getElementById('forumCurrentTitle').textContent=sport==='Todos'?'Todos los debates':sport+(subforum!=='Todos'?' · '+forumSubforumLabel(subforum):'');
+ document.getElementById('forumCurrentDescription').textContent=sport==='Todos'?'Todos los temas publicados en ALLSPORTS.':'Conversaciones y temas de '+(subforum==='Todos'?sport:forumSubforumLabel(subforum))+'.';
  renderForumTopics();
 }
 const forumReplyPages={};
