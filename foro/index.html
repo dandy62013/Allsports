@@ -48,6 +48,22 @@ section.content{padding:82px 0}.section-top{display:flex;justify-content:space-b
 
 /* Plantillas visuales de los bots ALLSPORTS */
 .asbot-card{margin:12px 0;padding:17px;border:1px solid #394752;border-radius:12px;background:linear-gradient(145deg,#17232d,#0d141b);color:#edf2f5;overflow:hidden}
+.nba-recap-card{margin:12px 0;padding:20px;border:1px solid #354650;border-radius:14px;background:linear-gradient(145deg,#172630,#0b1219);color:#edf3f6;overflow:hidden}
+.nba-recap-eyebrow{color:var(--lime);font-size:10px;font-weight:900;letter-spacing:2px}
+.nba-recap-heading{margin:7px 0 2px;font:800 25px 'Barlow Condensed',sans-serif;color:#fff}
+.nba-recap-date{margin-bottom:15px;color:#9eafb9;font-size:12px;text-transform:capitalize}
+.nba-recap-list{display:grid;gap:7px}
+.nba-recap-game{display:grid;grid-template-columns:minmax(0,1fr) 72px;gap:10px;align-items:center;padding:10px 12px;border:1px solid #2b3b46;border-radius:9px;background:#0d171f}
+.nba-recap-teams,.nba-recap-scores{display:grid;gap:5px}
+.nba-recap-teams span{font-size:13px;font-weight:650;line-height:1.25}
+.nba-recap-scores{grid-template-columns:1fr 1fr;text-align:center;font:800 17px 'Barlow Condensed',sans-serif}
+.nba-recap-scores strong{color:#fff}
+.nba-recap-detail{grid-column:1/-1;color:var(--lime);font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+.nba-recap-discussion{margin-top:14px;padding:13px 14px;border-left:3px solid var(--lime);border-radius:0 8px 8px 0;background:#202e37}
+.nba-recap-discussion span{color:var(--lime);font-size:9px;font-weight:900;letter-spacing:1.4px}
+.nba-recap-discussion p{margin:6px 0 0;color:#eef3f5;font-size:14px;line-height:1.5;font-weight:650}
+@media(max-width:520px){.nba-recap-card{padding:14px}.nba-recap-game{padding:9px}.nba-recap-teams span{font-size:12px}}
+
 .asbot-card:before{content:"ALLSPORTS · INFORMADOR";display:block;color:var(--lime);font-size:10px;font-weight:900;letter-spacing:2px;margin-bottom:12px}
 .asbot-card .asbot-kicker{font:800 19px 'Barlow Condensed',sans-serif;letter-spacing:1px;color:var(--lime);margin-bottom:12px}
 .asbot-card .asbot-match{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;text-align:center;padding:16px 10px;background:#080e14;border:1px solid #34414d;border-radius:9px;margin:10px 0}
@@ -244,7 +260,36 @@ const forumReplyPages={};
 let activeThreadId=null;
 const FORUM_MESSAGES_PER_PAGE=20;
 function renderBotTemplate(target,value){
- const source=String(value||'');
+ const source=String(value||''); 
+ if(/\[\[NBA_RESUMEN:(\d{4}-\d{2}-\d{2})\]\]/.test(source)){
+  const day=(source.match(/\[\[NBA_RESUMEN:(\d{4}-\d{2}-\d{2})\]\]/)||[])[1]||'';
+  const dateLabel=day?new Date(day+'T12:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'}):'';
+  const rows=source.split('\n').filter(line=>line.startsWith('RESULTADO |')).map(line=>line.slice(12).split('|'));
+  const question=(source.split('\n').find(line=>line.startsWith('PREGUNTA |'))||'').slice(11).trim();
+  target.replaceChildren();
+  const card=document.createElement('section');card.className='nba-recap-card';
+  const eyebrow=document.createElement('div');eyebrow.className='nba-recap-eyebrow';eyebrow.textContent='🏀 ALLSPORTS · NBA';card.append(eyebrow);
+  const heading=document.createElement('h3');heading.className='nba-recap-heading';heading.textContent='Resumen de la noche';card.append(heading);
+  if(dateLabel){const date=document.createElement('div');date.className='nba-recap-date';date.textContent=dateLabel;card.append(date);}
+  const list=document.createElement('div');list.className='nba-recap-list';
+  rows.forEach(parts=>{
+   const [away,awayScore,homeScore,home,detail]=parts.map(x=>(x||'').trim());
+   const row=document.createElement('div');row.className='nba-recap-game';
+   const teams=document.createElement('div');teams.className='nba-recap-teams';
+   const awayName=document.createElement('span');awayName.textContent=away;
+   const homeName=document.createElement('span');homeName.textContent=home;
+   teams.append(awayName,homeName);
+   const scores=document.createElement('div');scores.className='nba-recap-scores';
+   const awayPoints=document.createElement('strong');awayPoints.textContent=awayScore;
+   const homePoints=document.createElement('strong');homePoints.textContent=homeScore;
+   scores.append(awayPoints,homePoints);row.append(teams,scores);
+   if(detail){const note=document.createElement('small');note.className='nba-recap-detail';note.textContent=detail;row.append(note);}
+   list.append(row);
+  });
+  card.append(list);
+  if(question){const discussion=document.createElement('div');discussion.className='nba-recap-discussion';const label=document.createElement('span');label.textContent='💬 DEBATE DE LA JORNADA';const prompt=document.createElement('p');prompt.textContent=question;discussion.append(label,prompt);card.append(discussion);}
+  target.append(card);return;
+ }
  const type=(source.match(/\[\[ASB2:([A-Z]+):/)||[])[1]||'PREVIA';
  const clean=source.replace(/\[\[ASB2:[^\]]+\]\]/g,'').replace(/\n\n— ALLSPORTS Bot · Datos: ESPN/g,'').trim();
  const lines=clean.split('\n').map(x=>x.trim()).filter(Boolean);
@@ -313,7 +358,7 @@ function renderForumTopics(){
  const article=document.createElement('article');article.className='forum-post';
   const tag=document.createElement('div');tag.className='forum-post-tag';tag.textContent=x.sport+' · '+(x.subforum||'General');
   const title=document.createElement('h4');title.textContent=(x.content||'').split(/\n/)[0].slice(0,100)||'Nuevo tema';
-  const body=document.createElement('div');const botPost=/— ALLSPORTS Bot · Datos: ESPN/.test(x.content||'');if(botPost&&/\[\[ASB2:/.test(x.content||''))renderBotTemplate(body,getBotBody(x.content));else body.textContent=botPost?getBotBody(x.content):x.content;
+  const body=document.createElement('div');const botPost=/— ALLSPORTS Bot · Datos: ESPN/.test(x.content||'');if(botPost&&(/\[\[ASB2:|\[\[NBA_RESUMEN:/.test(x.content||'')))renderBotTemplate(body,getBotBody(x.content));else body.textContent=botPost?getBotBody(x.content):x.content;
   article.append(tag,title,body);renderForumAttachments(x,article);
   const meta=document.createElement('div');meta.className='forum-post-meta';meta.append(createForumAvatar(x.profiles?.avatar_url,x.profiles?.username||'Aficionado ALLSPORTS'));const metaText=document.createElement('span');metaText.textContent=((/— ALLSPORTS Bot · Datos: ESPN/.test(x.content||''))?'Informador':(x.profiles?.username||'Aficionado ALLSPORTS'))+' · '+getCommunityMessageCount(x.user_id)+' mensajes en la comunidad · '+(x.created_at?new Date(x.created_at).toLocaleString('es-ES',{dateStyle:'medium',timeStyle:'short'}):'Fecha no disponible');
   article.append(meta);
