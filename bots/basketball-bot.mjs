@@ -112,11 +112,11 @@ if (events.length && events.every(event => event.status?.type?.state === "post")
     const winner = homeScore > awayScore ? homeName : awayScore > homeScore ? awayName : "Empate";
     const margin = Math.abs(homeScore - awayScore);
     const detail = winner === "Empate" ? " (empate)" : margin >= 20 ? ` (victoria por ${margin})` : "";
-    results.push(`• **${awayName} ${awayScore} – ${homeScore} ${homeName}**${detail}`);
+    results.push(`RESULTADO | ${awayName}|${awayScore}|${homeScore}|${homeName}|${detail.replace(/[()]/g,"").trim()}`);
   }
   if (results.length) {
     const title = `🌙 NBA | Resumen de la noche · ${dateLabel}`;
-    const content = `[[NBA_RESUMEN:${dayKey}]]\n\n**Resultados de la noche:**\n\n${results.join("\n")}\n\n**${choosePrompt(dayKey)}**\n\n¿Qué os deja esta jornada? Os leemos en ALLSPORTS.`;
+    const content = `[[NBA_RESUMEN:${dayKey}]]\n${results.join("\n")}\nPREGUNTA | ${choosePrompt(dayKey)}`;
     if (await publish({ title, content, link_url: `https://www.espn.com/nba/scoreboard?date=${dayKey.replace(/-/g,"")}` })) {
       publishedGames++;
     }
