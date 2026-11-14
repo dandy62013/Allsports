@@ -42,8 +42,12 @@ const h=sideRoster(hr),v=sideRoster(vr);if(!h||!v||h.players.filter(x=>x.starter
 const format=(name,x)=>[`EQUIPO | ${name}`,`SISTEMA | ${x.formation||"No facilitado"}`,`TITULARES | ${x.players.filter(p=>p.starter).map(p=>(p.number?p.number+". ":"")+p.name).join(" · ")}`,`SUPLENTES | ${x.players.filter(p=>!p.starter).map(p=>(p.number?p.number+". ":"")+p.name).join(" · ")||"No facilitados"}`].join("\n");
 return[format(hn,h),format(vn,v)].join("\n")}
 function goals(s){const a=s.keyEvents||s.scoringPlays||[];return [...new Set(a.map(x=>x.text||x.shortText||x.description||"").filter(x=>/gol|goal|penalt/i.test(x)).map(x=>x.replace(/\s+/g," ").trim()))].slice(0,12)}
+const spanishClubs = new Set(["real madrid","barcelona","atletico madrid","atletico de madrid","girona","athletic club","real sociedad","villarreal","real betis","sevilla","celta vigo","valencia","osasuna","getafe","mallorca","alaves","espanyol","rayo vallecano","levante","elche","real oviedo","granada","las palmas","leganes","cadiz","sporting gijon","real zaragoza","tenerife","burgos","racing santander","almeria","eibar","huesca","valladolid"]);
+function normalizeTeamName(value){return String(value||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim()}
+function isSpanishClub(team){const name=normalizeTeamName(team?.displayName||team?.name||team?.shortDisplayName);return spanishClubs.has(name)||[...spanishClubs].some(club=>name.startsWith(club+" "))}
+
 let previews=0,lineups=0,results=0;
-for(const e of events){const t=teams(e);if(!t)continue;const kick=new Date(e.date).getTime();if(!Number.isFinite(kick))continue;
+for(const e of events){const t=teams(e);if(!t||(!isSpanishClub(t.h.team)&&!isSpanishClub(t.v.team)))continue;const kick=new Date(e.date).getTime();if(!Number.isFinite(kick))continue;
 let post=findPost(e.id);const matchDay=madridDate(new Date(kick)),today=madridDate(new Date(now));const missingTodayPreview=matchDay===today&&kick>now&&kick-now<=3*3600000;if(((matchDay===tomorrow&&kick>now)||missingTodayPreview)&&!post){const id=await openThread(e,t);if(id){previews++;post=posts.find(p=>p.id===id)}}
 if(!post)continue;const state=e.status?.type?.state,checkXI=state==="pre"&&kick>now&&kick-now<=3*3600000,checkFinal=state==="post"&&now-kick<=18*3600000;if(!checkXI&&!checkFinal)continue;
 const summary=await json(`https://site.api.espn.com/apis/site/v2/sports/soccer/${LEAGUE}/summary?event=${e.id}`).catch(err=>{console.log("Resumen no disponible",e.id,err.message);return null});if(!summary)continue;
