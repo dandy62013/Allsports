@@ -266,7 +266,7 @@ function renderBotTemplate(target,value){
   const dateLabel=day?new Date(day+'T12:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'}):'';
   const sourceLines=source.split('\n');
   let rows=sourceLines.filter(line=>line.startsWith('RESULTADO |')).map(line=>line.slice(12).split('|'));
-  if(!rows.length){rows=sourceLines.map(line=>{const m=line.match(/^•\\s*(.+?)\\s+(\\d+)\\s+[–-]\\s+(\\d+)\\s+(.+?)(?:\\s+\\((.*?)\\))?$/);return m?[m[1],m[2],m[3],m[4],m[5]||'']:null;}).filter(Boolean);}
+  if(!rows.length){rows=sourceLines.map(line=>{const m=line.match(/^•\s*(.+?)\s+(\d+)\s+[–-]\s+(\d+)\s+(.+?)(?:\s+\((.*?)\))?$/);return m?[m[1],m[2],m[3],m[4],m[5]||'']:null;}).filter(Boolean);}
   const questionLine=sourceLines.find(line=>line.startsWith('PREGUNTA |'));
   const question=questionLine?questionLine.slice(11).trim():sourceLines.find(line=>line.startsWith('¿')||line.startsWith('Mirando ')||line.startsWith('Balance '))||'';
   target.replaceChildren();
