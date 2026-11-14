@@ -59,6 +59,7 @@ section.content{padding:82px 0}.section-top{display:flex;justify-content:space-b
 .nba-recap-scores{grid-template-columns:1fr 1fr;text-align:center;font:800 17px 'Barlow Condensed',sans-serif}
 .nba-recap-scores strong{color:#fff}
 .nba-recap-detail{grid-column:1/-1;color:var(--lime);font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+.nba-recap-scorer{grid-column:1/-1;color:#dce6ec;font-size:11px;font-weight:650;line-height:1.35}
 .nba-recap-discussion{margin-top:14px;padding:13px 14px;border-left:3px solid var(--lime);border-radius:0 8px 8px 0;background:#202e37}
 .nba-recap-discussion span{color:var(--lime);font-size:9px;font-weight:900;letter-spacing:1.4px}
 .nba-recap-discussion p{margin:6px 0 0;color:#eef3f5;font-size:14px;line-height:1.5;font-weight:650}
@@ -287,6 +288,8 @@ function renderBotTemplate(target,value){
    const homePoints=document.createElement('strong');homePoints.textContent=homeScore;
    scores.append(awayPoints,homePoints);row.append(teams,scores);
    if(detail){const note=document.createElement('small');note.className='nba-recap-detail';note.textContent=detail;row.append(note);}
+   const scorerName=(parts[5]||'').trim(),scorerPoints=(parts[6]||'').trim();
+   if(scorerName&&scorerPoints){const scorer=document.createElement('small');scorer.className='nba-recap-scorer';scorer.textContent='⭐ Máximo anotador: '+scorerName+' · '+scorerPoints+' puntos';row.append(scorer);}
    list.append(row);
   });
   card.append(list);
