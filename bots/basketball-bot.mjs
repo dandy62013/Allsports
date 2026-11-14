@@ -94,6 +94,29 @@ for (const event of events) {
   }
 }
 
+async function getTopScorer(eventId) {
+  try {
+    const summary = await json(`https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=${eventId}`);
+    const scorers = [];
+    for (const team of (summary?.boxscore?.players || [])) {
+      for (const group of (team.statistics || [])) {
+        const labels = group.labels || group.names || [];
+        const pointsIndex = labels.findIndex(label => String(label).toUpperCase() === 'PTS');
+        for (const entry of (group.athletes || [])) {
+          const stats = entry.stats || [];
+          const points = Number(pointsIndex >= 0 ? stats[pointsIndex] : stats[stats.length - 1]);
+          const name = entry.athlete?.displayName || entry.athlete?.fullName || entry.athlete?.shortName;
+          if (name && Number.isFinite(points)) scorers.push({name, points});
+        }
+      }
+    }
+    scorers.sort((a,b) => b.points - a.points);
+    return scorers[0] || null;
+  } catch (error) {
+    console.log(`No se pudieron obtener los máximos anotadores del partido ${eventId}:`, error.message);
+    return null;
+  }
+}
 // Un único resumen de resultados cuando TODOS los partidos del marcador han terminado.
 if (events.length && events.every(event => event.status?.type?.state === "post")) {
   const dayKey = new Date().toLocaleDateString("en-CA", { timeZone: "Europe/Madrid" });
@@ -112,7 +135,8 @@ if (events.length && events.every(event => event.status?.type?.state === "post")
     const winner = homeScore > awayScore ? homeName : awayScore > homeScore ? awayName : "Empate";
     const margin = Math.abs(homeScore - awayScore);
     const detail = winner === "Empate" ? " (empate)" : margin >= 20 ? ` (victoria por ${margin})` : "";
-    results.push(`RESULTADO | ${awayName}|${awayScore}|${homeScore}|${homeName}|${detail.replace(/[()]/g,"").trim()}`);
+    const topScorer = await getTopScorer(event.id);
+    results.push(`RESULTADO | ${awayName}|${awayScore}|${homeScore}|${homeName}|${detail.replace(/[()]/g,"").trim()}|${topScorer?.name || ""}|${topScorer?.points ?? ""}`);
   }
   if (results.length) {
     const title = `🌙 NBA | Resumen de la noche · ${dateLabel}`;
