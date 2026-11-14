@@ -11,7 +11,7 @@ const auth={Authorization:`Bearer ${session.access_token}`};
 await json(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${userId}`,{method:"PATCH",headers:{...auth,Prefer:"return=minimal"},body:JSON.stringify({username:"Informador"})}).catch(e=>console.log("Aviso de perfil:",e.message));
 const since=new Date(Date.now()-30*86400000).toISOString();
 const [pRows,rRows]=await Promise.all([
- json(`${SUPABASE_URL}/rest/v1/posts?select=id,content,link_url,created_at&user_id=eq.${userId}&created_at=gte.${encodeURIComponent(since)}&order=created_at.desc&limit=500`,{headers:auth}),
+ json(`${SUPABASE_URL}/rest/v1/posts?select=id,content,link_url,created_at,subforum&user_id=eq.${userId}&created_at=gte.${encodeURIComponent(since)}&order=created_at.desc&limit=500`,{headers:auth}),
  json(`${SUPABASE_URL}/rest/v1/replies?select=id,post_id,content,created_at&user_id=eq.${userId}&created_at=gte.${encodeURIComponent(since)}&order=created_at.desc&limit=1000`,{headers:auth})
 ]);
 const posts=Array.isArray(pRows)?pRows:[], replies=Array.isArray(rRows)?rRows:[];
@@ -25,12 +25,16 @@ const scoreboards=await Promise.all([...monthKeys].map(month=>json(`https://site
 const events=[...new Map(scoreboards.flatMap(s=>Array.isArray(s?.events)?s.events:[]).map(e=>[String(e.id),e])).values()].filter(e=>{const d=new Date(e.date).getTime();return Number.isFinite(d)&&d>=from.getTime()&&d<=to.getTime()});
 const mark=(k,id)=>`[[ASB2:${k}:${id}]]`;
 function teams(e){const c=e.competitions?.[0],a=c?.competitors||[],h=a.find(x=>x.homeAway==="home"),v=a.find(x=>x.homeAway==="away");if(!h||!v)return null;return{c,h,v,hn:h.team?.displayName||h.team?.name||"Local",vn:v.team?.displayName||v.team?.name||"Visitante"}}
-function findPost(id){return posts.find(p=>String(p.link_url||"").includes(`gameId=${id}`)||(p.content||"").includes(mark("PREVIA",id)))}
+const CLUB_SUBFORUMS={
+ "athletic club":"Athletic Club","atletico de madrid":"Atlético de Madrid","atletico madrid":"Atlético de Madrid","ca osasuna":"CA Osasuna","osasuna":"CA Osasuna","rc celta":"Celta","celta de vigo":"Celta","celta":"Celta","deportivo alaves":"Deportivo Alavés","alaves":"Deportivo Alavés","elche cf":"Elche CF","elche":"Elche CF","fc barcelona":"FC Barcelona","barcelona":"FC Barcelona","barca":"FC Barcelona","getafe cf":"Getafe CF","getafe":"Getafe CF","levante ud":"Levante UD","levante":"Levante UD","malaga cf":"Málaga CF","malaga":"Málaga CF","r. racing club":"Racing de Santander","racing de santander":"Racing de Santander","racing santander":"Racing de Santander","racing":"Racing de Santander","rayo vallecano":"Rayo Vallecano","rayo":"Rayo Vallecano","rc deportivo":"RC Deportivo","deportivo la coruna":"RC Deportivo","deportivo":"RC Deportivo","rcd espanyol de barcelona":"RCD Espanyol","rcd espanyol":"RCD Espanyol","espanyol":"RCD Espanyol","real betis":"Real Betis","betis":"Real Betis","real madrid":"Real Madrid","real sociedad":"Real Sociedad","sevilla fc":"Sevilla FC","sevilla":"Sevilla FC","valencia cf":"Valencia CF","valencia":"Valencia CF","villarreal cf":"Villarreal CF","villarreal":"Villarreal CF"
+};
+function clubSubforum(team){const name=String(team?.displayName||team?.name||"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase().replace(/\\s+/g," ").trim();return CLUB_SUBFORUMS[name]||null}
+function findPost(id,subforum="La Liga"){return posts.find(p=>p.subforum===subforum&&(String(p.link_url||"").includes(`gameId=${id}`)||(p.content||"").includes(mark("PREVIA",id))))}
 function hasReply(postId,k,id){return replies.some(r=>r.post_id===postId&&(r.content||"").includes(mark(k,id)))}
-async function openThread(e,t){const date=new Date(e.date),title=`⚽ PRIMERA | ${t.hn} vs ${t.vn}`,venue=t.c?.venue?.fullName||"Estadio por confirmar";
+async function openThread(e,t,subforum="La Liga"){const date=new Date(e.date),title=`⚽ PRIMERA | ${t.hn} vs ${t.vn}`,venue=t.c?.venue?.fullName||"Estadio por confirmar";
 const body=[mark("PREVIA",e.id),"PREVIA DE LA JORNADA",`ENCUENTRO | ${t.hn} vs ${t.vn}`,`FECHA Y HORA | ${madridTime(date)} (hora peninsular)`,`ESTADIO | ${venue}`,"","LaLiga EA SPORTS nos trae este enfrentamiento. Abrimos el hilo para comentar cómo llegan ambos equipos y compartir pronósticos.","¿Quién se llevará los tres puntos? Os leemos.","",FOOTER].join("\n");
-const result=await json(`${SUPABASE_URL}/rest/v1/posts`,{method:"POST",headers:{...auth,Prefer:"return=representation"},body:JSON.stringify({user_id:userId,sport:"Fútbol",subforum:"La Liga",content:title+"\n"+body,link_url:`https://www.espn.com/soccer/match/_/gameId/${e.id}`})});
-const row=Array.isArray(result)?result[0]:result;if(row?.id)posts.unshift(row);console.log("Previa creada:",title);return row?.id||null}
+const result=await json(`${SUPABASE_URL}/rest/v1/posts`,{method:"POST",headers:{...auth,Prefer:"return=representation"},body:JSON.stringify({user_id:userId,sport:"Fútbol",subforum,content:title+"\n"+body,link_url:`https://www.espn.com/soccer/match/_/gameId/${e.id}`})});
+const row=Array.isArray(result)?result[0]:result;if(row?.id)posts.unshift(row);console.log("Previa creada:",subforum,title);return row?.id||null}
 async function updateThread(postId,k,id,content){if(!postId||hasReply(postId,k,id))return false;
 await json(`${SUPABASE_URL}/rest/v1/replies`,{method:"POST",headers:{...auth,Prefer:"return=minimal"},body:JSON.stringify({post_id:postId,user_id:userId,content:[mark(k,id),content,"",FOOTER].join("\n")})});
 replies.unshift({post_id:postId,content:mark(k,id)+content});console.log("Actualización:",k,id);return true}
@@ -44,10 +48,13 @@ return[format(hn,h),format(vn,v)].join("\n")}
 function goals(s){const a=s.keyEvents||s.scoringPlays||[];return [...new Set(a.map(x=>x.text||x.shortText||x.description||"").filter(x=>/gol|goal|penalt/i.test(x)).map(x=>x.replace(/\s+/g," ").trim()))].slice(0,12)}
 let previews=0,lineups=0,results=0;
 for(const e of events){const t=teams(e);if(!t)continue;const kick=new Date(e.date).getTime();if(!Number.isFinite(kick))continue;
-let post=findPost(e.id);const matchDay=madridDate(new Date(kick)),today=madridDate(new Date(now));const missingTodayPreview=matchDay===today&&kick>now&&kick-now<=3*3600000;if(((matchDay===tomorrow&&kick>now)||missingTodayPreview)&&!post){const id=await openThread(e,t);if(id){previews++;post=posts.find(p=>p.id===id)}}
-if(!post)continue;const state=e.status?.type?.state,checkXI=state==="pre"&&kick>now&&kick-now<=3*3600000,checkFinal=state==="post"&&now-kick<=18*3600000;if(!checkXI&&!checkFinal)continue;
+let post=findPost(e.id,"La Liga");const matchDay=madridDate(new Date(kick)),today=madridDate(new Date(now));const missingTodayPreview=matchDay===today&&kick>now&&kick-now<=3*3600000;const previewDue=(matchDay===tomorrow&&kick>now)||missingTodayPreview;if(previewDue&&!post){const id=await openThread(e,t,"La Liga");if(id){previews++;post=posts.find(p=>p.id===id)}}
+if(!post)continue;
+const mirrorDue=previewDue||(matchDay===today&&now-kick<=18*3600000);const targets=[post];
+if(mirrorDue){for(const team of [t.h.team,t.v.team]){const subforum=clubSubforum(team);if(!subforum){console.log("Aviso: no se reconoce el subforo del equipo",team?.displayName||team?.name||"");continue;}let clubPost=findPost(e.id,subforum);if(!clubPost){const id=await openThread(e,t,subforum);if(id)clubPost=posts.find(p=>p.id===id)}if(clubPost)targets.push(clubPost)}}
+const state=e.status?.type?.state,checkXI=(state==="pre"||state==="in")&&kick>=now-15*60*1000&&kick-now<=3*3600000,checkFinal=state==="post"&&now-kick<=18*3600000;if(!checkXI&&!checkFinal)continue;
 const summary=await json(`https://site.api.espn.com/apis/site/v2/sports/soccer/${LEAGUE}/summary?event=${e.id}`).catch(err=>{console.log("Resumen no disponible",e.id,err.message);return null});if(!summary)continue;
-if(checkXI&&!hasReply(post.id,"ALINEACIONES",e.id)){const xi=getLineups(summary,t.h.team?.id,t.v.team?.id,t.hn,t.vn);if(xi&&await updateThread(post.id,"ALINEACIONES",e.id,["ALINEACIONES OFICIALES",`PARTIDO | ${t.hn} vs ${t.vn}`,xi,"Fuente: ESPN"].join("\n\n")))lineups++}
-if(checkFinal&&!hasReply(post.id,"RESULTADO",e.id)){const score=[`MARCADOR | ${t.hn} | ${t.h.score??"—"} | ${t.v.score??"—"} | ${t.vn}`,`GOLEADORES | ${goals(summary).join(" · ")||"Detalle no disponible en la fuente"}`,`ESTADIO | ${t.c?.venue?.fullName||"No facilitado"}`,"El encuentro ha terminado. ¿Qué valoración hacéis del partido?"];if(await updateThread(post.id,"RESULTADO",e.id,["RESULTADO FINAL",...score].join("\n")))results++}
+if(checkXI){const xi=getLineups(summary,t.h.team?.id,t.v.team?.id,t.hn,t.vn);if(xi)for(const target of targets)if(await updateThread(target.id,"ALINEACIONES",e.id,["ALINEACIONES OFICIALES",`PARTIDO | ${t.hn} vs ${t.vn}`,xi,"Fuente: ESPN"].join("\n\n")))lineups++}
+if(checkFinal){const score=[`MARCADOR | ${t.hn} | ${t.h.score??"—"} | ${t.v.score??"—"} | ${t.vn}`,`GOLEADORES | ${goals(summary).join(" · ")||"Detalle no disponible en la fuente"}`,`ESTADIO | ${t.c?.venue?.fullName||"No facilitado"}`,"El encuentro ha terminado. ¿Qué valoración hacéis del partido?"];for(const target of targets)if(await updateThread(target.id,"RESULTADO",e.id,["RESULTADO FINAL",...score].join("\n")))results++}
 }
 console.log(`Primera División: ${events.length} partidos revisados; ${previews} previas; ${lineups} alineaciones; ${results} resultados.`);
