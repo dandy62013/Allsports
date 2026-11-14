@@ -55,9 +55,26 @@ const scoreboardUrl = "https://site.api.espn.com/apis/site/v2/sports/basketball/
 const scoreboard = await json(scoreboardUrl);
 const now = Date.now();
 let publishedGames = 0;
+const events = scoreboard.events || [];
 
-for (const event of (scoreboard.events || [])) {
-  if (publishedGames >= 5) break;
+const engagementPrompts = [
+  "La grada tiene la palabra: ¿qué equipo os ha sorprendido más esta noche y por qué?",
+  "¿Cuál ha sido para vosotros el partido más atractivo? Contadnos qué os ha llamado la atención.",
+  "Si tuvierais que elegir una actuación de la noche, ¿con cuál os quedáis?",
+  "¿Qué resultado puede tener más impacto en la clasificación? Os leemos.",
+  "¿Ha habido alguna sorpresa o decepción? Queremos conocer vuestro análisis.",
+  "Mirando a la próxima jornada, ¿qué equipo sale reforzado y cuál debe reaccionar?",
+  "¿Qué partido os gustaría comentar con más detalle? Dejad vuestra opinión.",
+  "Balance de la noche: ¿qué equipo ha dado el golpe sobre la mesa?"
+];
+function choosePrompt(seed) {
+  let hash = 0;
+  for (const char of String(seed)) hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+  return engagementPrompts[hash % engagementPrompts.length];
+}
+
+// Las previas siguen siendo individuales, pero sus preguntas van variando.
+for (const event of events) {
   const competition = event.competitions?.[0];
   const competitors = competition?.competitors || [];
   const home = competitors.find(t => t.homeAway === "home");
@@ -72,17 +89,37 @@ for (const event of (scoreboard.events || [])) {
   if (state === "pre" && start > now && start - now <= 2 * 60 * 60 * 1000) {
     const when = new Date(event.date).toLocaleString("es-ES", { dateStyle: "full", timeStyle: "short", timeZone: "Europe/Madrid" });
     const title = `🏀 PREVIA NBA | ${awayName} vs ${homeName}`;
-    const content = `Se acerca el partido **${awayName} – ${homeName}**.\n\n🕒 Inicio previsto: ${when} (hora peninsular).\n\n**Abrimos el debate:**\n- ¿Quién llega en mejor momento?\n- ¿Qué jugador puede ser decisivo?\n- ¿Cuál es vuestro pronóstico?\n\nDejad vuestro análisis antes del salto inicial.`;
+    const content = `Se acerca el partido **${awayName} – ${homeName}**.\n\n🕒 Inicio previsto: ${when} (hora peninsular).\n\n**${choosePrompt(event.id)}**\n\nDejad vuestro análisis antes del salto inicial.`;
     if (await publish({ title, content, link_url: gameUrl })) publishedGames++;
   }
+}
 
-  if (state === "post" && now - start <= 20 * 60 * 60 * 1000) {
-    const homeScore = home.score ?? "—";
-    const awayScore = away.score ?? "—";
-    const winner = Number(homeScore) > Number(awayScore) ? homeName : Number(awayScore) > Number(homeScore) ? awayName : "Empate";
-    const title = `🏁 RESULTADO NBA | ${awayName} ${awayScore} - ${homeScore} ${homeName}`;
-    const content = `**Resultado final:** ${awayName} ${awayScore} – ${homeScore} ${homeName}.\n\n${winner === "Empate" ? "El encuentro terminó igualado." : `Victoria de **${winner}**.`}\n\n**¿Qué os ha parecido el partido?**\n- ¿Quién ha sido el jugador más determinante?\n- ¿Qué ha decidido el encuentro?\n- ¿Qué consecuencias puede tener este resultado?`;
-    if (await publish({ title, content, link_url: gameUrl + "#resultado" })) publishedGames++;
+// Un único resumen de resultados cuando TODOS los partidos del marcador han terminado.
+if (events.length && events.every(event => event.status?.type?.state === "post")) {
+  const dayKey = new Date().toLocaleDateString("en-CA", { timeZone: "Europe/Madrid" });
+  const dateLabel = new Date().toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Madrid" });
+  const results = [];
+  for (const event of events) {
+    const competitors = event.competitions?.[0]?.competitors || [];
+    const home = competitors.find(t => t.homeAway === "home");
+    const away = competitors.find(t => t.homeAway === "away");
+    if (!home || !away) continue;
+    const homeScore = Number(home.score);
+    const awayScore = Number(away.score);
+    if (!Number.isFinite(homeScore) || !Number.isFinite(awayScore)) continue;
+    const homeName = home.team?.displayName || home.team?.name || "Local";
+    const awayName = away.team?.displayName || away.team?.name || "Visitante";
+    const winner = homeScore > awayScore ? homeName : awayScore > homeScore ? awayName : "Empate";
+    const margin = Math.abs(homeScore - awayScore);
+    const detail = winner === "Empate" ? " (empate)" : margin >= 20 ? ` (victoria por ${margin})` : "";
+    results.push(`• **${awayName} ${awayScore} – ${homeScore} ${homeName}**${detail}`);
+  }
+  if (results.length) {
+    const title = `🌙 NBA | Resumen de la noche · ${dateLabel}`;
+    const content = `[[NBA_RESUMEN:${dayKey}]]\n\n**Resultados de la noche:**\n\n${results.join("\n")}\n\n**${choosePrompt(dayKey)}**\n\n¿Qué os deja esta jornada? Os leemos en ALLSPORTS.`;
+    if (await publish({ title, content, link_url: `https://www.espn.com/nba/scoreboard?date=${dayKey.replace(/-/g,"")}` })) {
+      publishedGames++;
+    }
   }
 }
 
