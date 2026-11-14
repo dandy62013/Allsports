@@ -6,6 +6,7 @@ import html
 import http.cookiejar
 import urllib.parse
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
@@ -36,6 +37,10 @@ def valid_image_url(value):
         return False
     # Google News can return its own colourful placeholder as if it were an article photo.
     if GENERIC_GOOGLE_IMAGE_ID in parsed.path:
+        return False
+    # Reject publisher logos, placeholders and live-score graphics as article photos.
+    path = parsed.path.lower()
+    if any(term in path for term in ("logo", "placeholder", "no-image", "noimage", "amp-directo", "default-image")):
         return False
     return True
 
@@ -87,7 +92,7 @@ class OpenGraphImageParser(HTMLParser):
 def read_article_page(url):
     try:
         request = urllib.request.Request(url, headers=HEADERS)
-        with urllib.request.urlopen(request, timeout=10) as response:
+        with urllib.request.urlopen(request, timeout=8) as response:
             content_type = response.headers.get("Content-Type", "").lower()
             if "html" not in content_type:
                 return "", "", ""
@@ -117,7 +122,7 @@ def resolve_google_news_url(url):
             "https://news.google.com/rss/articles/" + article_id,
             headers=headers,
         )
-        with opener.open(page_request, timeout=20) as response:
+        with opener.open(page_request, timeout=8) as response:
             page = response.read(900_000).decode("utf-8", errors="replace")
         signature = re.search(r'data-n-a-sg="([^"]+)"', page)
         timestamp = re.search(r'data-n-a-ts="(\d+)"', page)
@@ -152,7 +157,7 @@ def resolve_google_news_url(url):
         post_request = urllib.request.Request(
             endpoint, data=body, headers=post_headers, method="POST"
         )
-        with opener.open(post_request, timeout=20) as response:
+        with opener.open(post_request, timeout=8) as response:
             raw = response.read().decode("utf-8", errors="replace")
         payload_text = raw.split("\n\n", 1)[-1].strip()
         frames = json.loads(payload_text)
@@ -220,6 +225,7 @@ def category_for(title, fallback):
     return fallback
 
 items = {}
+image_jobs = {}
 for query, fallback in QUERIES:
     params = urllib.parse.urlencode({"q": query, "hl": "es", "gl": "ES", "ceid": "ES:es"})
     url = "https://news.google.com/rss/search?" + params
@@ -239,8 +245,6 @@ for query, fallback in QUERIES:
         title = clean_title(raw_title, source)
         description = clean(node.findtext("description"))
         image = extract_image(node)
-        if not image:
-            image = fetch_article_image(link, source_node.attrib.get("url", "") if source_node is not None else "")
         pub_date = node.findtext("pubDate") or ""
         try:
             published = parsedate_to_datetime(pub_date).astimezone(timezone.utc).isoformat()
@@ -249,6 +253,9 @@ for query, fallback in QUERIES:
         if not title or not link:
             continue
         key = link
+        if key in items:
+            continue
+        image_jobs[key] = (link, source_node.attrib.get("url", "") if source_node is not None else "")
         items[key] = {
             "title": title,
             "url": link,
@@ -260,6 +267,27 @@ for query, fallback in QUERIES:
         }
 
 ordered = sorted(items.values(), key=lambda item: item["published"], reverse=True)[:24]
+
+# Resolve only the final, deduplicated news items, in parallel, so a slow
+# publisher cannot hold up the whole workflow for several minutes.
+key_by_url = {item["url"]: key for key, item in items.items()}
+pending = [
+    (item, image_jobs.get(key_by_url[item["url"]], ("", ""))[1])
+    for item in ordered if not item["image"]
+]
+if pending:
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        futures = {
+            pool.submit(fetch_article_image, item["url"], source_home): item
+            for item, source_home in pending
+        }
+        for future in as_completed(futures):
+            item = futures[future]
+            try:
+                item["image"] = future.result() or ""
+            except Exception as exc:
+                print(f"No se pudo obtener imagen para '{item['title'][:60]}': {exc}")
+
 payload = {
     "updatedAt": datetime.now(timezone.utc).isoformat(),
     "items": ordered,
