@@ -218,10 +218,11 @@ export default {
         "No solicites datos personales, no inventes fuentes y no afirmes tener actualización segundo a segundo."
       ].join(" ");
 
-      const messages = [{ role: "system", content: systemPrompt }, ...history];
-      const lastUser = [...messages].reverse().find(item => item.role === "user");
-      if (lastUser) lastUser.content += liveContext;
-      else messages.push({ role: "user", content: question + liveContext });
+      const messages = [
+        { role: "system", content: systemPrompt },
+        ...history,
+        { role: "user", content: question + liveContext }
+      ];
       const answer = await env.AI.run(MODEL, {
         messages,
         max_tokens: 850,
