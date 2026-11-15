@@ -88,7 +88,7 @@ for (const event of events) {
 
   if (state === "pre" && start > now && start - now <= 2 * 60 * 60 * 1000) {
     const when = new Date(event.date).toLocaleString("es-ES", { dateStyle: "full", timeStyle: "short", timeZone: "Europe/Madrid" });
-    const title = `🏀 PREVIA NBA | ${awayName} vs ${homeName}`;
+    const title = `🏀 NBA | ${awayName} vs ${homeName}`;
     const content = `Se acerca el partido **${awayName} – ${homeName}**.\n\n🕒 Inicio previsto: ${when} (hora peninsular).\n\n**${choosePrompt(event.id)}**\n\nDejad vuestro análisis antes del salto inicial.`;
     if (await publish({ title, content, link_url: gameUrl })) publishedGames++;
   }
