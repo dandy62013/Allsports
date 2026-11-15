@@ -51,7 +51,7 @@ async function runMoto(){
  if(!category?.id)throw new Error("No se encontró la categoría "+CONFIG.category+".");
  let created=0,grids=0,results=0,standings=0;
  for(const ev of events){
-  const eventId=ev.id||ev.uuid||ev.event_uuid;if(!eventId)continue;
+  const eventId=ev.id||ev.uuid||ev.event_uuid||ev.toad_api_uuid;if(!eventId)continue;
   const ss=await json(base+"/results/sessions?eventUuid="+encodeURIComponent(eventId)+"&categoryUuid="+encodeURIComponent(category.id),{headers:h}).catch(e=>{console.log("Sesiones no disponibles:",e.message);return []});
   if(!Array.isArray(ss)||!ss.length)continue;
   const ordered=ss.filter(x=>x.date).sort((a,b)=>new Date(a.date)-new Date(b.date));if(!ordered.length)continue;
