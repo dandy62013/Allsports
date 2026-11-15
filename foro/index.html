@@ -445,11 +445,11 @@ function forumDisplayTitle(content){
  const titleDate=(first.match(/\|\s*(\d{2}\/\d{2}\s*·\s*\d{2}:\d{2})\s*$/)||[])[1]||'';
  const bodyDate=(raw.match(/(?:FECHA Y HORA\s*\||Inicio previsto:\s*)([^\n]+)/i)||[])[1]||'';
  const dateLabel=titleDate||bodyDate.replace(/\s*\(hora[^)]*\).*$/i,'').trim();
- const roundMatch=first.match(/\bJornada\s+\d+\b/i)||raw.match(/JORNADA\s*\|\s*(\d+)/i);
- const round=roundMatch?(roundMatch[0].match(/\d+/)||[])[0]:'';
- const isFemale=/\[\[AS(?::|-)FEMENINO_CLUBES:PREVIA:/.test(raw);
+ const roundMatch=raw.match(/(?:^|\n)\s*(?:JORNADA|Jornada)\s*(?:\||:|-)?\s*(?:N[.º°]?\s*)?(\d{1,2})\b/im)||raw.match(/\bJornada\s+(\d{1,2})\b/i);
+ const round=roundMatch?roundMatch[1]:'';
+ const isFemale=/\[\[AS-FEMENINO_CLUBES:PREVIA:/.test(raw);
  if(isFemale){
-  const match=raw.match(/ENCUENTRO\s*\|\s*([^\n]+)/);
+  const match=raw.match(/ENCUENTRO\s*\|\s*([^\n]+)/i);
   return '⚽ Fútbol femenino · '+(match?match[1].trim():'Partido')+(round?' | Jornada '+round:'')+(dateLabel?' | '+dateLabel:'');
  }
  let title=first;
