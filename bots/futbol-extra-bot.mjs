@@ -30,6 +30,13 @@ const posts=Array.isArray(pRows)?pRows:[],replies=Array.isArray(rRows)?rRows:[];
 const madridDate=d=>new Intl.DateTimeFormat("en-CA",{timeZone:ZONE,year:"numeric",month:"2-digit",day:"2-digit"}).format(d);
 const madridTime=d=>d.toLocaleString("es-ES",{timeZone:ZONE,dateStyle:"full",timeStyle:"short"});
 const kickoffLabel=d=>d.toLocaleString("es-ES",{timeZone:ZONE,day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).replace(",", " ·");
+function matchdayNumber(e){
+ const c=e.competitions?.[0]||{};
+ const candidates=[e.week?.number,e.week?.text,c.week?.number,c.week?.text,e.season?.week?.number,...(Array.isArray(c.notes)?c.notes.map(n=>n?.headline||n?.text||n?.summary):[])];
+ for(const value of candidates){if(value==null)continue;const m=String(value).match(/(?:jornada|matchday|week|round|ronda)\s*#?\s*(\d+)|^(\d{1,2})$/i);if(m)return Number(m[1]||m[2]);}
+ return null;
+}
+
 const now=Date.now(),from=new Date(now-86400000),to=new Date(now+45*86400000);
 const monthKeys=new Set();for(let d=new Date(from);d<=to;d.setUTCDate(d.getUTCDate()+1))monthKeys.add(madridDate(d).replaceAll("-","").slice(0,6));
 const calendars=await Promise.all(config.leagues.flatMap(league=>[...monthKeys].map(async month=>({league,data:await json(`https://site.api.espn.com/apis/site/v2/sports/soccer/${league}/scoreboard?dates=${month}`).catch(e=>{console.log("Calendario no disponible",league,month,e.message);return null})}))));
@@ -42,10 +49,11 @@ function hasSpanishClub(e){return competitors(e).some(x=>{const n=norm(x.team?.d
 function teams(e){const a=competitors(e),h=a.find(x=>x.homeAway==="home")||a[0],v=a.find(x=>x.homeAway==="away")||a[1];if(!h||!v)return null;return{c:e.competitions?.[0],h,v,hn:h.team?.displayName||h.team?.name||"Local",vn:v.team?.displayName||v.team?.name||"Visitante"}}
 const mark=(kind,id)=>`[[AS-${config.key}:${kind}:${id}]]`;
 function findPost(e){return posts.find(p=>((p.content||"").includes(mark("PREVIA",e.id))||(p.link_url||"").includes(`gameId=${e.id}`)))}
+async function ensureMatchdayTitle(post,e,t){const n=matchdayNumber(e);if(!post||!n)return;const first=(post.content||"").split("\\n")[0]||"";const label=`Jornada ${n}`;if(first.includes(label))return;const title=`⚽ ${config.title} | ${t.hn} vs ${t.vn} | ${label} | ${kickoffLabel(new Date(e.date))}`;const content=title+"\\n"+(post.content||"").split("\\n").slice(1).join("\\n");await json(`${SUPABASE_URL}/rest/v1/posts?id=eq.${post.id}&user_id=eq.${userId}`,{method:"PATCH",headers:{...auth,Prefer:"return=minimal"},body:JSON.stringify({content})});post.content=content;console.log("Título actualizado:",title)}
 function hasReply(postId,kind,id){return replies.some(r=>r.post_id===postId&&(r.content||"").includes(mark(kind,id)))}
 async function createPreview(e,t){const kick=new Date(e.date),venue=t.c?.venue?.fullName||"Estadio por confirmar",competition=e.league?.name||e.season?.name||config.description;
-const title=`⚽ ${config.title} | ${t.hn} vs ${t.vn} | ${kickoffLabel(kick)}`;
-const body=[mark("PREVIA",e.id),"PREVIA DEL PARTIDO",`ENCUENTRO | ${t.hn} vs ${t.vn}`,`FECHA Y HORA | ${madridTime(kick)} (hora peninsular)`,`ESTADIO | ${venue}`,`COMPETICIÓN | ${competition}`,"",`Abrimos este hilo para seguir ${config.description}: comentar cómo llegan ambos equipos, compartir pronósticos y debatir el encuentro.`,"¿Cuál es vuestro pronóstico? ¡Os leemos!","",FOOTER].join("\n");
+const n=matchdayNumber(e),jornada=n?` | Jornada ${n}`:"";const title=`⚽ ${config.title} | ${t.hn} vs ${t.vn}${jornada} | ${kickoffLabel(kick)}`;
+const body=[mark("PREVIA",e.id),"PREVIA DEL PARTIDO",...(n?[`JORNADA | ${n}`]:[]),`ENCUENTRO | ${t.hn} vs ${t.vn}`,`FECHA Y HORA | ${madridTime(kick)} (hora peninsular)`,`ESTADIO | ${venue}`,`COMPETICIÓN | ${competition}`,"",`Abrimos este hilo para seguir ${config.description}: comentar cómo llegan ambos equipos, compartir pronósticos y debatir el encuentro.`,"¿Cuál es vuestro pronóstico? ¡Os leemos!","",FOOTER].join("\n");
 const result=await json(`${SUPABASE_URL}/rest/v1/posts`,{method:"POST",headers:{...auth,Prefer:"return=representation"},body:JSON.stringify({user_id:userId,sport:"Fútbol",subforum:config.subforum,content:title+"\n"+body,link_url:`https://www.espn.com/soccer/match/_/gameId/${e.id}`})});
 const row=Array.isArray(result)?result[0]:result;if(row?.id){posts.unshift(row);console.log("Previa creada:",title)}return row?.id||null}
 async function updateThread(postId,kind,id,content){if(!postId||hasReply(postId,kind,id))return false;const marker=mark(kind,id),suffix="\n\n"+FOOTER,max=1000-marker.length-suffix.length-1;let safe=String(content);if(safe.length>max)safe=safe.slice(0,max-1).trimEnd()+"…";await json(`${SUPABASE_URL}/rest/v1/replies`,{method:"POST",headers:{...auth,Prefer:"return=minimal"},body:JSON.stringify({post_id:postId,user_id:userId,content:[marker,safe,"",FOOTER].join("\n")})});replies.unshift({post_id:postId,content:marker+safe});console.log("Actualización:",kind,id);return true}
