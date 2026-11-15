@@ -32,7 +32,7 @@ const madridTime=d=>d.toLocaleString("es-ES",{timeZone:ZONE,dateStyle:"full",tim
 const kickoffLabel=d=>d.toLocaleString("es-ES",{timeZone:ZONE,day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).replace(",", " ·");
 function matchdayNumber(e){
  const c=e.competitions?.[0]||{};
- const candidates=[e.week?.number,e.week?.text,e.week,c.week?.number,c.week?.text,c.week,c.series?.summary,e.season?.week?.number,...(Array.isArray(c.notes)?c.notes.map(n=>n?.headline||n?.text||n?.summary):[])];
+ const candidates=[e.scoreboardWeek?.number,e.scoreboardWeek?.text,e.scoreboardWeek,e.week?.number,e.week?.text,e.week,c.week?.number,c.week?.text,c.week,c.series?.summary,e.season?.week?.number,...(Array.isArray(c.notes)?c.notes.map(n=>n?.headline||n?.text||n?.summary):[])];
  for(const value of candidates){if(value==null)continue;const m=String(value).match(/(?:jornada|matchday|week|round|ronda)\s*#?\s*(\d+)|^(\d{1,2})$/i);if(m)return Number(m[1]||m[2]);}
  return null;
 }
@@ -40,7 +40,7 @@ function matchdayNumber(e){
 const now=Date.now(),from=new Date(now-86400000),to=new Date(now+45*86400000);
 const monthKeys=new Set();for(let d=new Date(from);d<=to;d.setUTCDate(d.getUTCDate()+1))monthKeys.add(madridDate(d).replaceAll("-","").slice(0,6));
 const calendars=await Promise.all(config.leagues.flatMap(league=>[...monthKeys].map(async month=>({league,data:await json(`https://site.api.espn.com/apis/site/v2/sports/soccer/${league}/scoreboard?dates=${month}`).catch(e=>{console.log("Calendario no disponible",league,month,e.message);return null})}))));
-const allEvents=new Map();for(const item of calendars)for(const e of (Array.isArray(item.data?.events)?item.data.events:[]))allEvents.set(String(e.id),{...e,allsportsLeague:item.league});
+const allEvents=new Map();for(const item of calendars)for(const e of (Array.isArray(item.data?.events)?item.data.events:[]))allEvents.set(String(e.id),{...e,allsportsLeague:item.league,scoreboardWeek:item.data?.week||null});
 const events=[...allEvents.values()].filter(e=>{const d=new Date(e.date).getTime();return Number.isFinite(d)&&d>=from.getTime()&&d<=to.getTime()&&config.filter(e)});
 function competitors(e){return e.competitions?.[0]?.competitors||[]}
 function norm(s){return String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim()}
