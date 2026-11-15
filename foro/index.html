@@ -81,6 +81,19 @@ section.content{padding:82px 0}.section-top{display:flex;justify-content:space-b
 .as-result-note{margin:13px 0 0;color:#b9c7cf;font-size:12px;line-height:1.6}
 @media(max-width:520px){.as-result-card{padding:14px}.as-result-score{gap:7px;padding:14px 8px}.as-result-team{font-size:12px}.as-result-numbers{font-size:29px}}
 
+
+.cycling-card{margin:12px 0;padding:16px;border:1px solid #354650;border-radius:14px;background:linear-gradient(145deg,#172630,#0b1219);color:#edf3f6;overflow:hidden}
+.cycling-eyebrow{color:var(--lime);font-size:10px;font-weight:900;letter-spacing:1.8px;text-transform:uppercase}
+.cycling-heading{margin:7px 0 13px;color:#fff;font:800 22px 'Barlow Condensed',sans-serif}
+.cycling-table-wrap{overflow-x:auto}
+.cycling-table{width:100%;border-collapse:collapse;font-size:12px;min-width:300px}
+.cycling-table th{padding:8px 7px;text-align:left;color:#a8bac5;font-size:10px;letter-spacing:.7px;text-transform:uppercase;border-bottom:1px solid #40515c}
+.cycling-table td{padding:8px 7px;border-bottom:1px solid #263742;vertical-align:middle}
+.cycling-table tr:first-child td{color:#dfff70;font-weight:850}
+.cycling-table td:first-child{width:34px;color:#a8bac5;font-weight:800}
+.cycling-table td:last-child{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.cycling-foot{margin-top:12px;color:#93a5af;font-size:10px}
+.cycling-foot a{color:#b9d96a;text-decoration:none}
 .asbot-card{margin:12px 0;padding:17px;border:1px solid #394752;border-radius:12px;background:linear-gradient(145deg,#17232d,#0d141b);color:#edf2f5;overflow:hidden}
 .nba-recap-card{margin:12px 0;padding:20px;border:1px solid #354650;border-radius:14px;background:linear-gradient(145deg,#172630,#0b1219);color:#edf3f6;overflow:hidden}
 .nba-recap-eyebrow{color:var(--lime);font-size:10px;font-weight:900;letter-spacing:2px}
@@ -376,6 +389,32 @@ function renderBotTemplate(target,value){
  }
  target.append(card);
 }
+function renderCyclingTemplate(target,value){
+ const source=String(value||'');
+ if(!/\[\[ASCICLISMO:[^\]]+\]\]/.test(source)||!/^CICLISMO\s*\|/mi.test(source))return false;
+ const lines=source.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+ const heading=lines.find(x=>/^CICLISMO\s*\|/i.test(x))||'CICLISMO';
+ const meta=heading.split('|').slice(1).join(' · ').trim();
+ const isStage=/ETAPA\s+\d+/i.test(meta);
+ const rows=lines.filter(x=>/^\d{1,3}\s*\|/.test(x)).map(line=>line.split('|').map(v=>v.trim())).filter(x=>x.length>=4).slice(0,10);
+ if(!rows.length)return false;
+ target.replaceChildren();
+ const card=document.createElement('section');card.className='cycling-card';
+ const eyebrow=document.createElement('div');eyebrow.className='cycling-eyebrow';eyebrow.textContent='🚴 ALLSPORTS · CICLISMO';card.append(eyebrow);
+ const title=document.createElement('h3');title.className='cycling-heading';title.textContent=meta||'Clasificación';card.append(title);
+ const wrap=document.createElement('div');wrap.className='cycling-table-wrap';
+ const table=document.createElement('table');table.className='cycling-table';
+ const thead=document.createElement('thead'),hr=document.createElement('tr');
+ ['Pos.','Ciclista','Tiempo','Dif.'].forEach(label=>{const th=document.createElement('th');th.textContent=label;hr.append(th)});
+ thead.append(hr);table.append(thead);
+ const tbody=document.createElement('tbody');
+ rows.forEach(parts=>{const tr=document.createElement('tr');parts.slice(0,4).forEach((value,i)=>{const td=document.createElement('td');td.textContent=value||'—';tr.append(td)});tbody.append(tr)});
+ table.append(tbody);wrap.append(table);card.append(wrap);
+ const sourceLine=lines.find(x=>/^FUENTE\s*\|/i.test(x));
+ const foot=document.createElement('div');foot.className='cycling-foot';foot.textContent='Datos oficiales · ALLSPORTS';
+ if(sourceLine){const url=sourceLine.split('|').slice(1).join('|').trim();if(/^https:\/\/(www\.)?(giroditalia\.it|letour\.fr|lavuelta\.es)/i.test(url)){const link=document.createElement('a');link.href=url;link.target='_blank';link.rel='noopener noreferrer';link.textContent=' · Ver clasificación oficial';foot.append(link)}}
+ card.append(foot);target.append(card);return true;
+}
 function renderFootballLineupTemplate(target,value){
  const source=String(value||'').replace(/— ALLSPORTS Bot · Datos: ESPN/g,'').replace(/\r/g,'').trim();
  if(!/(?:ALINEACIONES(?:_LOCAL|_VISITANTE)?|ALINEACIONES OFICIALES)/i.test(source))return false;
@@ -576,7 +615,7 @@ function renderForumTopics(){
   replies.slice((page-1)*FORUM_MESSAGES_PER_PAGE,page*FORUM_MESSAGES_PER_PAGE).forEach(r=>{
    const item=document.createElement('div');item.className='forum-reply';
    const replyIsBot=isAllsportsBotContent(r.content);const author=document.createElement('strong');author.textContent=replyIsBot?'Informador':(r.profiles?.username||'Aficionado ALLSPORTS');
-   const content=document.createElement('div');content.className='forum-reply-content';if(renderTennisRankingTemplate(content,r.content)){}else if(renderFootballLineupTemplate(content,r.content)){}else if(renderUniversalResultTemplate(content,r.content)){}else if(/\[\[ASMOTOR:/.test(r.content||''))renderMotorTemplate(content,r.content);else if(/\[\[ASB2:/.test(r.content||''))renderBotTemplate(content,r.content);else if(/\[\[AS-[^\]]+:PREVIA:/.test(r.content||''))renderFootballPreviewTemplate(content,r.content);else if(/\[\[AS-FEMENINO_CLUBES:/.test(r.content||''))renderForumText(content,String(r.content||'').replace(/\[\[AS-FEMENINO_CLUBES:[^\]]+\]\]/g,'').replace(/— ALLSPORTS Bot · Datos: ESPN/g,'').trim());else renderForumText(content,r.content);const replyHead=document.createElement('div');replyHead.className='forum-reply-head';replyHead.append(createForumAvatar(r.profiles?.avatar_url,author.textContent),author);const replyCount=document.createElement('span');replyCount.className='forum-user-count';replyCount.textContent=getCommunityMessageCount(r.user_id)+' mensajes en la comunidad';replyHead.append(replyCount);item.append(replyHead,content);const userSignature=(r.profiles?.signature||'').trim();if(userSignature){const signature=document.createElement('div');signature.className='forum-reply-signature';signature.textContent=userSignature;item.append(signature);}renderForumAttachments(r,item);
+   const content=document.createElement('div');content.className='forum-reply-content';if(renderCyclingTemplate(content,r.content)){}else if(renderTennisRankingTemplate(content,r.content)){}else if(renderFootballLineupTemplate(content,r.content)){}else if(renderUniversalResultTemplate(content,r.content)){}else if(/\[\[ASMOTOR:/.test(r.content||''))renderMotorTemplate(content,r.content);else if(/\[\[ASB2:/.test(r.content||''))renderBotTemplate(content,r.content);else if(/\[\[AS-[^\]]+:PREVIA:/.test(r.content||''))renderFootballPreviewTemplate(content,r.content);else if(/\[\[AS-FEMENINO_CLUBES:/.test(r.content||''))renderForumText(content,String(r.content||'').replace(/\[\[AS-FEMENINO_CLUBES:[^\]]+\]\]/g,'').replace(/— ALLSPORTS Bot · Datos: ESPN/g,'').trim());else renderForumText(content,r.content);const replyHead=document.createElement('div');replyHead.className='forum-reply-head';replyHead.append(createForumAvatar(r.profiles?.avatar_url,author.textContent),author);const replyCount=document.createElement('span');replyCount.className='forum-user-count';replyCount.textContent=getCommunityMessageCount(r.user_id)+' mensajes en la comunidad';replyHead.append(replyCount);item.append(replyHead,content);const userSignature=(r.profiles?.signature||'').trim();if(userSignature){const signature=document.createElement('div');signature.className='forum-reply-signature';signature.textContent=userSignature;item.append(signature);}renderForumAttachments(r,item);
    const date=document.createElement('small');date.textContent=r.created_at?new Date(r.created_at).toLocaleString('es-ES',{dateStyle:'medium',timeStyle:'short'}):'';item.append(date);
    const tools=document.createElement('div');tools.className='forum-message-tools';
    const quote=document.createElement('button');quote.type='button';quote.className='forum-text-button';quote.textContent='Citar';quote.addEventListener('click',()=>{field.value+=(field.value?'\n':'')+'> '+(r.profiles?.username||'Aficionado')+':\n'+r.content.split('\n').map(line=>'> '+line).join('\n')+'\n\n';field.focus();field.scrollIntoView({behavior:'smooth',block:'center'});});
