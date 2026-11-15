@@ -1,6 +1,11 @@
 name: Actualizar noticias deportivas
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/update_news.py"
+      - ".github/workflows/update-news.yml"
   schedule:
     - cron: "17 */4 * * *"
   workflow_dispatch:
