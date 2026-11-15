@@ -19,6 +19,64 @@ const madridDate=d=>new Intl.DateTimeFormat("en-CA",{timeZone:ZONE,year:"numeric
 const dateKey=d=>madridDate(d).replaceAll("-","");
 const madridTime=d=>d.toLocaleString("es-ES",{timeZone:ZONE,dateStyle:"full",timeStyle:"short"});
 const kickoffLabel=d=>d.toLocaleString("es-ES",{timeZone:ZONE,day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).replace(",", " ·");
+
+const LALIGA_BASE="https://apim.laliga.com/public-service/api/v1";
+const LALIGA_PUBLIC_KEY="c13c3a8e2f6b46da9c5c425cf61fab3e";
+const laligaRoundsCache=new Map();
+function collectApiObjects(value,out=[]){if(!value||typeof value!=="object")return out;if(Array.isArray(value)){for(const x of value)collectApiObjects(x,out);return out;}out.push(value);for(const [k,v] of Object.entries(value)){if(v&&typeof v==="object"&&k!=="home_team"&&k!=="away_team"&&k!=="team")collectApiObjects(v,out);}return out;}
+function officialRoundValue(value){if(value==null)return null;if(typeof value==="object"){for(const x of [value.week,value.number,value.round,value.matchday,value.name,value.title]){const n=officialRoundValue(x);if(n)return n;}return null;}const m=String(value).match(/(?:jornada|matchday|week|round|ronda|fecha)?\\s*#?\\s*(\\d{1,2})/i);return m?Number(m[1]):null;}
+function teamNames(value){if(!value)return[];if(typeof value==="string")return[value];return [value.nickname,value.display_name,value.displayName,value.short_name,value.shortName,value.name,value.team_name].filter(x=>typeof x==="string");}
+function normTeam(value){return String(value||"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();}
+function seasonStartYear(){const d=new Date(),m=Number(new Intl.DateTimeFormat("en",{timeZone:"Europe/Madrid",month:"numeric"}).format(d));return d.getFullYear()-(m<7?1:0);}
+async function officialMatchday(e,competitionSlug,kind){
+ const cacheKey=competitionSlug+":"+seasonStartYear();
+ if(!laligaRoundsCache.has(cacheKey))laligaRoundsCache.set(cacheKey,(async()=>{
+  const apiHeaders={"Ocp-Apim-Subscription-Key":LALIGA_PUBLIC_KEY};
+  const year=seasonStartYear();
+  let subscriptions=[];
+  for(let offset=0;offset<100;offset+=20){
+   const page=await json(LALIGA_BASE+"/subscriptions?offset="+offset,{headers:apiHeaders}).catch(err=>{console.log("LaLiga suscripciones no disponibles:",err.message);return null;});
+   if(!page)break;
+   const rows=collectApiObjects(page).filter(x=>typeof x.slug==="string"&&x.slug.includes(String(year)));
+   subscriptions.push(...rows);
+   if(rows.length===0&&offset>0)break;
+   if(Array.isArray(page)&&page.length<20)break;
+   if(Array.isArray(page.data)&&page.data.length<20)break;
+  }
+  const hints=kind==="primera"?["easports","primera"]:kind==="segunda"?["hypermotion","segunda"]:["femenina","liga-f","women"];
+  const sub=subscriptions.find(x=>JSON.stringify(x).toLowerCase().includes(competitionSlug)&&x.slug.includes(String(year)))||
+    subscriptions.find(x=>hints.some(h=>x.slug.toLowerCase().includes(h)));
+  if(!sub){console.log("LaLiga: no se encontró la suscripción de temporada",kind,year);return[];}
+  const all=[];
+  for(let offset=0;offset<1000;offset+=100){
+   const page=await json(LALIGA_BASE+"/matches?subscription="+encodeURIComponent(sub.slug)+"&competition="+encodeURIComponent(competitionSlug)+"&limit=100&offset="+offset,{headers:apiHeaders}).catch(err=>{console.log("LaLiga partidos no disponibles:",kind,err.message);return null;});
+   if(!page)break;
+   const rows=collectApiObjects(page).filter(x=>x.gameweek!=null&&(x.home_team||x.homeTeam)&&(x.away_team||x.awayTeam));
+   all.push(...rows);
+   const arr=Array.isArray(page)?page:(page.data||page.matches||page.items||page.content||[]);
+   if(!Array.isArray(arr)||arr.length<100)break;
+  }
+  console.log("LaLiga: jornadas cargadas",kind,all.length,"partidos");
+  return all;
+ })());
+ const matches=await laligaRoundsCache.get(cacheKey);
+ const c=e.competitions?.[0]||{},home=c.competitors?.find(x=>x.homeAway==="home"),away=c.competitors?.find(x=>x.homeAway==="away");
+ const homeSet=new Set(teamNames(home?.team).map(normTeam)),awaySet=new Set(teamNames(away?.team).map(normTeam));
+ const kickoff=new Date(e.date).getTime();
+ let best=null,bestDiff=Infinity;
+ for(const match of matches){
+  const mh=match.home_team||match.homeTeam||match.home,ma=match.away_team||match.awayTeam||match.away;
+  const hNames=teamNames(mh).map(normTeam),aNames=teamNames(ma).map(normTeam);
+  const same=(xs,ys)=>xs.some(x=>ys.has(x)||[...ys].some(y=>x.length>4&&y.length>4&&(x.includes(y)||y.includes(x))));
+  if(!same(hNames,homeSet)||!same(aNames,awaySet))continue;
+  const dateValue=match.date||match.match_date||match.start_date||match.utc_date||match.kickoff||match.scheduled_at||match.datetime;
+  const diff=dateValue?Math.abs(new Date(dateValue).getTime()-kickoff):Infinity;
+  if(Number.isFinite(diff)&&diff<bestDiff){best=match;bestDiff=diff;}
+ }
+ if(!best||bestDiff>72*3600000)return null;
+ return officialRoundValue(best.gameweek);
+}
+
 function matchdayNumber(e){
  const c=e.competitions?.[0]||{},core=e.coreCompetition||{};
  const candidates=[e.scoreboardWeek?.number,e.scoreboardWeek?.text,e.scoreboardWeek,e.week?.number,e.week?.text,e.week,c.week?.number,c.week?.text,c.week,c.series?.summary,core.week?.number,core.week?.text,core.week,core.roundNumber,core.round,core.matchday,e.season?.week?.number,...(Array.isArray(c.notes)?c.notes.map(n=>n?.headline||n?.text||n?.summary):[]),...(Array.isArray(core.notes)?core.notes.map(n=>n?.headline||n?.text||n?.summary):[])];
@@ -27,6 +85,7 @@ function matchdayNumber(e){
 }
 const dailyScoreboardCache=new Map(),coreCompetitionCache=new Map();
 async function resolveMatchday(e){
+ const official=await officialMatchday(e,"primera-division","primera");if(official)return official;
  const date=madridDate(new Date(e.date)).replaceAll("-","");
  const key=LEAGUE+":"+date;
  if(!dailyScoreboardCache.has(key))dailyScoreboardCache.set(key,json("https://site.api.espn.com/apis/site/v2/sports/soccer/"+LEAGUE+"/scoreboard?dates="+date).catch(err=>{console.log("Jornada diaria no disponible",date,err.message);return null}));
