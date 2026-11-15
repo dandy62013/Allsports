@@ -447,7 +447,8 @@ function forumDisplayTitle(content){
  const dateLabel=titleDate||bodyDate.replace(/\s*\(hora[^)]*\).*$/i,'').trim();
  if(/\[\[AS-FEMENINO_CLUBES:PREVIA:/.test(raw)){
   const match=raw.match(/ENCUENTRO\s*\|\s*([^\n]+)/);
-  return '⚽ Fútbol femenino · '+(match?match[1].trim():'Partido')+(dateLabel?' | '+dateLabel:'');
+  const round=(first.match(/\bJornada\s+\d+\b/i)||raw.match(/JORNADA\s*\|\s*(\d+)/i)||[])[0]||'';
+  return '⚽ Fútbol femenino · '+(match?match[1].trim():'Partido')+(round?' | '+round:'')+(dateLabel?' | '+dateLabel:'');
  }
  if(dateLabel&&!titleDate)return (first+' | '+dateLabel).slice(0,150);
  return first.slice(0,150)||'Nuevo tema';
