@@ -37,7 +37,7 @@ function matchdayNumber(e){
  return null;
 }
 
-const now=Date.now(),from=new Date(now-86400000),to=new Date(now+45*86400000);
+const now=Date.now(),from=new Date(now-30*86400000),to=new Date(now+45*86400000);
 const monthKeys=new Set();for(let d=new Date(from);d<=to;d.setUTCDate(d.getUTCDate()+1))monthKeys.add(madridDate(d).replaceAll("-","").slice(0,6));
 const calendars=await Promise.all(config.leagues.flatMap(league=>[...monthKeys].map(async month=>({league,data:await json(`https://site.api.espn.com/apis/site/v2/sports/soccer/${league}/scoreboard?dates=${month}`).catch(e=>{console.log("Calendario no disponible",league,month,e.message);return null})}))));
 const allEvents=new Map();for(const item of calendars)for(const e of (Array.isArray(item.data?.events)?item.data.events:[]))allEvents.set(String(e.id),{...e,allsportsLeague:item.league,scoreboardWeek:item.data?.week||null});
