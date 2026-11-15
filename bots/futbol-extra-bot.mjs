@@ -90,14 +90,14 @@ async function officialMatchday(e,competitionSlug,kind){
 
 function matchdayNumber(e){
  const c=e.competitions?.[0]||{},core=e.coreCompetition||{};
- const candidates=[e.scoreboardWeek?.number,e.scoreboardWeek?.text,e.scoreboardWeek,e.week?.number,e.week?.text,e.week,c.week?.number,c.week?.text,c.week,c.series?.summary,core.week?.number,core.week?.text,core.week,core.roundNumber,core.round,core.matchday,e.season?.week?.number,...(Array.isArray(c.notes)?c.notes.map(n=>n?.headline||n?.text||n?.summary):[]),...(Array.isArray(core.notes)?core.notes.map(n=>n?.headline||n?.text||n?.summary):[])];
+ const candidates=[e.officialMatchday,e.scoreboardWeek?.number,e.scoreboardWeek?.text,e.scoreboardWeek,e.week?.number,e.week?.text,e.week,c.week?.number,c.week?.text,c.week,c.series?.summary,core.week?.number,core.week?.text,core.week,core.roundNumber,core.round,core.matchday,e.season?.week?.number,...(Array.isArray(c.notes)?c.notes.map(n=>n?.headline||n?.text||n?.summary):[]),...(Array.isArray(core.notes)?core.notes.map(n=>n?.headline||n?.text||n?.summary):[])];
  for(const value of candidates){if(value==null)continue;const m=String(value).match(/(?:jornada|matchday|week|round|ronda|fecha)\s*#?\s*(\d+)|^(\d{1,2})$/i);if(m)return Number(m[1]||m[2]);}
  return null;
 }
 const dailyScoreboardCache=new Map(),coreCompetitionCache=new Map();
 async function resolveMatchday(e){
  if(config.key!=="FEMENINO_CLUBES"||e.allsportsLeague!=="esp.w.1")return matchdayNumber(e);
- const official=await officialMatchday(e,"primera-division-femenina","femenina");if(official)return official;
+ const official=await officialMatchday(e,"primera-division-femenina","femenina");if(official){e.officialMatchday=official;return official;}
  const date=madridDate(new Date(e.date)).replaceAll("-","");
  const key=e.allsportsLeague+":"+date;
  if(!dailyScoreboardCache.has(key))dailyScoreboardCache.set(key,json("https://site.api.espn.com/apis/site/v2/sports/soccer/"+e.allsportsLeague+"/scoreboard?dates="+date).catch(err=>{console.log("Jornada diaria femenina no disponible",date,err.message);return null}));
