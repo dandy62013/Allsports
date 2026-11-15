@@ -26,7 +26,7 @@ function matchdayNumber(e){
  return null;
 }
 
-const now=Date.now(), from=new Date(now-86400000), to=new Date(now+9*86400000);
+const now=Date.now(), from=new Date(now-30*86400000), to=new Date(now+9*86400000);
 const tomorrow=new Date(Date.parse(madridDate(new Date(now))+"T12:00:00Z")+86400000).toISOString().slice(0,10);
 const monthKeys=new Set();for(let d=new Date(from);d<=to;d.setUTCDate(d.getUTCDate()+1))monthKeys.add(dateKey(d).slice(0,6));
 const scoreboards=await Promise.all([...monthKeys].map(month=>json(`https://site.api.espn.com/apis/site/v2/sports/soccer/${LEAGUE}/scoreboard?dates=${month}`)));
