@@ -2,8 +2,8 @@ const SUPABASE_URL="https://tzmigdagymfauatjivcl.supabase.co";
 const SUPABASE_KEY="sb_publishable_gZ8cx30ZlxlVjlb00vo1nw_LyDC0yGH";
 const EMAIL=process.env.BOT_EMAIL, PASSWORD=process.env.BOT_PASSWORD;
 const ZONE="Europe/Madrid", FOOTER="— ALLSPORTS Bot · Datos: ESPN";
-const MEN=["uefa.nations","fifa.worldq.uefa","fifa.world","uefa.euro","uefa.euroq","fifa.friendly"];
-const WOMEN=["uefa.w.nations","fifa.wworldq.uefa","fifa.wwc","uefa.weuro","fifa.friendly.w","fifa.w.olympics"];
+const MEN=["uefa.nations","fifa.worldq.uefa","fifa.worldq.caf","fifa.worldq.afc","fifa.worldq.concacaf","fifa.worldq.conmebol","fifa.worldq.ofc","fifa.world","uefa.euro","uefa.euroq","fifa.friendly","conmebol.america","caf.nations","caf.nations_qual","concacaf.gold","concacaf.nations.league","afc.asian.cup"];
+const WOMEN=["uefa.w.nations","fifa.wworldq.uefa","fifa.wwcq.ply","fifa.wwc","uefa.weuro","fifa.friendly.w","fifa.w.olympics","fifa.shebelieves","concacaf.w.gold","conmebol.america.femenina"];
 const SPANISH_CLUBS=["athletic club","atletico de madrid","atletico madrid","barcelona","fc barcelona","real madrid","real sociedad","sevilla","sevilla fc","levante","levante ud","real betis","betis","deportivo alaves","alaves","tenerife","cd tenerife","granada","granada cf","valencia","valencia cf","espanyol","rcd espanyol","badalona","fc badalona women","madrid cff","eibar","sd eibar","osasuna","ca osasuna","villarreal","villarreal cf"];
 const CONFIGS={
  "copa-del-rey":{key:"COPA_REY",title:"COPA DEL REY",subforum:"Copa del Rey",leagues:["esp.copa_del_rey"],filter:()=>true,description:"Copa del Rey"},
