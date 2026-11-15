@@ -54,11 +54,11 @@ async function runRankings(tour){
    for(let i=replies.length-1;i>=0;i--)if(replies[i].post_id===old.id)replies.splice(i,1);
    console.log(tour+": "+oldReplies.length+" respuestas antiguas retiradas.");
   }
-  await json(SUPABASE_URL+"/rest/v1/posts?id=eq."+old.id,{method:"PATCH",headers:{...auth,Prefer:"return=minimal"},body:JSON.stringify({content})});
+  await json(SUPABASE_URL+"/rest/v1/posts?id=eq."+old.id,{method:"PATCH",headers:{...auth,Prefer:"return=minimal"},body:JSON.stringify({content,link_url:null})});
   old.content=content;old.created_at=new Date().toISOString();
   console.log(tour+": ranking reemplazado por una única lista Top 40.");
  }else{
-  const id=await createPost(sub,title,body,"https://www.espn.com/tennis/rankings");
+  const id=await createPost(sub,title,body,null);
   if(id)console.log(tour+": ranking publicado en una única lista Top 40.");
  }
 }
