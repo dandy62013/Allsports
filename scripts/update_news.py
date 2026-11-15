@@ -2,6 +2,8 @@
 """Build a small, attributed sports-news feed from Google News RSS."""
 import json
 import re
+import unicodedata
+from difflib import SequenceMatcher
 import html
 import http.cookiejar
 import urllib.parse
@@ -211,6 +213,20 @@ def clean_title(title, source):
         title = re.sub(r"\s*(?:-|–|—|\|)\s*" + re.escape(source) + r"\s*$", "", title, flags=re.I)
     return title.strip(" -–—|")
 
+def story_tokens(title):
+    value = unicodedata.normalize('NFKD', title.lower())
+    value = ''.join(ch for ch in value if not unicodedata.combining(ch))
+    value = re.sub(r'[^a-z0-9]+', ' ', value)
+    ignored = {'espana', 'inglaterra', 'futbol', 'seleccion', 'partido', 'hoy', 'directo', 'ultima', 'hora', 'victoria', 'derrota', 'frente', 'ante'}
+    return {word for word in value.split() if len(word) > 2 and word not in ignored}
+
+def same_story(first, second):
+    a, b = story_tokens(first), story_tokens(second)
+    if not a or not b:
+        return False
+    overlap = len(a & b) / max(1, min(len(a), len(b)))
+    similarity = SequenceMatcher(None, ' '.join(sorted(a)), ' '.join(sorted(b))).ratio()
+    return overlap >= 0.72 or similarity >= 0.78
 def category_for(title, fallback):
     t = title.lower()
     rules = [
@@ -282,33 +298,18 @@ for query, fallback in QUERIES:
             "category": category_for(title, fallback),
         }
 
-ordered = sorted(items.values(), key=lambda item: item["published"], reverse=True)[:24]
-
-# Resolve only the final, deduplicated news items, in parallel, so a slow
-# publisher cannot hold up the whole workflow for several minutes.
-key_by_url = {item["url"]: key for key, item in items.items()}
-pending = [
-    (item, image_jobs.get(key_by_url[item["url"]], ("", ""))[1])
-    for item in ordered if not item["image"]
-]
-if pending:
-    with ThreadPoolExecutor(max_workers=8) as pool:
-        futures = {
-            pool.submit(fetch_article_image, item["url"], source_home): item
-            for item, source_home in pending
-        }
-        for future in as_completed(futures):
-            item = futures[future]
-            try:
-                item["image"] = future.result() or ""
-            except Exception as exc:
-                print(f"No se pudo obtener imagen para '{item['title'][:60]}': {exc}")
-
-# Correct a known broken/grey thumbnail with a verified tennis photo from EFE.
-for item in ordered:
-    if "Svitolina arrolla a Noskova" in item["title"]:
-        item["image"] = "https://i0.wp.com/efe.com/wp-content/uploads/2026/11/Svitolina_tenis_Finales_WTA.webp?fit=900%2C600&ssl=1"
-
+# Agrupar titulares de distintos medios que describen la misma noticia aunque tengan URL diferente.
+ranked = sorted(items.values(), key=lambda item: item['published'], reverse=True)
+ordered = []
+for item in ranked:
+    duplicate = next((existing for existing in ordered if same_story(item['title'], existing['title'])), None)
+    if duplicate:
+        print('Noticia repetida agrupada: ' + item['title'][:90])
+        continue
+    # No publicar fotografías no verificadas: una imagen equivocada es peor que una tarjeta sin foto.
+    item['image'] = ''
+    ordered.append(item)
+ordered = ordered[:24]
 payload = {
     "updatedAt": datetime.now(timezone.utc).isoformat(),
     "items": ordered,
