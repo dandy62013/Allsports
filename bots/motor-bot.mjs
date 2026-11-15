@@ -53,7 +53,7 @@ async function runMoto(){
  for(const ev of events){
   const eventId=ev.id||ev.event_id||ev.toad_api_uuid;if(!eventId)continue;
   const eventUuid=eventId;
-  const ss=await json(base+"/results/sessions?eventUuid="+encodeURIComponent(eventUuid)+"&categoryUuid="+encodeURIComponent(category.id),{headers:h}).catch(e=>{console.log("Sesiones no disponibles:",e.message);return []});
+  const ss=await json(base+"/results/sessions?eventUuid="+encodeURIComponent(eventUuid)+"&categoryUuid="+encodeURIComponent(category.id),{headers:h});
   if(!Array.isArray(ss)||!ss.length)continue;
   const ordered=ss.filter(x=>x.date).sort((a,b)=>new Date(a.date)-new Date(b.date));if(!ordered.length)continue;
   const start=ordered[0].date,end=ordered[ordered.length-1].date;
