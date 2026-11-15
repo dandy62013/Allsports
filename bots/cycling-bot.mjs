@@ -22,11 +22,11 @@ function addDays(iso,n){const d=new Date(iso+"T12:00:00Z");d.setUTCDate(d.getUTC
 function fmtDate(iso){return new Date(iso+"T12:00:00").toLocaleDateString("es-ES",{timeZone:ZONE,day:"2-digit",month:"2-digit",year:"numeric"})}
 const GIRO_DATES=["2027-05-08","2027-05-09","2027-05-10","2027-05-11","2027-05-12","2027-05-13","2027-05-14","2027-05-15","2027-05-16","2027-05-18","2027-05-19","2027-05-20","2027-05-21","2027-05-22","2027-05-23","2027-05-25","2027-05-26","2027-05-27","2027-05-28","2027-05-29","2027-05-30"];
 const TOUR_DATES=["2027-07-02","2027-07-03","2027-07-04","2027-07-06","2027-07-07","2027-07-08","2027-07-09","2027-07-10","2027-07-11","2027-07-13","2027-07-14","2027-07-15","2027-07-16","2027-07-17","2027-07-18","2027-07-20","2027-07-21","2027-07-22","2027-07-23","2027-07-24","2027-07-25"];
-const VUELTA_DATES=["2027-09-04","2027-09-05","2027-09-06","2027-09-07","2027-09-08","2027-09-09","2027-09-10","2027-09-11","2027-09-12","2027-09-14","2027-09-15","2027-09-16","2027-09-17","2027-09-18","2027-09-19","2027-09-21","2027-09-22","2027-09-23","2027-09-24","2027-09-25","2027-09-26"];
+const VUELTA_DATES=[];
 const RACES=[
- {key:"GIRO2027",name:"Giro de Italia",subforum:"Giro de Italia",start:"2027-05-08",end:"2027-05-30",dates:GIRO_DATES,site:"https://www.giroditalia.it",gc:"https://www.giroditalia.it/en/classifiche/",stage:n=>"https://www.giroditalia.it/en/classifiche/di-tappa/"+n+"/",kind:"giro"},
- {key:"TOUR2027",name:"Tour de Francia",subforum:"Tour de Francia",start:"2027-07-02",end:"2027-07-25",dates:TOUR_DATES,site:"https://www.letour.fr/es",gc:"https://www.letour.fr/en/rankings",stage:n=>"https://www.letour.fr/en/rankings/stage-"+n,kind:"aso"},
- {key:"VUELTA2027",name:"La Vuelta",subforum:"Vuelta a España",start:"2027-09-04",end:"2027-09-26",dates:VUELTA_DATES,site:"https://www.lavuelta.es/es",gc:"https://www.lavuelta.es/en/rankings",stage:n=>"https://www.lavuelta.es/en/rankings/stage-"+n,kind:"aso"}
+ {key:"GIRO2027",name:"Giro de Italia",subforum:"Giro de Italia",start:"2027-05-08",end:"2027-05-30",dates:GIRO_DATES,site:"https://www.giroditalia.it",route:"https://www.giroditalia.it/en/the-route/",gc:"https://www.giroditalia.it/en/classifiche/",stage:n=>"https://www.giroditalia.it/en/classifiche/di-tappa/"+n+"/",kind:"giro"},
+ {key:"TOUR2027",name:"Tour de Francia",subforum:"Tour de Francia",start:"2027-07-02",end:"2027-07-25",dates:TOUR_DATES,site:"https://www.letour.fr/es",route:"https://www.letour.fr/en/overall-route",gc:"https://www.letour.fr/en/rankings",stage:n=>"https://www.letour.fr/en/rankings/stage-"+n,kind:"aso"},
+ {key:"VUELTA2027",name:"La Vuelta",subforum:"Vuelta a España",start:"2027-09-04",end:"2027-09-26",dates:VUELTA_DATES,site:"https://www.lavuelta.es/es",route:"https://www.lavuelta.es/en/overall-route",gc:"https://www.lavuelta.es/en/rankings",stage:n=>"https://www.lavuelta.es/en/rankings/stage-"+n,kind:"aso"}
 ];
 function markerThread(r){return "[[ASCICLISMO:"+r.key+":HILO]]"}
 function markerReply(r,type,stage){return "[[ASCICLISMO:"+r.key+":"+type+":"+stage+"]]"}
@@ -81,7 +81,7 @@ function clean(v){return String(v||"").replace(/[|\n\r]/g," ").replace(/\s+/g," 
 function formatReply(r,type,stage,rows,stageDate){
  const label=type==="ETAPA"?"ETAPA "+stage+" · "+fmtDate(stageDate):"GENERAL · tras etapa "+stage;
  const lines=[markerReply(r,type,stage),"CICLISMO | "+r.name+" 2027 | "+label,"POS|CICLISTA|TIEMPO|DIFERENCIA"];
- rows.slice(0,10).forEach((x,i)=>lines.push([x.rank,clean(x.rider),clean(x.time),clean(x.gap|| (i===0?"—":"—"))].join("|")));
+ rows.slice(0,10).forEach((x,i)=>lines.push([x.rank,clean(x.rider),clean(x.time),clean(i===0?"—":x.gap||"—")].join("|")));
  lines.push("FUENTE | "+r.site,FOOTER);
  return lines.join("\n");
 }
@@ -92,12 +92,28 @@ async function addReply(r,postId,type,stage,rows,stageDate){
  await request(SUPABASE_URL+"/rest/v1/replies",{method:"POST",headers:{...auth,Prefer:"return=minimal"},body:JSON.stringify({post_id:postId,user_id:userId,content})});
  replies.unshift({post_id:postId,content});console.log("Clasificación publicada:",r.name,type,"etapa",stage);return true;
 }
+async function resolveRouteDates(r){
+ try{
+  const source=await html(r.route),rows=[];
+  const trRe=/<tr\b[^>]*>([\s\S]*?)<\/tr>/gi;let m;
+  while((m=trRe.exec(source))){
+   const cells=[...m[1].matchAll(/<t[dh]\b[^>]*>([\s\S]*?)<\/t[dh]>/gi)].map(x=>decode(x[1]));
+   const stage=Number((cells[0]||"").match(/^\s*(\d{1,2})\b/)?.[1]);
+   const dateText=cells.find(x=>/\d{2}\/\d{2}\/2027/.test(x))||"";
+   const date=(dateText.match(/(\d{2})\/(\d{2})\/(2027)/)||[]);
+   if(stage>=1&&stage<=21&&date.length){rows.push({stage,date:date[3]+"-"+date[1]+"-"+date[2]})}
+  }
+  if(rows.length>=21){r.dates=rows.sort((a,b)=>a.stage-b.stage).map(x=>x.date);console.log(r.name+": calendario oficial de 2027 cargado.")}
+  else if(!r.dates.length)console.log(r.name+": el recorrido detallado de 2027 aún no está publicado; espero al calendario oficial.");
+ }catch(e){if(!r.dates.length)console.log(r.name+": calendario oficial pendiente ("+e.message.slice(0,90)+").")}
+}
 function currentStage(r){const index=r.dates.indexOf(today);return index>=0?index+1:0}
 async function runRace(r){
  const startTime=new Date(r.start+"T00:00:00+01:00").getTime(),endTime=new Date(r.end+"T23:59:59+02:00").getTime();
  let post=findThread(r);
  if(!post&&now.getTime()>=startTime-7*86400000&&now.getTime()<=endTime){const id=await createThread(r);if(id)post=posts.find(p=>p.id===id)}
  if(!post){console.log(r.name+": aún no toca abrir el hilo.");return}
+ await resolveRouteDates(r);
  const stage=currentStage(r);if(!stage){console.log(r.name+": hoy no hay etapa programada.");return}
  const nowMadrid=new Date(now.toLocaleString("en-US",{timeZone:ZONE}));
  if(nowMadrid.getHours()<20){console.log(r.name+": esperando al cierre de la etapa para publicar resultados definitivos.");return}
