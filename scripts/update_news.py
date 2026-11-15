@@ -15,11 +15,11 @@ from html.parser import HTMLParser
 from pathlib import Path
 
 QUERIES = [
-    ("deportes", "deportes"),
-    ("fútbol OR LaLiga OR Champions", "fútbol"),
-    ("baloncesto OR NBA OR Euroliga", "baloncesto"),
-    ("tenis OR ATP OR WTA", "tenis"),
-    ("Fórmula 1 OR MotoGP OR rally", "motor"),
+    ("deportes", "Otros deportes"),
+    ("fútbol OR LaLiga OR Champions", "Fútbol"),
+    ("baloncesto OR NBA OR Euroliga", "Baloncesto"),
+    ("tenis OR ATP OR WTA", "Tenis"),
+    ("Fórmula 1 OR MotoGP OR rally", "Motor"),
 ]
 HEADERS = {"User-Agent": "ALLSPORTS-NewsBot/1.0 (+https://github.com/dandy62013/Allsports)"}
 
@@ -214,15 +214,24 @@ def clean_title(title, source):
 def category_for(title, fallback):
     t = title.lower()
     rules = [
-        ("Motor", ("fórmula 1", "formula 1", "f1", "motogp", "rally", "moto gp")),
+        ("Motor", ("fórmula 1", "formula 1", "f1", "motogp", "moto gp", "rally", "gran premio")),
         ("Baloncesto", ("baloncesto", "nba", "euroliga", "acb", "basket")),
         ("Tenis", ("tenis", "atp", "wta", "alcaraz", "sinner", "swiatek")),
-        ("Fútbol", ("fútbol", "laliga", "champions", "liga", "selección", "mundial", "premier league")),
+        ("Fútbol", ("fútbol", "futbol", "laliga", "champions", "premier league", "copa del rey", "selección española")),
     ]
     for category, words in rules:
         if any(word in t for word in words):
             return category
-    return fallback
+    fallback_map = {
+        "deportes": "Otros deportes",
+        "otros deportes": "Otros deportes",
+        "fútbol": "Fútbol",
+        "futbol": "Fútbol",
+        "baloncesto": "Baloncesto",
+        "tenis": "Tenis",
+        "motor": "Motor",
+    }
+    return fallback_map.get((fallback or "").lower(), "Otros deportes")
 
 items = {}
 image_jobs = {}
