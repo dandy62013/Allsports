@@ -46,6 +46,21 @@ section.content{padding:82px 0}.section-top{display:flex;justify-content:space-b
 .forum-post-tag{font-size:10px;color:var(--lime);font-weight:800;letter-spacing:1px;text-transform:uppercase}
 @media(max-width:800px){.forum-shell{grid-template-columns:1fr}.forum-categories{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.forum-categories h3{grid-column:1/-1}.forum-category{margin:0}.forum-subforums{grid-column:1/-1}.forum-compose-row{grid-template-columns:1fr 1fr}.forum-compose-row button{grid-column:1/-1}}
 
+.motor-card{margin:12px 0;padding:18px;border:1px solid #3a4b56;border-radius:14px;background:linear-gradient(145deg,#182832,#0b131a);color:#edf3f6;overflow:hidden}
+.motor-eyebrow{color:var(--lime);font-size:10px;font-weight:900;letter-spacing:2px}
+.motor-heading{margin:7px 0 14px;color:#fff;font:800 25px 'Barlow Condensed',sans-serif;text-transform:uppercase}
+.motor-event-name{grid-column:1/-1;font:800 19px 'Barlow Condensed',sans-serif;color:#fff;margin-bottom:4px}
+.motor-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.motor-chip{padding:11px 12px;border:1px solid #344651;border-radius:9px;background:#0d171f;min-width:0}
+.motor-chip b{display:block;color:var(--lime);font-size:9px;letter-spacing:1.4px;margin-bottom:5px}
+.motor-chip span{font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+.motor-sessions{margin-top:16px;padding-top:13px;border-top:1px solid #344651}
+.motor-sessions h4{margin:0 0 9px;color:var(--lime);font:800 13px 'Barlow Condensed',sans-serif;letter-spacing:1.2px}
+.motor-session,.motor-result-row{display:flex;justify-content:space-between;gap:12px;padding:9px 10px;margin-top:5px;border-radius:7px;background:#0d171f;font-size:12px;line-height:1.45}
+.motor-session strong{color:#fff}.motor-session span{color:#c5d1d8;text-align:right}
+.motor-result-row{justify-content:flex-start;color:#e5edf1}
+.motor-note{margin:12px 0 0;color:#c8d4da;font-size:12px;line-height:1.6}
+@media(max-width:560px){.motor-card{padding:14px}.motor-meta{grid-template-columns:1fr}.motor-session{align-items:flex-start;flex-direction:column;gap:3px}.motor-session span{text-align:left}}
 /* Plantillas visuales de los bots ALLSPORTS */
 .asbot-card{margin:12px 0;padding:17px;border:1px solid #394752;border-radius:12px;background:linear-gradient(145deg,#17232d,#0d141b);color:#edf2f5;overflow:hidden}
 .nba-recap-card{margin:12px 0;padding:20px;border:1px solid #354650;border-radius:14px;background:linear-gradient(145deg,#172630,#0b1219);color:#edf3f6;overflow:hidden}
@@ -333,6 +348,31 @@ function renderBotTemplate(target,value){
  }
  target.append(card);
 }
+function renderMotorTemplate(target,value){
+ const source=String(value||'').replace(/— ALLSPORTS Bot · Datos: (?:ESPN|ESPN\/MotoGP)/g,'').trim();
+ const lines=source.split('\n').map(x=>x.trim()).filter(Boolean);
+ const markerLine=lines.find(x=>/^\[\[ASMOTOR:/.test(x))||'';
+ const kind=(markerLine.match(/:([A-Z]+):/)||[])[1]||'PREVIA';
+ const clean=lines.filter(x=>!/^\[\[ASMOTOR:/.test(x));
+ target.replaceChildren();
+ const card=document.createElement('section');card.className='motor-card motor-'+kind.toLowerCase();
+ const eyebrow=document.createElement('div');eyebrow.className='motor-eyebrow';eyebrow.textContent='🏁 ALLSPORTS · INFORMADOR';card.append(eyebrow);
+ const heading=document.createElement('h3');heading.className='motor-heading';heading.textContent=({PREVIA:'Gran Premio · Previa',PARRILLA:'Parrilla de salida',RESULTADO:'Resultado final',CLASIFICACION:'Clasificación del campeonato'})[kind]||'Información del Gran Premio';card.append(heading);
+ const meta=document.createElement('div');meta.className='motor-meta';const sessionRows=[];
+ clean.forEach(line=>{
+  if(line==='PREVIA DEL GRAN PREMIO'||line==='PARRILLA DE SALIDA'||line==='RESULTADO FINAL'||line==='CLASIFICACIÓN DEL CAMPEONATO')return;
+  if(line.startsWith('GRAN PREMIO |')){const v=document.createElement('div');v.className='motor-event-name';v.textContent=line.slice(13).trim();meta.append(v);return;}
+  if(line.startsWith('LUGAR |')||line.startsWith('FECHAS |')){const place=line.startsWith('LUGAR |');const v=document.createElement('div');v.className='motor-chip';const b=document.createElement('b');b.textContent=place?'CIRCUITO':'FECHAS';const t=document.createElement('span');t.textContent=line.slice(place?7:8).trim();v.append(b,t);meta.append(v);return;}
+  if(line==='HORARIOS DE SESIONES')return;
+  if(line.startsWith('SESIÓN |')||/^(FP|P|Q|RAC|RACE|SPRINT|CLASIFICACIÓN)/i.test(line)){sessionRows.push(line);return;}
+  if(line.startsWith('Abrimos este hilo')||line==='¡Os leemos!'){const p=document.createElement('p');p.className='motor-note';p.textContent=line;card.append(p);return;}
+  if(/^(\d+\.|•)/.test(line)){const row=document.createElement('div');row.className='motor-result-row';row.textContent=line;meta.append(row);return;}
+  if(line!==kind){const p=document.createElement('p');p.className='motor-note';p.textContent=line;card.append(p);}
+ });
+ if(meta.childNodes.length)card.append(meta);
+ if(sessionRows.length){const section=document.createElement('div');section.className='motor-sessions';const label=document.createElement('h4');label.textContent='HORARIOS DEL FIN DE SEMANA';section.append(label);sessionRows.forEach(line=>{const parts=line.split(' | ');const row=document.createElement('div');row.className='motor-session';const name=document.createElement('strong');name.textContent=parts[0];const time=document.createElement('span');time.textContent=parts.slice(1).join(' · ');row.append(name,time);section.append(row);});card.append(section);}
+ target.append(card);
+}
 function renderForumText(target,value){
  target.replaceChildren();
  const lines=String(value||'').split('\n').filter(line=>!/^\s*\[\[AS[^\]]+\]\]\s*$/.test(line));
@@ -366,7 +406,7 @@ function renderForumTopics(){
  const article=document.createElement('article');article.className='forum-post';
   const tag=document.createElement('div');tag.className='forum-post-tag';tag.textContent=x.sport+' · '+(x.subforum||'General');
   const title=document.createElement('h4');title.textContent=(x.content||'').split(/\n/)[0].slice(0,100)||'Nuevo tema';
-  const body=document.createElement('div');const botPost=/— ALLSPORTS Bot · Datos: ESPN/.test(x.content||'');if(botPost&&(/\[\[ASB2:|\[\[NBA_RESUMEN:/.test(x.content||'')))renderBotTemplate(body,getBotBody(x.content));else body.textContent=botPost?getBotBody(x.content):x.content;
+  const body=document.createElement('div');const botPost=/— ALLSPORTS Bot · Datos: ESPN/.test(x.content||'');if(botPost&&/\[\[ASMOTOR:/.test(x.content||''))renderMotorTemplate(body,getBotBody(x.content));else if(botPost&&(/\[\[ASB2:|\[\[NBA_RESUMEN:/.test(x.content||'')))renderBotTemplate(body,getBotBody(x.content));else body.textContent=botPost?getBotBody(x.content):x.content;
   article.append(tag,title,body);if(currentUser&&(currentUser.id===x.user_id||isForumAdmin)){const deleteTopic=document.createElement('button');deleteTopic.type='button';deleteTopic.className='forum-text-button';deleteTopic.textContent='Borrar hilo';deleteTopic.addEventListener('click',()=>deleteForumPost(x));article.append(deleteTopic);}renderForumAttachments(x,article);
   const meta=document.createElement('div');meta.className='forum-post-meta';meta.append(createForumAvatar(x.profiles?.avatar_url,x.profiles?.username||'Aficionado ALLSPORTS'));const metaText=document.createElement('span');metaText.textContent=((/— ALLSPORTS Bot · Datos: ESPN/.test(x.content||''))?'Informador':(x.profiles?.username||'Aficionado ALLSPORTS'))+' · '+getCommunityMessageCount(x.user_id)+' mensajes en la comunidad · '+(x.created_at?new Date(x.created_at).toLocaleString('es-ES',{dateStyle:'medium',timeStyle:'short'}):'Fecha no disponible');
   article.append(meta);
@@ -379,7 +419,7 @@ function renderForumTopics(){
   replies.slice((page-1)*FORUM_MESSAGES_PER_PAGE,page*FORUM_MESSAGES_PER_PAGE).forEach(r=>{
    const item=document.createElement('div');item.className='forum-reply';
    const author=document.createElement('strong');author.textContent=r.profiles?.username||'Aficionado ALLSPORTS';
-   const content=document.createElement('div');content.className='forum-reply-content';if(/\[\[ASB2:/.test(r.content||''))renderBotTemplate(content,r.content);else renderForumText(content,r.content);const replyHead=document.createElement('div');replyHead.className='forum-reply-head';replyHead.append(createForumAvatar(r.profiles?.avatar_url,author.textContent),author);const replyCount=document.createElement('span');replyCount.className='forum-user-count';replyCount.textContent=getCommunityMessageCount(r.user_id)+' mensajes en la comunidad';replyHead.append(replyCount);item.append(replyHead,content);const userSignature=(r.profiles?.signature||'').trim();if(userSignature){const signature=document.createElement('div');signature.className='forum-reply-signature';signature.textContent=userSignature;item.append(signature);}renderForumAttachments(r,item);
+   const content=document.createElement('div');content.className='forum-reply-content';if(/\[\[ASMOTOR:/.test(r.content||''))renderMotorTemplate(content,r.content);else if(/\[\[ASB2:/.test(r.content||''))renderBotTemplate(content,r.content);else renderForumText(content,r.content);const replyHead=document.createElement('div');replyHead.className='forum-reply-head';replyHead.append(createForumAvatar(r.profiles?.avatar_url,author.textContent),author);const replyCount=document.createElement('span');replyCount.className='forum-user-count';replyCount.textContent=getCommunityMessageCount(r.user_id)+' mensajes en la comunidad';replyHead.append(replyCount);item.append(replyHead,content);const userSignature=(r.profiles?.signature||'').trim();if(userSignature){const signature=document.createElement('div');signature.className='forum-reply-signature';signature.textContent=userSignature;item.append(signature);}renderForumAttachments(r,item);
    const date=document.createElement('small');date.textContent=r.created_at?new Date(r.created_at).toLocaleString('es-ES',{dateStyle:'medium',timeStyle:'short'}):'';item.append(date);
    const tools=document.createElement('div');tools.className='forum-message-tools';
    const quote=document.createElement('button');quote.type='button';quote.className='forum-text-button';quote.textContent='Citar';quote.addEventListener('click',()=>{field.value+=(field.value?'\n':'')+'> '+(r.profiles?.username||'Aficionado')+':\n'+r.content.split('\n').map(line=>'> '+line).join('\n')+'\n\n';field.focus();field.scrollIntoView({behavior:'smooth',block:'center'});});
