@@ -41,7 +41,7 @@ async function runRankings(tour){
  if(sorted.length<40)throw new Error("ESPN solo ha devuelto "+sorted.length+" puestos del ranking "+tour+"; no publico una lista incompleta.");
  const rankingDate=data?.asOf||rankGroup?.asOf||rankGroup?.date||new Date().toISOString();
  const stamp=new Date().toISOString().slice(0,10).replaceAll("-","");
- const entries=sorted.map((x,i)=>{const a=x.athlete||x.player||x;const name=a.displayName||a.fullName||a.name||a.shortName||"Tenista";const pos=x.current??x.rank??x.position??i+1;return {pos,name:String(name).replace(/[|\n\r]/g," ").trim()};});
+ const entries=sorted.map((x,i)=>{const a=x.athlete||x.player||x;const name=a.shortName||a.displayName||a.fullName||a.name||"Tenista";const pos=x.current??x.rank??x.position??i+1;return {pos,name:String(name).replace(/[|\n\r]/g," ").trim()};});
  const title="🎾 RANKING "+tour+" | "+new Date(rankingDate).toLocaleDateString("es-ES",{timeZone:ZONE});
  const body=[marker("RANKING",tour,stamp),"Clasificación mundial individual · Top 40",...entries.map(x=>x.pos+"|"+x.name)].join("\n");
  const content=title+"\n"+body+"\n\n"+FOOTER;
