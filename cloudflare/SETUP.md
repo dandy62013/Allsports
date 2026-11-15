@@ -30,3 +30,13 @@ Abre la web, pulsa «Pregunta a ALLSPORTS» y pregunta algo como «¿Cuáles son
 ## Noticias automáticas
 
 El flujo `.github/workflows/update-news.yml` consulta feeds RSS de Google News en español cada cuatro horas y actualiza `news.json`. La web muestra titulares, fecha, categoría, medio y enlace a la noticia original. La selección depende de los resultados que Google News incluya en sus feeds; revisa atribución y condiciones de uso de cada fuente antes de un uso comercial.
+
+
+## Despliegue automático desde GitHub
+
+El repositorio incluye el flujo `.github/workflows/deploy-chat-worker.yml`. Para que publique el Worker automáticamente, añade una sola vez estos dos secretos en **GitHub → Settings → Secrets and variables → Actions → New repository secret**:
+
+- `CLOUDFLARE_API_TOKEN`: token de Cloudflare con permiso para editar Workers.
+- `CLOUDFLARE_ACCOUNT_ID`: identificador de la cuenta de Cloudflare.
+
+Después de guardarlos, abre **GitHub → Actions → Deploy ALLSPORTS Chatbot → Run workflow**. Los siguientes cambios dentro de `cloudflare/` se publicarán automáticamente. No compartas esos valores en el chat ni los guardes en archivos del repositorio.
