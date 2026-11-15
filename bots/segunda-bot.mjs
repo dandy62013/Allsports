@@ -20,13 +20,12 @@ const dateKey=d=>madridDate(d).replaceAll("-","");
 const madridTime=d=>d.toLocaleString("es-ES",{timeZone:ZONE,dateStyle:"full",timeStyle:"short"});
 const kickoffLabel=d=>d.toLocaleString("es-ES",{timeZone:ZONE,day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).replace(",", " ·");
 function matchdayNumber(e){
- const c=e.competitions?.[0]||{};
- const candidates=[e.scoreboardWeek?.number,e.scoreboardWeek?.text,e.scoreboardWeek,e.week?.number,e.week?.text,e.week,c.week?.number,c.week?.text,c.week,c.series?.summary,e.season?.week?.number,...(Array.isArray(c.notes)?c.notes.map(n=>n?.headline||n?.text||n?.summary):[])];
- for(const value of candidates){if(value==null)continue;const m=String(value).match(/(?:jornada|matchday|week|round|ronda)\s*#?\s*(\d+)|^(\d{1,2})$/i);if(m)return Number(m[1]||m[2]);}
+ const c=e.competitions?.[0]||{},core=e.coreCompetition||{};
+ const candidates=[e.scoreboardWeek?.number,e.scoreboardWeek?.text,e.scoreboardWeek,e.week?.number,e.week?.text,e.week,c.week?.number,c.week?.text,c.week,c.series?.summary,core.week?.number,core.week?.text,core.week,core.roundNumber,core.round,core.matchday,e.season?.week?.number,...(Array.isArray(c.notes)?c.notes.map(n=>n?.headline||n?.text||n?.summary):[]),...(Array.isArray(core.notes)?core.notes.map(n=>n?.headline||n?.text||n?.summary):[])];
+ for(const value of candidates){if(value==null)continue;const m=String(value).match(/(?:jornada|matchday|week|round|ronda|fecha)\\s*#?\\s*(\\d+)|^(\\d{1,2})$/i);if(m)return Number(m[1]||m[2]);}
  return null;
 }
-
-const dailyScoreboardCache=new Map();
+const dailyScoreboardCache=new Map(),coreCompetitionCache=new Map();
 async function resolveMatchday(e){
  const date=madridDate(new Date(e.date)).replaceAll("-","");
  const key=LEAGUE+":"+date;
@@ -35,7 +34,13 @@ async function resolveMatchday(e){
  if(dailyEvent?.week!=null)e.week=dailyEvent.week;
  if(dailyEvent?.competitions?.[0]?.week!=null)e.competitions[0].week=dailyEvent.competitions[0].week;
  e.scoreboardWeek=board?.week||e.scoreboardWeek||null;
- return matchdayNumber(e);
+ let n=matchdayNumber(e);if(n)return n;
+ const cid=e.competitions?.[0]?.id||e.id,coreKey=LEAGUE+":"+e.id+":"+cid;
+ if(!coreCompetitionCache.has(coreKey))coreCompetitionCache.set(coreKey,json("https://sports.core.api.espn.com/v2/sports/soccer/leagues/"+LEAGUE+"/events/"+e.id+"/competitions/"+cid+"?lang=es&region=es").catch(err=>{console.log("Jornada Core ESPN no disponible",e.id,err.message);return null}));
+ e.coreCompetition=await coreCompetitionCache.get(coreKey);
+ n=matchdayNumber(e);
+ if(!n&&e.coreCompetition)console.log("ESPN no facilita jornada:",LEAGUE,e.id,Object.keys(e.coreCompetition).join(","));
+ return n;
 }
 
 const now=Date.now(), from=new Date(now-30*86400000), to=new Date(now+9*86400000);
