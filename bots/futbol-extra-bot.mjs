@@ -39,7 +39,7 @@ function matchdayNumber(e){
 
 const dailyScoreboardCache=new Map();
 async function resolveMatchday(e){
- if(matchdayNumber(e)||config.key!=="FEMENINO_CLUBES"||e.allsportsLeague!=="esp.w.1")return matchdayNumber(e);
+ if(config.key!=="FEMENINO_CLUBES"||e.allsportsLeague!=="esp.w.1")return matchdayNumber(e);
  const date=madridDate(new Date(e.date)).replaceAll("-","");
  const key=e.allsportsLeague+":"+date;
  if(!dailyScoreboardCache.has(key))dailyScoreboardCache.set(key,json("https://site.api.espn.com/apis/site/v2/sports/soccer/"+e.allsportsLeague+"/scoreboard?dates="+date).catch(err=>{console.log("Jornada diaria femenina no disponible",date,err.message);return null}));
