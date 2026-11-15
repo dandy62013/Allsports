@@ -31,7 +31,7 @@ function canonical(n){return String(n||"").toLowerCase().normalize("NFD").replac
 async function runRankings(tour){const sub=tour==="ATP"?"ATP":"WTA",token="[[ASTENIS:RANKING:"+tour+":";const old=posts.find(p=>p.subforum===sub&&(p.content||"").includes(token));if(old&&now-new Date(old.created_at).getTime()<15*86400000){console.log(tour+": ranking todavía dentro del intervalo de 15 días.");return}
 const data=await json("https://site.api.espn.com/apis/site/v2/sports/tennis/"+tour.toLowerCase()+"/rankings");
 const groups=Array.isArray(data?.rankings)?data.rankings:[],rankGroup=groups.find(x=>/singles|individual/i.test(x.name||x.type||""))||groups[0],rows=rankGroup?.ranks||rankGroup?.athletes||rankGroup?.entries||data?.ranks||data?.athletes||[];
-const sorted=[...rows].sort((a,b)=>(a.current??a.rank??a.position??999)-(b.current??b.rank??b.position??999)).slice(0,30);
+const sorted=[...rows].sort((a,b)=>(a.current??a.rank??a.position??999)-(b.current??b.rank??b.position??999)).slice(0,20);
 if(!sorted.length)throw new Error("ESPN no ha devuelto el ranking "+tour+".");
 const rankingDate=data?.asOf||rankGroup?.asOf||rankGroup?.date||new Date().toISOString(),stamp=new Date().toISOString().slice(0,10).replaceAll("-","");
 const lines=sorted.map((x,i)=>{const a=x.athlete||x.player||x;const name=a.displayName||a.fullName||a.name||a.shortName||"Jugador";const pos=x.current??x.rank??x.position??i+1;const points=x.points??x.pointTotal??x.stats?.find?.(z=>/point/i.test(z.name||""))?.value;return pos+". "+name+(points!=null?" · "+Number(points).toLocaleString("es-ES")+" pts":"")+(a.flag?.href?"":"")});
