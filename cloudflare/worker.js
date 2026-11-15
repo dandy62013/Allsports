@@ -44,12 +44,12 @@ async function getJson(url) {
 }
 
 function wantsLiveData(question) {
-  return /(ahora|hoy|en directo|directo|marcador|resultado|resultados|cómo va|como va|quién va ganando|quien va ganando|partido|partidos|juega|jugando|clasificación|clasificacion|tabla|próximo|proximo|calendario|horario|a qué hora|a que hora|último partido|ultimo partido|goleador|ha marcado|han marcado)/i.test(question)
-    && !/(historia|histórico|historico|en \\d{4}|temporada pasada|temporadas pasadas|hace años|hace décadas)/i.test(question);
+  return /(ahora|hoy|en directo|directo|marcador|resultado|resultados|cómo va|como va|quién va ganando|quien va ganando|quién ha ganado|quien ha ganado|quién ganó|quien gano|partido|partidos|juega|jugando|clasificación|clasificacion|tabla|próximo|proximo|calendario|horario|a qué hora|a que hora|último partido|ultimo partido|goleador|ha marcado|han marcado)/i.test(question)
+    && !/(historia|histórico|historico|en \d{4}|temporada pasada|temporadas pasadas|hace años|hace décadas)/i.test(question);
 }
 
 function isFootballQuestion(q) {
-  return /(fútbol|futbol|laliga|liga f|premier|champions|europa league|conference|segunda división|segunda division|copa del rey|selección|seleccion|mundial|eurocopa|valencia cf|barcelona|real madrid|atlético|atletico|sevilla|betis|athletic|girona|osasuna|espanyol|getafe|rayo|celta|alavés|alaves|elche|levante)/i.test(q);
+  return /(fútbol|futbol|laliga|liga f|premier|champions|europa league|conference|segunda división|segunda division|copa del rey|selección|seleccion|mundial|eurocopa|valencia cf|barcelona|barça|real madrid|atlético|atletico|sevilla|betis|athletic|girona|osasuna|espanyol|getafe|rayo|celta|alavés|alaves|elche|levante)/i.test(q);
 }
 
 function isBasketballQuestion(q) {
@@ -117,6 +117,13 @@ function euroDateIsRelevant(game, now) {
   return madridDateKey(new Date(start)) === today &&
     (game.played === true ? age >= 0 && age <= 4 * 60 * 60 * 1000 :
       age >= 0 ? age < 4 * 60 * 60 * 1000 : start - now <= 18 * 60 * 60 * 1000);
+}
+
+async function fetchNbaData() {
+  const payload = await getJson("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=" + madridDateKey());
+  const lines = (payload.events || []).map(event => formatEspnEvent(event, "NBA")).filter(Boolean);
+  if (!lines.length) return "ESPN no muestra partidos de NBA para hoy.";
+  return "Fuente: ESPN. Partidos NBA del día (hora peninsular española):\\n" + lines.join("\\n");
 }
 
 async function fetchEuroBasketballData() {
