@@ -2,7 +2,7 @@
 
 La web ya incluye la interfaz de chat. Este Worker mantiene la clave/ejecución de IA fuera del navegador y utiliza Cloudflare Workers AI.
 
-## 1. Crear el Worker (plan gratuito disponible)
+## 1. Crear o actualizar el Worker (plan gratuito disponible)
 
 1. Crea una cuenta en https://dash.cloudflare.com/ si todavía no tienes una.
 2. Entra en **Workers & Pages** y crea un Worker llamado `allsports-chat`.
