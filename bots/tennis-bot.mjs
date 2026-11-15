@@ -31,21 +31,31 @@ function canonical(n){return String(n||"").toLowerCase().normalize("NFD").replac
 async function runRankings(tour){
  const sub=tour==="ATP"?"ATP":"WTA",token="[[ASTENIS:RANKING:"+tour+":";
  const old=posts.find(p=>p.subforum===sub&&(p.content||"").includes(token));
- const recent=old&&now-new Date(old.created_at).getTime()<15*86400000;
-
  const data=await json("https://site.api.espn.com/apis/site/v2/sports/tennis/"+tour.toLowerCase()+"/rankings");
  const groups=Array.isArray(data?.rankings)?data.rankings:[],rankGroup=groups.find(x=>/singles|individual/i.test(x.name||x.type||""))||groups[0],rows=rankGroup?.ranks||rankGroup?.athletes||rankGroup?.entries||data?.ranks||data?.athletes||[];
  const sorted=[...rows].sort((a,b)=>(a.current??a.rank??a.position??999)-(b.current??b.rank??b.position??999)).slice(0,40);
  if(sorted.length<40)throw new Error("ESPN solo ha devuelto "+sorted.length+" puestos del ranking "+tour+"; no publico una lista incompleta.");
+ const oldMarker=(old?.content||"").match(/\[\[ASTENIS:RANKING:(?:ATP|WTA):(\d{8})\]\]/);
+ const oldDate=oldMarker?new Date(oldMarker[1].slice(0,4)+"-"+oldMarker[1].slice(4,6)+"-"+oldMarker[1].slice(6,8)+"T12:00:00Z").getTime():0;
+ const oldRows=(old?.content||"").split(/\r?\n/).map(line=>{const m=line.match(/^(\d+)\|([^|\r\n]+)/);return m?{pos:Number(m[1]),name:m[2].trim()}:null}).filter(Boolean);
+ const previous=new Map(oldRows.map(x=>[x.name.toLocaleLowerCase("es"),x.pos]));
+ const hasV2=oldRows.length>=40&&(old?.content||"").split(/\r?\n/).some(line=>/^\d+\|[^|]+\|[\d,.]+\|/.test(line));
+ if(old&&hasV2&&oldDate&&now-oldDate<15*86400000){console.log(tour+": ranking ya actualizado en esta quincena; se mantiene.");return;}
  const rankingDate=data?.asOf||rankGroup?.asOf||rankGroup?.date||new Date().toISOString();
  const stamp=new Date().toISOString().slice(0,10).replaceAll("-","");
- const entries=sorted.map((x,i)=>{const a=x.athlete||x.player||x;const name=a.shortName||a.displayName||a.fullName||a.name||"Tenista";const pos=x.current??x.rank??x.position??i+1;return {pos,name:String(name).replace(/[|\n\r]/g," ").trim()};});
+ const entries=sorted.map((x,i)=>{
+  const athlete=x.athlete||x.player||x,name=athlete.shortName||athlete.displayName||athlete.fullName||athlete.name||"Tenista";
+  const pos=Number(x.current??x.rank??x.position??i+1),points=Number(x.points??x.pointTotal??x.totalPoints);
+  if(!Number.isFinite(points))throw new Error(tour+": ESPN no ha facilitado los puntos de "+name+".");
+  const cleanName=String(name).replace(/[|\n\r]/g," ").trim(),before=previous.get(cleanName.toLocaleLowerCase("es"));
+  const movement=before===undefined?"NUEVO":before>pos?"↑"+(before-pos):before<pos?"↓"+(pos-before):"—";
+  return {pos,name:cleanName,points,movement};
+ });
  const title="🎾 RANKING "+tour+" | "+new Date(rankingDate).toLocaleDateString("es-ES",{timeZone:ZONE});
- const body=[marker("RANKING",tour,stamp),"Clasificación mundial individual · Top 40",...entries.map(x=>x.pos+"|"+x.name)].join("\n");
+ const body=[marker("RANKING",tour,stamp),"Clasificación mundial individual · Top 40",...entries.map(x=>x.pos+"|"+x.name+"|"+Math.round(x.points)+"|"+x.movement)].join("\n");
  const content=title+"\n"+body+"\n\n"+FOOTER;
  if(content.length>1000)throw new Error(tour+": la lista Top 40 supera el límite de 1000 caracteres ("+content.length+"). No se ha publicado una lista cortada.");
  if(old){
-  // Elimina únicamente las respuestas del Informador del hilo antiguo para evitar los bloques 21–100.
   const oldReplies=replies.filter(r=>r.post_id===old.id);
   if(oldReplies.length){
    await json(SUPABASE_URL+"/rest/v1/replies?post_id=eq."+old.id+"&user_id=eq."+userId,{method:"DELETE",headers:{...auth,Prefer:"return=minimal"}});
@@ -54,10 +64,10 @@ async function runRankings(tour){
   }
   await json(SUPABASE_URL+"/rest/v1/posts?id=eq."+old.id,{method:"PATCH",headers:{...auth,Prefer:"return=minimal"},body:JSON.stringify({content,link_url:null})});
   old.content=content;old.created_at=new Date().toISOString();
-  console.log(tour+": ranking reemplazado por una única lista Top 40.");
+  console.log(tour+": ranking actualizado con puntos y variación respecto a la quincena anterior.");
  }else{
   const id=await createPost(sub,title,body,null);
-  if(id)console.log(tour+": ranking publicado en una única lista Top 40.");
+  if(id)console.log(tour+": ranking publicado con puntos y variación.");
  }
 }
 async function getBoards(tour){const months=new Set();for(let i=0;i<3;i++){const d=new Date();d.setUTCMonth(d.getUTCMonth()+i);months.add(d.toISOString().slice(0,7).replace("-",""))}const pages=await Promise.all([...months].map(m=>json("https://site.api.espn.com/apis/site/v2/sports/tennis/"+tour+"/scoreboard?dates="+m).catch(e=>{console.log("Calendario "+tour+" no disponible",m,e.message);return null})));return [...new Map(pages.flatMap(x=>Array.isArray(x?.events)?x.events:[]).map(e=>[String(e.id),e])).values()]}
