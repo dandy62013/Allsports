@@ -45,7 +45,7 @@ async function getJson(url) {
 
 function wantsLiveData(question) {
   return /(ahora|hoy|en directo|directo|marcador|resultado|resultados|cómo va|como va|quién va ganando|quien va ganando|quién ha ganado|quien ha ganado|quién ganó|quien ganó|quien gano|partido|partidos|juega|jugando|clasificación|clasificacion|tabla|próximo|proximo|calendario|horario|a qué hora|a que hora|último partido|ultimo partido|goleador|ha marcado|han marcado)/i.test(question)
-    && !/(historia|histórico|historico|\\b(?:19\\d{2}|20(?:0\\d|1\\d|2[0-5]))\\b|temporada pasada|temporadas pasadas|hace años|hace décadas)/i.test(question);
+    && !/(historia|histórico|historico|\b(?:19\d{2}|20(?:0\d|1\d|2[0-5]))\b|temporada pasada|temporadas pasadas|hace años|hace décadas)/i.test(question);
 }
 
 function isFootballQuestion(q) {
