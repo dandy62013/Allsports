@@ -169,7 +169,12 @@ async function getLiveContext(question) {
     tasks.push(fetchFootballData(question).then(value => "FÚTBOL:\n" + value).catch(error => "FÚTBOL: No se pudo consultar la fuente (" + String(error?.message || error) + ")."));
   }
   if (isBasketballQuestion(q) || (!isFootballQuestion(q) && /(partido|marcador|resultado|en directo|hoy|ahora)/i.test(q))) {
-    tasks.push(fetchEuroBasketballData().then(value => "BALONCESTO:\n" + value).catch(error => "BALONCESTO: No se pudo consultar la fuente (" + String(error?.message || error) + ")."));
+    tasks.push(Promise.allSettled([fetchNbaData(), fetchEuroBasketballData()]).then(results => {
+      const labels = ["NBA", "Euroliga y EuroCup"];
+      return "BALONCESTO:\\n" + results.map((result, index) =>
+        labels[index] + ": " + (result.status === "fulfilled" ? result.value : "No se pudo consultar la fuente (" + String(result.reason?.message || result.reason) + ").")
+      ).join("\\n");
+    }));
   }
   if (!tasks.length) return "";
   const values = await Promise.all(tasks);
