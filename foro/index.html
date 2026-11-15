@@ -405,12 +405,12 @@ function renderTennisRankingTemplate(target,value){
  if(!source.split('\n').some(x=>/^\[\[ASTENIS:RANKING:(ATP|WTA):/.test(x)))return false;
  const lines=source.split('\n').map(x=>x.trim()).filter(Boolean);
  const heading=lines.find(x=>/^Clasificación mundial individual · Top/i.test(x))||'Clasificación mundial individual';
- const rows=lines.filter(x=>/^\d+\|/.test(x)).map(line=>{const p=line.split('|');return [p[0],p[1]||'—',p[2]||'—']});
+ const rows=lines.filter(x=>/^\d+\|/.test(x)).map(line=>{const p=line.split('|');return [p[0],p[1]||'—']});
  if(!rows.length)return false;
  target.replaceChildren();const card=document.createElement('section');card.className='tennis-ranking-card';
  const top=document.createElement('div');top.className='tennis-ranking-top';const brand=document.createElement('span');brand.className='tennis-ranking-brand';brand.textContent='ALLSPORTS · INFORMADOR';const count=document.createElement('span');count.className='tennis-ranking-count';count.textContent='TOP '+rows.length;top.append(brand,count);card.append(top);
  const title=document.createElement('h3');title.className='tennis-ranking-title';title.textContent=heading;card.append(title);
- const table=document.createElement('table');table.className='tennis-ranking-table';const thead=document.createElement('thead'),trh=document.createElement('tr');['POS.','TENISTA','PUNTOS'].forEach(x=>{const th=document.createElement('th');th.textContent=x;trh.append(th)});thead.append(trh);table.append(thead);
+ const table=document.createElement('table');table.className='tennis-ranking-table';const thead=document.createElement('thead'),trh=document.createElement('tr');['POS.','TENISTA'].forEach(x=>{const th=document.createElement('th');th.textContent=x;trh.append(th)});thead.append(trh);table.append(thead);
  const tbody=document.createElement('tbody');rows.forEach(row=>{const tr=document.createElement('tr');row.forEach(x=>{const td=document.createElement('td');td.textContent=x;tr.append(td)});tbody.append(tr)});table.append(tbody);card.append(table);
  const foot=document.createElement('div');foot.className='tennis-ranking-foot';foot.textContent='Fuente: ESPN · Clasificación individual';card.append(foot);target.append(card);return true;
 }
