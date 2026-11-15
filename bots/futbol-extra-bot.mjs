@@ -32,7 +32,7 @@ const madridTime=d=>d.toLocaleString("es-ES",{timeZone:ZONE,dateStyle:"full",tim
 const kickoffLabel=d=>d.toLocaleString("es-ES",{timeZone:ZONE,day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).replace(",", " ·");
 function matchdayNumber(e){
  const c=e.competitions?.[0]||{};
- const candidates=[e.week?.number,e.week?.text,c.week?.number,c.week?.text,e.season?.week?.number,...(Array.isArray(c.notes)?c.notes.map(n=>n?.headline||n?.text||n?.summary):[])];
+ const candidates=[e.week?.number,e.week?.text,e.week,c.week?.number,c.week?.text,c.week,c.series?.summary,e.season?.week?.number,...(Array.isArray(c.notes)?c.notes.map(n=>n?.headline||n?.text||n?.summary):[])];
  for(const value of candidates){if(value==null)continue;const m=String(value).match(/(?:jornada|matchday|week|round|ronda)\s*#?\s*(\d+)|^(\d{1,2})$/i);if(m)return Number(m[1]||m[2]);}
  return null;
 }
