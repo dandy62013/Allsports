@@ -69,9 +69,11 @@ async function officialMatchday(e,competitionSlug,kind){
   const hNames=teamNames(mh).map(normTeam),aNames=teamNames(ma).map(normTeam);
   const same=(xs,ys)=>xs.some(x=>ys.has(x)||[...ys].some(y=>x.length>4&&y.length>4&&(x.includes(y)||y.includes(x))));
   if(!same(hNames,homeSet)||!same(aNames,awaySet))continue;
-  const dateValue=match.date||match.match_date||match.start_date||match.utc_date||match.kickoff||match.scheduled_at||match.datetime;
-  const diff=dateValue?Math.abs(new Date(dateValue).getTime()-kickoff):Infinity;
+  const dateValue=match.date||match.match_date||match.match_date_utc||match.matchDate||match.matchDateUtc||match.start_date||match.startDate||match.date_start||match.utc_date||match.utcDate||match.kickoff||match.scheduled_at||match.datetime||match.date_time||match.startTime;
+  const parsedDate=dateValue?new Date(dateValue).getTime():NaN;
+  const diff=Number.isFinite(parsedDate)?Math.abs(parsedDate-kickoff):Infinity;
   if(Number.isFinite(diff)&&diff<bestDiff){best=match;bestDiff=diff;}
+  else if(!Number.isFinite(diff)&&!best){best=match;bestDiff=0;}
  }
  if(!best||bestDiff>72*3600000)return null;
  return officialRoundValue(best.gameweek);
