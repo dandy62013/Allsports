@@ -335,7 +335,7 @@ function renderBotTemplate(target,value){
 }
 function renderForumText(target,value){
  target.replaceChildren();
- const lines=String(value||'').split('\n');
+ const lines=String(value||'').split('\n').filter(line=>!/^\s*\[\[AS[^\]]+\]\]\s*$/.test(line));
  let quoteLines=[];
  const flushQuote=()=>{if(!quoteLines.length)return;const quote=document.createElement('blockquote');quote.textContent=quoteLines.join('\n').replace(/^> ?/gm,'');target.append(quote);quoteLines=[];};
  lines.forEach(line=>{if(line.startsWith('>')){quoteLines.push(line);}else{flushQuote();if(line){const span=document.createElement('span');span.textContent=line;target.append(span);}target.append(document.createElement('br'));}});
