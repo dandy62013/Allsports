@@ -348,6 +348,31 @@ function renderBotTemplate(target,value){
  }
  target.append(card);
 }
+function renderFemaleFootballTemplate(target,value){
+ const source=String(value||'').replace(/— ALLSPORTS Bot · Datos: ESPN/g,'').replace(/\[\[AS-FEMENINO_CLUBES:[^\]]+\]\]/g,'').trim();
+ const normalized=source.replace(/\s+(?=(?:ENCUENTRO|FECHA Y HORA|ESTADIO|COMPETICIÓN) \|)/g,'\n');
+ const lines=normalized.split(/\n/).map(x=>x.trim()).filter(Boolean);
+ const pick=label=>lines.find(x=>x.startsWith(label+' |'))?.slice(label.length+3).trim()||'';
+ const teams=pick('ENCUENTRO').split(/\s+vs\s+/i);
+ target.replaceChildren();
+ const card=document.createElement('section');card.className='asbot-card asbot-femenino';
+ const kicker=document.createElement('div');kicker.className='asbot-kicker';kicker.textContent='⚽ FÚTBOL FEMENINO · PREVIA';card.append(kicker);
+ const match=document.createElement('div');match.className='asbot-match';
+ const home=document.createElement('div');home.className='asbot-team';home.textContent=teams[0]||'Equipo local';
+ const vs=document.createElement('div');vs.className='asbot-vs';vs.textContent='VS';
+ const away=document.createElement('div');away.className='asbot-team';away.textContent=teams[1]||'Equipo visitante';
+ match.append(home,vs,away);card.append(match);
+ const meta=document.createElement('div');meta.className='asbot-meta';
+ [['FECHA Y HORA','📅'],['ESTADIO','🏟️'],['COMPETICIÓN','🏆']].forEach(([label,emoji])=>{const value=pick(label);if(!value)return;const chip=document.createElement('div');chip.className='asbot-chip';chip.textContent=emoji+' '+value;meta.append(chip);});
+ if(meta.childNodes.length)card.append(meta);
+ const note=document.createElement('p');note.className='asbot-note';note.textContent=lines.find(x=>x.startsWith('Abrimos este hilo'))||'Abrimos el debate antes del encuentro. ¿Cuál es vuestro pronóstico? ¡Os leemos!';card.append(note);
+ target.append(card);
+}
+function forumDisplayTitle(content){
+ const raw=String(content||'');
+ if(/\[\[AS-FEMENINO_CLUBES:PREVIA:/.test(raw)){const match=raw.match(/ENCUENTRO\s*\|\s*([^\n]+)/);return '⚽ Previa · '+(match?match[1].trim():'Fútbol femenino');}
+ return raw.split(/\n/)[0].replace(/\[\[[^\]]+\]\]/g,'').trim().slice(0,100)||'Nuevo tema';
+}
 function renderMotorTemplate(target,value){
  const source=String(value||'').replace(/— ALLSPORTS Bot · Datos: (?:ESPN|ESPN\/MotoGP)/g,'').trim();
  const lines=source.split('\n').map(x=>x.trim()).filter(Boolean);
@@ -389,7 +414,7 @@ function addForumEmojiPicker(field,parent){
  toggle.addEventListener('click',()=>{panel.hidden=!panel.hidden;toggle.textContent=panel.hidden?'☺ Añadir emoji':'Cerrar emojis';});
  tools.append(toggle,panel);parent.append(tools);
 }
-function isAllsportsBotContent(content){return /— ALLSPORTS Bot · Datos: ESPN|\[\[(?:ASB2:|AS:|NBA_RESUMEN:|ASMOTOR:|ASCL:)/.test(String(content||''));}
+function isAllsportsBotContent(content){return /— ALLSPORTS Bot · Datos: ESPN|\[\[(?:ASB2:|AS:|NBA_RESUMEN:|ASMOTOR:|ASCL:|AS-FEMENINO_CLUBES:)/.test(String(content||''));}
 function createForumAvatar(url,username){const avatar=document.createElement('span');avatar.className='forum-avatar';if(username==='Informador'){avatar.classList.add('forum-avatar-informador');avatar.textContent='AS';avatar.title='ALLSPORTS · INFORMADOR';avatar.setAttribute('aria-label','ALLSPORTS · INFORMADOR');return avatar;}if(url){const img=document.createElement('img');img.src=url;img.alt='Avatar de '+(username||'aficionado');img.loading='lazy';img.onerror=()=>{avatar.textContent=(username||'A').trim().charAt(0).toUpperCase();};avatar.append(img);}else avatar.textContent=(username||'A').trim().charAt(0).toUpperCase();return avatar;}
 function setProfileAvatar(url){const preview=document.getElementById('profileAvatarPreview');if(!preview)return;preview.replaceChildren();if(url){const img=document.createElement('img');img.src=url;img.alt='Mi avatar';preview.append(img);}else preview.textContent=(document.getElementById('accountUsername')?.textContent||'A').trim().charAt(0).toUpperCase();}
 function getCommunityMessageCount(userId){return data.filter(p=>p.user_id===userId).length+forumReplies.filter(r=>r.user_id===userId).length;}
@@ -399,15 +424,15 @@ function renderForumTopics(){
  const chosen=data.filter(x=>(forumSport==='Todos'||x.sport===forumSport||(forumSport==='Mundial de fútbol 2030'&&x.sport==='Mundial'))&&(forumSubforum==='Todos'||x.subforum===forumSubforum));
  if(!activeThreadId){
   if(!chosen.length){const p=document.createElement('p');p.className='empty';p.textContent='Todavía no hay temas en este subforo. ¡Puedes abrir el primero!';forumTopics.append(p);return;}
-  chosen.forEach(x=>{const row=document.createElement('article');row.className='forum-topic-row';const isBot=isAllsportsBotContent(x.content);const username=isBot?'Informador':(x.profiles?.username||'Aficionado ALLSPORTS');row.append(createForumAvatar(x.profiles?.avatar_url,username));const main=document.createElement('div');main.className='forum-topic-main';const open=document.createElement('button');open.type='button';open.className='forum-topic-open';open.textContent=(x.content||'').split(/\n/)[0].slice(0,100)||'Nuevo tema';open.addEventListener('click',()=>{activeThreadId=x.id;renderForumTopics();window.scrollTo({top:0,behavior:'smooth'});});const meta=document.createElement('div');meta.className='forum-topic-meta';meta.textContent=(x.sport||'')+' · '+(x.subforum||'General')+' · '+username+' · '+getCommunityMessageCount(x.user_id)+' mensajes en la comunidad · '+(x.created_at?new Date(x.created_at).toLocaleString('es-ES',{dateStyle:'medium',timeStyle:'short'}):'Fecha no disponible');main.append(open,meta);row.append(main);const count=document.createElement('span');count.className='forum-topic-count';const n=forumReplies.filter(r=>r.post_id===x.id).length;count.textContent=n+' '+(n===1?'respuesta':'respuestas');row.append(count);if(currentUser&&(currentUser.id===x.user_id||isForumAdmin)){const remove=document.createElement('button');remove.type='button';remove.className='forum-text-button';remove.textContent='Borrar';remove.setAttribute('aria-label','Borrar hilo');remove.addEventListener('click',()=>deleteForumPost(x));row.append(remove);}forumTopics.append(row);});return;
+  chosen.forEach(x=>{const row=document.createElement('article');row.className='forum-topic-row';const isBot=isAllsportsBotContent(x.content);const username=isBot?'Informador':(x.profiles?.username||'Aficionado ALLSPORTS');row.append(createForumAvatar(x.profiles?.avatar_url,username));const main=document.createElement('div');main.className='forum-topic-main';const open=document.createElement('button');open.type='button';open.className='forum-topic-open';open.textContent=forumDisplayTitle(x.content);open.addEventListener('click',()=>{activeThreadId=x.id;renderForumTopics();window.scrollTo({top:0,behavior:'smooth'});});const meta=document.createElement('div');meta.className='forum-topic-meta';meta.textContent=(x.sport||'')+' · '+(x.subforum||'General')+' · '+username+' · '+getCommunityMessageCount(x.user_id)+' mensajes en la comunidad · '+(x.created_at?new Date(x.created_at).toLocaleString('es-ES',{dateStyle:'medium',timeStyle:'short'}):'Fecha no disponible');main.append(open,meta);row.append(main);const count=document.createElement('span');count.className='forum-topic-count';const n=forumReplies.filter(r=>r.post_id===x.id).length;count.textContent=n+' '+(n===1?'respuesta':'respuestas');row.append(count);if(currentUser&&(currentUser.id===x.user_id||isForumAdmin)){const remove=document.createElement('button');remove.type='button';remove.className='forum-text-button';remove.textContent='Borrar';remove.setAttribute('aria-label','Borrar hilo');remove.addEventListener('click',()=>deleteForumPost(x));row.append(remove);}forumTopics.append(row);});return;
  }
  const selectedPost=chosen.find(x=>x.id===activeThreadId);if(!selectedPost){activeThreadId=null;renderForumTopics();return;}
  const back=document.createElement('button');back.type='button';back.className='btn secondary forum-back';back.textContent='← Volver a los temas';back.addEventListener('click',()=>{activeThreadId=null;renderForumTopics();});forumTopics.append(back);
  [selectedPost].forEach(x=>{
  const article=document.createElement('article');article.className='forum-post';
   const tag=document.createElement('div');tag.className='forum-post-tag';tag.textContent=x.sport+' · '+(x.subforum||'General');
-  const title=document.createElement('h4');title.textContent=(x.content||'').split(/\n/)[0].slice(0,100)||'Nuevo tema';
-  const body=document.createElement('div');const botPost=isAllsportsBotContent(x.content);if(botPost&&/\[\[ASMOTOR:/.test(x.content||''))renderMotorTemplate(body,getBotBody(x.content));else if(botPost&&(/\[\[ASB2:|\[\[NBA_RESUMEN:/.test(x.content||'')))renderBotTemplate(body,getBotBody(x.content));else body.textContent=botPost?getBotBody(x.content):x.content;
+  const title=document.createElement('h4');title.textContent=forumDisplayTitle(x.content);
+  const body=document.createElement('div');const botPost=isAllsportsBotContent(x.content);if(botPost&&/\[\[ASMOTOR:/.test(x.content||''))renderMotorTemplate(body,getBotBody(x.content));else if(botPost&&(/\[\[ASB2:|\[\[NBA_RESUMEN:/.test(x.content||'')))renderBotTemplate(body,getBotBody(x.content));else if(botPost&&/\[\[AS-FEMENINO_CLUBES:/.test(x.content||''))renderFemaleFootballTemplate(body,x.content);else body.textContent=botPost?getBotBody(x.content):x.content;
   article.append(tag,title,body);if(currentUser&&(currentUser.id===x.user_id||isForumAdmin)){const deleteTopic=document.createElement('button');deleteTopic.type='button';deleteTopic.className='forum-text-button';deleteTopic.textContent='Borrar hilo';deleteTopic.addEventListener('click',()=>deleteForumPost(x));article.append(deleteTopic);}renderForumAttachments(x,article);
   const meta=document.createElement('div');meta.className='forum-post-meta';meta.append(createForumAvatar(null,isAllsportsBotContent(x.content)?'Informador':(x.profiles?.username||'Aficionado ALLSPORTS')));const metaText=document.createElement('span');metaText.textContent=((isAllsportsBotContent(x.content))?'Informador':(x.profiles?.username||'Aficionado ALLSPORTS'))+' · '+getCommunityMessageCount(x.user_id)+' mensajes en la comunidad · '+(x.created_at?new Date(x.created_at).toLocaleString('es-ES',{dateStyle:'medium',timeStyle:'short'}):'Fecha no disponible');
   article.append(meta);
@@ -420,7 +445,7 @@ function renderForumTopics(){
   replies.slice((page-1)*FORUM_MESSAGES_PER_PAGE,page*FORUM_MESSAGES_PER_PAGE).forEach(r=>{
    const item=document.createElement('div');item.className='forum-reply';
    const replyIsBot=isAllsportsBotContent(r.content);const author=document.createElement('strong');author.textContent=replyIsBot?'Informador':(r.profiles?.username||'Aficionado ALLSPORTS');
-   const content=document.createElement('div');content.className='forum-reply-content';if(/\[\[ASMOTOR:/.test(r.content||''))renderMotorTemplate(content,r.content);else if(/\[\[ASB2:/.test(r.content||''))renderBotTemplate(content,r.content);else renderForumText(content,r.content);const replyHead=document.createElement('div');replyHead.className='forum-reply-head';replyHead.append(createForumAvatar(r.profiles?.avatar_url,author.textContent),author);const replyCount=document.createElement('span');replyCount.className='forum-user-count';replyCount.textContent=getCommunityMessageCount(r.user_id)+' mensajes en la comunidad';replyHead.append(replyCount);item.append(replyHead,content);const userSignature=(r.profiles?.signature||'').trim();if(userSignature){const signature=document.createElement('div');signature.className='forum-reply-signature';signature.textContent=userSignature;item.append(signature);}renderForumAttachments(r,item);
+   const content=document.createElement('div');content.className='forum-reply-content';if(/\[\[ASMOTOR:/.test(r.content||''))renderMotorTemplate(content,r.content);else if(/\[\[ASB2:/.test(r.content||''))renderBotTemplate(content,r.content);else if(/\[\[AS-FEMENINO_CLUBES:/.test(r.content||''))renderFemaleFootballTemplate(content,r.content);else renderForumText(content,r.content);const replyHead=document.createElement('div');replyHead.className='forum-reply-head';replyHead.append(createForumAvatar(r.profiles?.avatar_url,author.textContent),author);const replyCount=document.createElement('span');replyCount.className='forum-user-count';replyCount.textContent=getCommunityMessageCount(r.user_id)+' mensajes en la comunidad';replyHead.append(replyCount);item.append(replyHead,content);const userSignature=(r.profiles?.signature||'').trim();if(userSignature){const signature=document.createElement('div');signature.className='forum-reply-signature';signature.textContent=userSignature;item.append(signature);}renderForumAttachments(r,item);
    const date=document.createElement('small');date.textContent=r.created_at?new Date(r.created_at).toLocaleString('es-ES',{dateStyle:'medium',timeStyle:'short'}):'';item.append(date);
    const tools=document.createElement('div');tools.className='forum-message-tools';
    const quote=document.createElement('button');quote.type='button';quote.className='forum-text-button';quote.textContent='Citar';quote.addEventListener('click',()=>{field.value+=(field.value?'\n':'')+'> '+(r.profiles?.username||'Aficionado')+':\n'+r.content.split('\n').map(line=>'> '+line).join('\n')+'\n\n';field.focus();field.scrollIntoView({behavior:'smooth',block:'center'});});
