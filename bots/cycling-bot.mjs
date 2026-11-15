@@ -34,7 +34,7 @@ function findThread(r){return posts.find(p=>p.subforum===r.subforum&&(p.content|
 function hasReply(postId,marker){return replies.some(x=>x.post_id===postId&&(x.content||"").includes(marker))}
 async function createThread(r){
  const content=["🚴 "+r.name+" 2027 · SEGUIMIENTO OFICIAL",markerThread(r),"FECHAS | "+fmtDate(r.start)+" – "+fmtDate(r.end),"","En este hilo seguiremos la carrera día a día. El Informador añadirá, cuando las clasificaciones oficiales estén confirmadas, los 10 primeros de cada etapa y los 10 primeros de la clasificación general, con sus diferencias de tiempo.","","FUENTE OFICIAL | "+r.site,"",FOOTER].join("\n");
- const title="🚴 "+r.name+" | "+fmtDate(r.start)+" · inicio";
+ const title="🚴 "+r.name+" | "+fmtDate(r.start)+" · horario por confirmar";
  const result=await request(SUPABASE_URL+"/rest/v1/posts",{method:"POST",headers:{...auth,Prefer:"return=representation"},body:JSON.stringify({user_id:userId,sport:"Ciclismo",subforum:r.subforum,content:title+"\n"+content,link_url:r.site})});
  const row=Array.isArray(result)?result[0]:result;if(row?.id){posts.unshift(row);console.log("Hilo creado:",r.name)}return row?.id||null;
 }
@@ -77,11 +77,11 @@ async function getRows(url,apiUrl){
  const source=await html(url);const rows=parseHtmlRows(source);if(rows.length>=10)return rows;
  console.log("No se han podido extraer 10 filas de la clasificación:",url,"filas:",rows.length);return [];
 }
-function clean(v){return String(v||"").replace(/[|\n\r]/g," ").replace(/\s+/g," ").trim().slice(0,46)}
+function clean(v,max=36){return String(v||"").replace(/[|\n\r]/g," ").replace(/\s+/g," ").trim().slice(0,max)}
 function formatReply(r,type,stage,rows,stageDate){
  const label=type==="ETAPA"?"ETAPA "+stage+" · "+fmtDate(stageDate):"GENERAL · tras etapa "+stage;
  const lines=[markerReply(r,type,stage),"CICLISMO | "+r.name+" 2027 | "+label,"POS|CICLISTA|TIEMPO|DIFERENCIA"];
- rows.slice(0,10).forEach((x,i)=>lines.push([x.rank,clean(x.rider),clean(x.time),clean(i===0?"—":x.gap||"—")].join("|")));
+ rows.slice(0,10).forEach((x,i)=>lines.push([x.rank,clean(x.rider,34),clean(x.time,18),clean(i===0?"—":x.gap||"—",18)].join("|")));
  lines.push("FUENTE | "+r.site,FOOTER);
  return lines.join("\n");
 }
