@@ -38,17 +38,20 @@ async function createThread(r){
  const result=await request(SUPABASE_URL+"/rest/v1/posts",{method:"POST",headers:{...auth,Prefer:"return=representation"},body:JSON.stringify({user_id:userId,sport:"Ciclismo",subforum:r.subforum,content:title+"\n"+content,link_url:r.site})});
  const row=Array.isArray(result)?result[0]:result;if(row?.id){posts.unshift(row);console.log("Hilo creado:",r.name)}return row?.id||null;
 }
-function decode(s){return String(s||"").replace(/<br\\s*\\/?\\s*>/gi," ").replace(/<[^>]*>/g," ").replace(/&nbsp;|&#160;/gi," ").replace(/&amp;/gi,"&").replace(/&quot;/gi,'"').replace(/&#39;|&apos;/gi,"'").replace(/&lt;/gi,"<").replace(/&gt;/gi,">").replace(/\\s+/g," ").trim()}
+function decode(s){return String(s||"").replace(/<br\s*\/?\s*>/gi," ").replace(/<[^>]*>/g," ").replace(/&nbsp;|&#160;/gi," ").replace(/&amp;/gi,"&").replace(/&quot;/gi,'"').replace(/&#39;|&apos;/gi,"'").replace(/&lt;/gi,"<").replace(/&gt;/gi,">").replace(/\s+/g," ").trim()}
 function parseHtmlRows(source){
  const out=[];
- const trRe=/<tr\\b[^>]*>([\\s\\S]*?)<\\/tr>/gi;let m;
+ const trRe=/<tr\b[^>]*>([\s\S]*?)<\/tr>/gi;let m;
  while((m=trRe.exec(source))){
-  const cells=[...m[1].matchAll(/<t[dh]\\b[^>]*>([\\s\\S]*?)<\\/t[dh]>/gi)].map(x=>decode(x[1]));
+  const cells=[...m[1].matchAll(/<t[dh]\b[^>]*>([\s\S]*?)<\/t[dh]>/gi)].map(x=>decode(x[1]));
   if(cells.length<5)continue;
-  const rank=Number((cells[0].match(/^\\s*(\\d{1,3})\\b/)||[])[1]);if(!rank)continue;
-  const timeIndex=cells.findIndex((x,i)=>i>1&&/\\d{1,2}[:h]\\d{2}/.test(x));if(timeIndex<0)continue;
-  const rider=cells[1]||"",team=cells[2]||"";
-  const time=cells[timeIndex]||"",gap=cells.length>timeIndex+1?cells[cells.length-1]:"";
+  const rank=Number((cells[0].match(/^\s*(\d{1,3})\b/)||[])[1]);if(!rank)continue;
+  const timeIndex=cells.findIndex((x,i)=>i>1&&/\d{1,2}[:h]\d{2}/.test(x));if(timeIndex<0)continue;
+  const nameCells=cells.slice(1,timeIndex).filter(x=>x&&!/^\d{1,3}$/.test(x));
+  const rider=nameCells[0]||"",team=nameCells.length>1?nameCells[nameCells.length-1]:"";
+  const time=cells[timeIndex]||"";
+  let gap=cells[timeIndex+1]||"";
+  if(timeIndex+2<cells.length&&/^(?:\+?\s*)?\d{1,2}:\d{2}(?::\d{2})?$/.test(gap))gap=cells[timeIndex+2];
   out.push({rank,rider,team,time,gap});
  }
  return out.filter(x=>x.rider&&x.time).sort((a,b)=>a.rank-b.rank).slice(0,10);
@@ -74,13 +77,13 @@ async function getRows(url,apiUrl){
  const source=await html(url);const rows=parseHtmlRows(source);if(rows.length>=10)return rows;
  console.log("No se han podido extraer 10 filas de la clasificación:",url,"filas:",rows.length);return [];
 }
-function clean(v){return String(v||"").replace(/[|\\n\\r]/g," ").replace(/\\s+/g," ").trim().slice(0,46)}
+function clean(v){return String(v||"").replace(/[|\n\r]/g," ").replace(/\s+/g," ").trim().slice(0,46)}
 function formatReply(r,type,stage,rows,stageDate){
  const label=type==="ETAPA"?"ETAPA "+stage+" · "+fmtDate(stageDate):"GENERAL · tras etapa "+stage;
  const lines=[markerReply(r,type,stage),"CICLISMO | "+r.name+" 2027 | "+label,"POS|CICLISTA|TIEMPO|DIFERENCIA"];
  rows.slice(0,10).forEach((x,i)=>lines.push([x.rank,clean(x.rider),clean(x.time),clean(x.gap|| (i===0?"—":"—"))].join("|")));
  lines.push("FUENTE | "+r.site,FOOTER);
- return lines.join("\\n");
+ return lines.join("\n");
 }
 async function addReply(r,postId,type,stage,rows,stageDate){
  const mark=markerReply(r,type,stage);if(hasReply(postId,mark))return false;
@@ -99,9 +102,9 @@ async function runRace(r){
  const nowMadrid=new Date(now.toLocaleString("en-US",{timeZone:ZONE}));
  if(nowMadrid.getHours()<20){console.log(r.name+": esperando al cierre de la etapa para publicar resultados definitivos.");return}
  const apiBase=r.kind==="aso"?(r.site.includes("letour")?"https://www.letour.fr":"https://www.lavuelta.es")+"/api/":"";
- const stageApi=apiBase?"":null;
+ const stageApi=apiBase?apiBase+"rankingTypeArrival-2027-"+stage:null;
  const stageUrl=r.stage(stage);
- const gcApi=apiBase?"":null;
+ const gcApi=apiBase?apiBase+"rankingType-2027-"+stage:null;
  const [stageRows,gcRows]=await Promise.all([
   getRows(stageUrl,stageApi),
   getRows(r.gc,gcApi)
