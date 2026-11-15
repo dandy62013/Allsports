@@ -56,7 +56,7 @@ jobs:
           BOT_EMAIL: ${{ secrets.BOT_EMAIL }}
           BOT_PASSWORD: ${{ secrets.BOT_PASSWORD }}
 
-  selecciones:
+  copa_del_rey:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -66,8 +66,72 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Ejecutar bot de la selección española
-        run: node bots/selecciones-bot.mjs
+      - name: Ejecutar bot de Copa del Rey
+        run: node bots/futbol-extra-bot.mjs copa-del-rey
+        env:
+          BOT_EMAIL: ${{ secrets.BOT_EMAIL }}
+          BOT_PASSWORD: ${{ secrets.BOT_PASSWORD }}
+
+  futbol_femenino:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Ejecutar bot de fútbol femenino
+        run: node bots/futbol-extra-bot.mjs futbol-femenino
+        env:
+          BOT_EMAIL: ${{ secrets.BOT_EMAIL }}
+          BOT_PASSWORD: ${{ secrets.BOT_PASSWORD }}
+
+  seleccion_masculina:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Ejecutar bot de selección masculina
+        run: node bots/futbol-extra-bot.mjs seleccion-masculina
+        env:
+          BOT_EMAIL: ${{ secrets.BOT_EMAIL }}
+          BOT_PASSWORD: ${{ secrets.BOT_PASSWORD }}
+
+  seleccion_femenina:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Ejecutar bot de selección femenina
+        run: node bots/futbol-extra-bot.mjs seleccion-femenina
+        env:
+          BOT_EMAIL: ${{ secrets.BOT_EMAIL }}
+          BOT_PASSWORD: ${{ secrets.BOT_PASSWORD }}
+
+  selecciones_otros:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Ejecutar bot de selecciones de otros países
+        run: node bots/futbol-extra-bot.mjs selecciones-otros
         env:
           BOT_EMAIL: ${{ secrets.BOT_EMAIL }}
           BOT_PASSWORD: ${{ secrets.BOT_PASSWORD }}
