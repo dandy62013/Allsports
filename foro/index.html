@@ -367,7 +367,7 @@ function renderForumTopics(){
   const tag=document.createElement('div');tag.className='forum-post-tag';tag.textContent=x.sport+' · '+(x.subforum||'General');
   const title=document.createElement('h4');title.textContent=(x.content||'').split(/\n/)[0].slice(0,100)||'Nuevo tema';
   const body=document.createElement('div');const botPost=/— ALLSPORTS Bot · Datos: ESPN/.test(x.content||'');if(botPost&&(/\[\[ASB2:|\[\[NBA_RESUMEN:/.test(x.content||'')))renderBotTemplate(body,getBotBody(x.content));else body.textContent=botPost?getBotBody(x.content):x.content;
-  article.append(tag,title,body);renderForumAttachments(x,article);
+  article.append(tag,title,body);if(currentUser&&(currentUser.id===x.user_id||isForumAdmin)){const deleteTopic=document.createElement('button');deleteTopic.type='button';deleteTopic.className='forum-text-button';deleteTopic.textContent='Borrar hilo';deleteTopic.addEventListener('click',()=>deleteForumPost(x));article.append(deleteTopic);}renderForumAttachments(x,article);
   const meta=document.createElement('div');meta.className='forum-post-meta';meta.append(createForumAvatar(x.profiles?.avatar_url,x.profiles?.username||'Aficionado ALLSPORTS'));const metaText=document.createElement('span');metaText.textContent=((/— ALLSPORTS Bot · Datos: ESPN/.test(x.content||''))?'Informador':(x.profiles?.username||'Aficionado ALLSPORTS'))+' · '+getCommunityMessageCount(x.user_id)+' mensajes en la comunidad · '+(x.created_at?new Date(x.created_at).toLocaleString('es-ES',{dateStyle:'medium',timeStyle:'short'}):'Fecha no disponible');
   article.append(meta);
   const thread=document.createElement('div');thread.className='forum-replies';
@@ -384,6 +384,7 @@ function renderForumTopics(){
    const tools=document.createElement('div');tools.className='forum-message-tools';
    const quote=document.createElement('button');quote.type='button';quote.className='forum-text-button';quote.textContent='Citar';quote.addEventListener('click',()=>{field.value+=(field.value?'\n':'')+'> '+(r.profiles?.username||'Aficionado')+':\n'+r.content.split('\n').map(line=>'> '+line).join('\n')+'\n\n';field.focus();field.scrollIntoView({behavior:'smooth',block:'center'});});
    tools.append(quote);
+   if(currentUser&&(currentUser.id===r.user_id||isForumAdmin)){const remove=document.createElement('button');remove.type='button';remove.className='forum-text-button';remove.textContent='Borrar';remove.addEventListener('click',()=>deleteForumReply(r));tools.append(remove);}
    if(currentUser&&currentUser.id===r.user_id){
     const edit=document.createElement('button');edit.type='button';edit.className='forum-text-button';edit.textContent='Editar';
     edit.addEventListener('click',()=>{if(item.querySelector('.forum-edit-area'))return;const area=document.createElement('textarea');area.className='forum-edit-area';area.maxLength=1000;area.value=r.content;const save=document.createElement('button');save.type='button';save.className='btn secondary';save.textContent='Guardar';const cancel=document.createElement('button');cancel.type='button';cancel.className='forum-text-button';cancel.textContent='Cancelar';tools.after(area,save,cancel);edit.disabled=true;save.addEventListener('click',async()=>{const value=area.value.trim();if(!value){area.focus();return;}save.disabled=true;save.textContent='Guardando…';const {error}=await supabaseClient.from('replies').update({content:value}).eq('id',r.id).eq('user_id',currentUser.id);if(error){save.disabled=false;save.textContent='Guardar';hint.textContent='No se pudo editar: '+error.message;return;}await loadPosts();});cancel.addEventListener('click',()=>{area.remove();save.remove();cancel.remove();edit.disabled=false;});});
@@ -443,12 +444,17 @@ const authStatus=document.getElementById('authStatus');
 const authGuest=document.getElementById('authGuest');
 const authAccount=document.getElementById('authAccount');
 let currentUser=null;
+let isForumAdmin=false;
+async function canManageForum(){if(!currentUser)return false;if(isForumAdmin)return true;return false;}
+async function deleteForumReply(reply){if(!currentUser||!(currentUser.id===reply.user_id||isForumAdmin))return; if(!window.confirm('¿Seguro que quieres borrar este mensaje?'))return;const {error}=await supabaseClient.from('replies').delete().eq('id',reply.id);if(error){authMessage('No se pudo borrar el mensaje: '+error.message,true);return;}await loadPosts();}
+async function deleteForumPost(post){if(!currentUser||!(currentUser.id===post.user_id||isForumAdmin))return;if(!window.confirm('¿Seguro que quieres borrar este hilo y todas sus respuestas? Esta acción no se puede deshacer.'))return;const {error:replyError}=await supabaseClient.from('replies').delete().eq('post_id',post.id);if(replyError){authMessage('No se pudieron borrar las respuestas: '+replyError.message,true);return;}const {error}=await supabaseClient.from('posts').delete().eq('id',post.id);if(error){authMessage('No se pudo borrar el hilo: '+error.message,true);return;}activeThreadId=null;await loadPosts();}
 function authMessage(message,isError=false){authStatus.textContent=message;authStatus.style.color=isError?'#ff8b70':'var(--lime)';}
 function showAuthMode(mode){const register=mode==='register';document.getElementById('registerForm').hidden=!register;document.getElementById('loginForm').hidden=register;document.getElementById('showRegister').classList.toggle('active',register);document.getElementById('showLogin').classList.toggle('active',!register);}
 document.getElementById('showRegister').addEventListener('click',()=>showAuthMode('register'));
 document.getElementById('showLogin').addEventListener('click',()=>showAuthMode('login'));
 async function refreshAccount(user){
- currentUser=user||null;
+ currentUser=user||null;isForumAdmin=false;
+ if(user){const adminResult=await supabaseClient.from('forum_admins').select('user_id').eq('user_id',user.id).maybeSingle();isForumAdmin=!adminResult.error&&!!adminResult.data;}
  authGuest.style.display=user?'none':'block';
  authAccount.classList.toggle('show',!!user);
  if(!user){authMessage('Puedes crear una cuenta gratuita o iniciar sesión.');return;}
