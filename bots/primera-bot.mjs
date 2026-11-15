@@ -19,6 +19,7 @@ const madridDate=d=>new Intl.DateTimeFormat("en-CA",{timeZone:ZONE,year:"numeric
 const dateKey=d=>madridDate(d).replaceAll("-","");
 const madridTime=d=>d.toLocaleString("es-ES",{timeZone:ZONE,dateStyle:"full",timeStyle:"short"});
 const kickoffLabel=d=>d.toLocaleString("es-ES",{timeZone:ZONE,day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).replace(",", " ·");
+const kickoffLabel=d=>d.toLocaleString("es-ES",{timeZone:ZONE,day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).replace(",", " ·");
 const now=Date.now(), from=new Date(now-86400000), to=new Date(now+9*86400000);
 const tomorrow=new Date(Date.parse(madridDate(new Date(now))+"T12:00:00Z")+86400000).toISOString().slice(0,10);
 const monthKeys=new Set();for(let d=new Date(from);d<=to;d.setUTCDate(d.getUTCDate()+1))monthKeys.add(dateKey(d).slice(0,6));
@@ -32,7 +33,7 @@ const CLUB_SUBFORUMS={
 function clubSubforum(team){const names=[team?.displayName,team?.name,team?.shortDisplayName,team?.abbreviation].filter(Boolean).map(x=>String(x).normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase().replace(/\\s+/g," ").trim());return names.map(x=>CLUB_SUBFORUMS[x]).find(Boolean)||null}
 function findPost(id,subforum="La Liga"){return posts.find(p=>p.subforum===subforum&&(String(p.link_url||"").includes(`gameId=${id}`)||(p.content||"").includes(mark("PREVIA",id))))}
 function hasReply(postId,k,id){return replies.some(r=>r.post_id===postId&&(r.content||"").includes(mark(k,id)))}
-async function openThread(e,t,subforum="La Liga"){const date=new Date(e.date),title=`⚽ PRIMERA | ${t.hn} vs ${t.vn} | ${kickoffLabel(date)}`,venue=t.c?.venue?.fullName||"Estadio por confirmar";
+async function openThread(e,t,subforum="La Liga"){const date=new Date(e.date),title=`⚽ PRIMERA | ${t.hn} vs ${t.vn} | ${kickoffLabel(date)} | ${kickoffLabel(date)}`,venue=t.c?.venue?.fullName||"Estadio por confirmar";
 const body=[mark("PREVIA",e.id),"PREVIA DE LA JORNADA",`ENCUENTRO | ${t.hn} vs ${t.vn}`,`FECHA Y HORA | ${madridTime(date)} (hora peninsular)`,`ESTADIO | ${venue}`,"","LaLiga EA SPORTS nos trae este enfrentamiento. Abrimos el hilo para comentar cómo llegan ambos equipos y compartir pronósticos.","¿Quién se llevará los tres puntos? Os leemos.","",FOOTER].join("\n");
 const result=await json(`${SUPABASE_URL}/rest/v1/posts`,{method:"POST",headers:{...auth,Prefer:"return=representation"},body:JSON.stringify({user_id:userId,sport:"Fútbol",subforum,content:title+"\n"+body,link_url:`https://www.espn.com/soccer/match/_/gameId/${e.id}`})});
 const row=Array.isArray(result)?result[0]:result;if(row?.id)posts.unshift(row);console.log("Previa creada:",subforum,title);return row?.id||null}
