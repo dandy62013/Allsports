@@ -39,7 +39,7 @@ async function runRankings(tour){
  const oldDate=oldMarker?new Date(oldMarker[1].slice(0,4)+"-"+oldMarker[1].slice(4,6)+"-"+oldMarker[1].slice(6,8)+"T12:00:00Z").getTime():0;
  const oldRows=(old?.content||"").split(/\r?\n/).map(line=>{const m=line.match(/^(\d+)\|([^|\r\n]+)/);return m?{pos:Number(m[1]),name:m[2].trim()}:null}).filter(Boolean);
  const previous=new Map(oldRows.map(x=>[x.name.toLocaleLowerCase("es"),x.pos]));
- const hasV2=oldRows.length>=40&&(old?.content||"").split(/\r?\n/).some(line=>/^\d+\|[^|]+\|[\d,.]+\|/.test(line));
+ const hasV2=oldRows.length>0&&(old?.content||"").split(/\r?\n/).some(line=>/^\d+\|[^|]+\|[\d,.]+\|/.test(line));
  if(old&&hasV2&&oldDate&&now-oldDate<15*86400000){console.log(tour+": ranking ya actualizado en esta quincena; se mantiene.");return;}
  const rankingDate=data?.asOf||rankGroup?.asOf||rankGroup?.date||new Date().toISOString();
  const stamp=new Date().toISOString().slice(0,10).replaceAll("-","");
@@ -52,9 +52,15 @@ async function runRankings(tour){
   return {pos,name:cleanName,points,movement};
  });
  const title="🎾 RANKING "+tour+" | "+new Date(rankingDate).toLocaleDateString("es-ES",{timeZone:ZONE});
- const body=[marker("RANKING",tour,stamp),"Clasificación mundial individual · Top 40",...entries.map(x=>x.pos+"|"+x.name+"|"+Math.round(x.points)+"|"+x.movement)].join("\n");
- const content=title+"\n"+body+"\n\n"+FOOTER;
- if(content.length>1000)throw new Error(tour+": la lista Top 40 supera el límite de 1000 caracteres ("+content.length+"). No se ha publicado una lista cortada.");
+ let selected=entries.slice(0,40);
+ let body=[marker("RANKING",tour,stamp),"Clasificación mundial individual · Top 40",...selected.map(x=>x.pos+"|"+x.name+"|"+Math.round(x.points)+"|"+x.movement)].join("\n");
+ let content=title+"\n"+body+"\n\n"+FOOTER;
+ if(content.length>1000){
+  selected=entries.slice(0,20);
+  body=[marker("RANKING",tour,stamp),"Clasificación mundial individual · Top 20",...selected.map(x=>x.pos+"|"+x.name+"|"+Math.round(x.points)+"|"+x.movement)].join("\n");
+  content=title+"\n"+body+"\n\n"+FOOTER;
+ }
+ if(content.length>1000)throw new Error(tour+": el ranking supera el límite de 1000 caracteres incluso con Top 20.");
  if(old){
   const oldReplies=replies.filter(r=>r.post_id===old.id);
   if(oldReplies.length){
