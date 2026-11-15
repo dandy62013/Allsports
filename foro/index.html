@@ -358,8 +358,16 @@ function renderBotTemplate(target,value){
   [['GOLEADORES','⚽'],['ESTADIO','🏟️']].forEach(([label,emoji])=>{const value=pick(label);if(value){const chip=document.createElement('div');chip.className='asbot-chip';const b=document.createElement('b');b.textContent=emoji+' '+label;chip.append(b,document.createTextNode(value));card.append(chip)}});
   const note=document.createElement('p');note.className='asbot-note';note.textContent=lines.find(x=>x.startsWith('El encuentro ha terminado'))||'';card.append(note);
  }else{
-  const teams=[];let current=null;
-  for(const line of lines){if(line.startsWith('EQUIPO |')){current={name:line.slice(9),rows:[]};teams.push(current)}else if(current&&/^(SISTEMA|TITULARES|SUPLENTES) \|/.test(line)){const idx=line.indexOf('|');current.rows.push([line.slice(0,idx).trim(),line.slice(idx+1).trim()])}}
+  const teams=[];let current=null,section='';const groups=['PORTEROS','DEFENSAS','CENTROCAMPISTAS','DELANTEROS','OTROS'];
+  for(const line of lines){
+   if(line.startsWith('EQUIPO |')){current={name:line.slice(9),rows:[]};teams.push(current);section='';continue}
+   if(!current)continue;
+   if(line==='TITULARES'||line==='SUPLENTES'){section=line;continue}
+   const idx=line.indexOf('|');if(idx<0)continue;
+   const label=line.slice(0,idx).trim(),value=line.slice(idx+1).trim();
+   if(label==='SISTEMA'){current.rows.push(['SISTEMA',value]);continue}
+   if(groups.includes(label)){current.rows.push([section?section+' · '+label:label,value]);}
+  }
   const grid=document.createElement('div');grid.className='asbot-lineups';
   teams.forEach(team=>{const box=document.createElement('section');box.className='asbot-lineup-team';const h=document.createElement('h6');h.textContent=team.name;box.append(h);team.rows.forEach(([label,value])=>{const p=document.createElement('p');const b=document.createElement('b');b.textContent=label+' · ';p.append(b,document.createTextNode(value||'No facilitado'));box.append(p)});grid.append(box)});
   if(!teams.length){const p=document.createElement('p');p.className='asbot-note';p.textContent=clean;grid.append(p)}
