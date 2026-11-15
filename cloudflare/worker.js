@@ -44,7 +44,7 @@ async function getJson(url) {
 }
 
 function wantsLiveData(question) {
-  return /(ahora|hoy|en directo|directo|marcador|resultado|resultados|cómo va|como va|quién va ganando|quien va ganando|quién ha ganado|quien ha ganado|quién ganó|quien gano|partido|partidos|juega|jugando|clasificación|clasificacion|tabla|próximo|proximo|calendario|horario|a qué hora|a que hora|último partido|ultimo partido|goleador|ha marcado|han marcado)/i.test(question)
+  return /(ahora|hoy|en directo|directo|marcador|resultado|resultados|cómo va|como va|quién va ganando|quien va ganando|quién ha ganado|quien ha ganado|quién ganó|quien ganó|quien gano|partido|partidos|juega|jugando|clasificación|clasificacion|tabla|próximo|proximo|calendario|horario|a qué hora|a que hora|último partido|ultimo partido|goleador|ha marcado|han marcado)/i.test(question)
     && !/(historia|histórico|historico|en \d{4}|temporada pasada|temporadas pasadas|hace años|hace décadas)/i.test(question);
 }
 
@@ -123,7 +123,7 @@ async function fetchNbaData() {
   const payload = await getJson("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=" + madridDateKey());
   const lines = (payload.events || []).map(event => formatEspnEvent(event, "NBA")).filter(Boolean);
   if (!lines.length) return "ESPN no muestra partidos de NBA para hoy.";
-  return "Fuente: ESPN. Partidos NBA del día (hora peninsular española):\\n" + lines.join("\\n");
+  return "Fuente: ESPN. Partidos NBA del día (hora peninsular española):\n" + lines.join("\n");
 }
 
 async function fetchEuroBasketballData() {
@@ -171,9 +171,9 @@ async function getLiveContext(question) {
   if (isBasketballQuestion(q) || (!isFootballQuestion(q) && /(partido|marcador|resultado|en directo|hoy|ahora)/i.test(q))) {
     tasks.push(Promise.allSettled([fetchNbaData(), fetchEuroBasketballData()]).then(results => {
       const labels = ["NBA", "Euroliga y EuroCup"];
-      return "BALONCESTO:\\n" + results.map((result, index) =>
+      return "BALONCESTO:\n" + results.map((result, index) =>
         labels[index] + ": " + (result.status === "fulfilled" ? result.value : "No se pudo consultar la fuente (" + String(result.reason?.message || result.reason) + ").")
-      ).join("\\n");
+      ).join("\n");
     }));
   }
   if (!tasks.length) return "";
