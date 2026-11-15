@@ -28,7 +28,6 @@ function matchdayNumber(e){
 
 const dailyScoreboardCache=new Map();
 async function resolveMatchday(e){
- if(matchdayNumber(e))return matchdayNumber(e);
  const date=madridDate(new Date(e.date)).replaceAll("-","");
  const key=LEAGUE+":"+date;
  if(!dailyScoreboardCache.has(key))dailyScoreboardCache.set(key,json("https://site.api.espn.com/apis/site/v2/sports/soccer/"+LEAGUE+"/scoreboard?dates="+date).catch(err=>{console.log("Jornada diaria no disponible",date,err.message);return null}));
