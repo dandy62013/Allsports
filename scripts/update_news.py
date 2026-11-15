@@ -310,6 +310,28 @@ for item in ranked:
     item['image'] = ''
     ordered.append(item)
 ordered = ordered[:24]
+
+# Recuperar la fotografía editorial de cada noticia desde la página original.
+key_by_url = {item["url"]: key for key, item in items.items()}
+pending = [
+    (item, image_jobs.get(key_by_url[item["url"]], ("", ""))[1])
+    for item in ordered if not item["image"]
+]
+if pending:
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        futures = {
+            pool.submit(fetch_article_image, item["url"], source_home): item
+            for item, source_home in pending
+        }
+        for future in as_completed(futures):
+            item = futures[future]
+            try:
+                candidate = future.result() or ""
+                if valid_image_url(candidate):
+                    item["image"] = candidate
+            except Exception as exc:
+                print(f"No se pudo obtener foto real para '{item['title'][:60]}': {exc}")
+
 payload = {
     "updatedAt": datetime.now(timezone.utc).isoformat(),
     "items": ordered,
