@@ -32,9 +32,7 @@ async function runRankings(tour){
  const sub=tour==="ATP"?"ATP":"WTA",token="[[ASTENIS:RANKING:"+tour+":";
  const old=posts.find(p=>p.subforum===sub&&(p.content||"").includes(token));
  const recent=old&&now-new Date(old.created_at).getTime()<15*86400000;
- if(recent&&/Clasificación mundial individual · Top 40/.test(old.content||"")&&(old.content||"").split("\n").filter(x=>/^\d+\|/.test(x)).length===40){
-  console.log(tour+": ranking Top 40 ya actualizado recientemente.");return;
- }
+
  const data=await json("https://site.api.espn.com/apis/site/v2/sports/tennis/"+tour.toLowerCase()+"/rankings");
  const groups=Array.isArray(data?.rankings)?data.rankings:[],rankGroup=groups.find(x=>/singles|individual/i.test(x.name||x.type||""))||groups[0],rows=rankGroup?.ranks||rankGroup?.athletes||rankGroup?.entries||data?.ranks||data?.athletes||[];
  const sorted=[...rows].sort((a,b)=>(a.current??a.rank??a.position??999)-(b.current??b.rank??b.position??999)).slice(0,40);
