@@ -114,6 +114,7 @@ section.content{padding:82px 0}.section-top{display:flex;justify-content:space-b
 .asbot-lineup-team h6{font:800 17px 'Barlow Condensed',sans-serif;color:#fff;margin:0 0 9px}
 .asbot-lineup-team p{font-size:12px;line-height:1.65;color:#d0d9df;margin:7px 0;overflow-wrap:anywhere}
 .asbot-lineup-team b{color:var(--lime);font-size:10px;letter-spacing:.8px}
+.asbot-lineup-names{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 12px}.asbot-lineup-names li{font-size:12px;line-height:1.4;color:#dce5ea;padding:5px 7px;background:#111c25;border-radius:5px;overflow-wrap:anywhere}.asbot-lineup-names li::before{content:'•';color:var(--lime);margin-right:7px}@media(max-width:420px){.asbot-lineup-names{grid-template-columns:1fr}}
 @media(max-width:600px){.asbot-lineups{grid-template-columns:1fr}.asbot-card{padding:13px}.asbot-card .asbot-team{font-size:12px}.asbot-card .asbot-score{font-size:25px}}
 
 footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-size:12px}.foot{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}.foot strong{font:800 22px 'Barlow Condensed',sans-serif;color:white}
@@ -375,6 +376,39 @@ function renderBotTemplate(target,value){
  }
  target.append(card);
 }
+function renderFootballLineupTemplate(target,value){
+ const source=String(value||'').replace(/— ALLSPORTS Bot · Datos: ESPN/g,'').replace(/\r/g,'').trim();
+ if(!/(?:ALINEACIONES(?:_LOCAL|_VISITANTE)?|ALINEACIONES OFICIALES)/i.test(source))return false;
+ const lines=source.split('\n').map(x=>x.trim()).filter(Boolean);
+ const teams=[];let current=null,section='';
+ const addNames=value=>String(value||'').split(/\s*[·,;]\s*/).map(name=>name.replace(/^\d{1,3}\s*[.)-]\s*/,'').trim()).filter(name=>name&&!/^(?:no facilitados?|no disponible)$/i.test(name));
+ for(const line of lines){
+  if(line.startsWith('EQUIPO |')){current={name:line.slice(9).trim(),names:[]};teams.push(current);section='';continue;}
+  if(!current)continue;
+  if(/^TITULARES$/i.test(line)){section='TITULARES';continue;}
+  if(/^SUPLENTES$/i.test(line)){section='SUPLENTES';continue;}
+  const idx=line.indexOf('|');if(idx<0)continue;
+  const label=line.slice(0,idx).trim().toUpperCase(),value=line.slice(idx+1).trim();
+  if(label==='TITULARES'){section='TITULARES';current.names.push(...addNames(value));continue;}
+  if(label==='SUPLENTES'){section='SUPLENTES';continue;}
+  if(['SISTEMA','FORMACIÓN','FORMACION'].includes(label))continue;
+  if(['PORTEROS','DEFENSAS','CENTROCAMPISTAS','DELANTEROS','OTROS','JUGADORES','NOMBRES'].includes(label)&&section!=='SUPLENTES')current.names.push(...addNames(value));
+ }
+ if(!teams.length)return false;
+ target.replaceChildren();
+ const card=document.createElement('section');card.className='asbot-card asbot-alineaciones';
+ const kicker=document.createElement('div');kicker.className='asbot-kicker';kicker.textContent='⚽ ALINEACIONES OFICIALES';card.append(kicker);
+ const grid=document.createElement('div');grid.className='asbot-lineups';
+ teams.forEach(team=>{
+  const box=document.createElement('section');box.className='asbot-lineup-team';
+  const heading=document.createElement('h6');heading.textContent=team.name;box.append(heading);
+  const list=document.createElement('ul');list.className='asbot-lineup-names';
+  [...new Set(team.names)].forEach(name=>{const item=document.createElement('li');item.textContent=name;list.append(item);});
+  if(!list.childNodes.length){const item=document.createElement('li');item.textContent='Nombres no facilitados';list.append(item);}
+  box.append(list);grid.append(box);
+ });
+ card.append(grid);target.append(card);return true;
+}
 function renderFootballPreviewTemplate(target,value){
  const source=String(value||'').replace(/— ALLSPORTS Bot · Datos: ESPN/g,'').replace(/\[\[AS-[^\]]+\]\]/g,'').trim();
  const normalized=source.replace(/\s+(?=(?:ENCUENTRO|FECHA Y HORA|ESTADIO|COMPETICIÓN)\s*\|)/g,'\n');
@@ -527,7 +561,7 @@ function renderForumTopics(){
   replies.slice((page-1)*FORUM_MESSAGES_PER_PAGE,page*FORUM_MESSAGES_PER_PAGE).forEach(r=>{
    const item=document.createElement('div');item.className='forum-reply';
    const replyIsBot=isAllsportsBotContent(r.content);const author=document.createElement('strong');author.textContent=replyIsBot?'Informador':(r.profiles?.username||'Aficionado ALLSPORTS');
-   const content=document.createElement('div');content.className='forum-reply-content';if(renderTennisRankingTemplate(content,r.content)){}else if(renderUniversalResultTemplate(content,r.content)){}else if(/\[\[ASMOTOR:/.test(r.content||''))renderMotorTemplate(content,r.content);else if(/\[\[ASB2:/.test(r.content||''))renderBotTemplate(content,r.content);else if(/\[\[AS-[^\]]+:PREVIA:/.test(r.content||''))renderFootballPreviewTemplate(content,r.content);else if(/\[\[AS-FEMENINO_CLUBES:/.test(r.content||''))renderForumText(content,String(r.content||'').replace(/\[\[AS-FEMENINO_CLUBES:[^\]]+\]\]/g,'').replace(/— ALLSPORTS Bot · Datos: ESPN/g,'').trim());else renderForumText(content,r.content);const replyHead=document.createElement('div');replyHead.className='forum-reply-head';replyHead.append(createForumAvatar(r.profiles?.avatar_url,author.textContent),author);const replyCount=document.createElement('span');replyCount.className='forum-user-count';replyCount.textContent=getCommunityMessageCount(r.user_id)+' mensajes en la comunidad';replyHead.append(replyCount);item.append(replyHead,content);const userSignature=(r.profiles?.signature||'').trim();if(userSignature){const signature=document.createElement('div');signature.className='forum-reply-signature';signature.textContent=userSignature;item.append(signature);}renderForumAttachments(r,item);
+   const content=document.createElement('div');content.className='forum-reply-content';if(renderTennisRankingTemplate(content,r.content)){}else if(renderFootballLineupTemplate(content,r.content)){}else if(renderUniversalResultTemplate(content,r.content)){}else if(/\[\[ASMOTOR:/.test(r.content||''))renderMotorTemplate(content,r.content);else if(/\[\[ASB2:/.test(r.content||''))renderBotTemplate(content,r.content);else if(/\[\[AS-[^\]]+:PREVIA:/.test(r.content||''))renderFootballPreviewTemplate(content,r.content);else if(/\[\[AS-FEMENINO_CLUBES:/.test(r.content||''))renderForumText(content,String(r.content||'').replace(/\[\[AS-FEMENINO_CLUBES:[^\]]+\]\]/g,'').replace(/— ALLSPORTS Bot · Datos: ESPN/g,'').trim());else renderForumText(content,r.content);const replyHead=document.createElement('div');replyHead.className='forum-reply-head';replyHead.append(createForumAvatar(r.profiles?.avatar_url,author.textContent),author);const replyCount=document.createElement('span');replyCount.className='forum-user-count';replyCount.textContent=getCommunityMessageCount(r.user_id)+' mensajes en la comunidad';replyHead.append(replyCount);item.append(replyHead,content);const userSignature=(r.profiles?.signature||'').trim();if(userSignature){const signature=document.createElement('div');signature.className='forum-reply-signature';signature.textContent=userSignature;item.append(signature);}renderForumAttachments(r,item);
    const date=document.createElement('small');date.textContent=r.created_at?new Date(r.created_at).toLocaleString('es-ES',{dateStyle:'medium',timeStyle:'short'}):'';item.append(date);
    const tools=document.createElement('div');tools.className='forum-message-tools';
    const quote=document.createElement('button');quote.type='button';quote.className='forum-text-button';quote.textContent='Citar';quote.addEventListener('click',()=>{field.value+=(field.value?'\n':'')+'> '+(r.profiles?.username||'Aficionado')+':\n'+r.content.split('\n').map(line=>'> '+line).join('\n')+'\n\n';field.focus();field.scrollIntoView({behavior:'smooth',block:'center'});});
