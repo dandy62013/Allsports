@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Build a small, attributed sports-news feed from Google News RSS."""
 import json
+import time
 import re
 import unicodedata
 from difflib import SequenceMatcher
@@ -255,11 +256,22 @@ for query, fallback in QUERIES:
     params = urllib.parse.urlencode({"q": query, "hl": "es", "gl": "ES", "ceid": "ES:es"})
     url = "https://news.google.com/rss/search?" + params
     request = urllib.request.Request(url, headers=HEADERS)
-    try:
-        with urllib.request.urlopen(request, timeout=25) as response:
-            root = ET.fromstring(response.read())
-    except Exception as exc:
-        print(f"No se pudo leer RSS para {query}: {exc}")
+    root = None
+    last_error = None
+    # Google News devuelve a veces 503 de forma temporal; reintentar antes de rendirse.
+    for attempt in range(4):
+        try:
+            with urllib.request.urlopen(request, timeout=25) as response:
+                root = ET.fromstring(response.read())
+            break
+        except Exception as exc:
+            last_error = exc
+            if attempt < 3:
+                wait = 2 ** (attempt + 1)
+                print(f"RSS temporalmente no disponible para {query}; reintento en {wait}s: {exc}")
+                time.sleep(wait)
+    if root is None:
+        print(f"No se pudo leer RSS para {query} tras 4 intentos: {last_error}")
         continue
 
     for node in root.findall("./channel/item"):
@@ -306,8 +318,9 @@ for item in ranked:
     if duplicate:
         print('Noticia repetida agrupada: ' + item['title'][:90])
         continue
-    # No publicar fotografías no verificadas: una imagen equivocada es peor que una tarjeta sin foto.
-    item['image'] = ''
+    # Conservar miniaturas editoriales válidas del RSS; solo buscar OG si falta una.
+    if not valid_image_url(item.get("image", "")):
+        item["image"] = ""
     ordered.append(item)
 ordered = ordered[:24]
 
@@ -332,11 +345,14 @@ if pending:
             except Exception as exc:
                 print(f"No se pudo obtener foto real para '{item['title'][:60]}': {exc}")
 
+if not ordered:
+    # Nunca reemplazar el feed bueno por uno vacío si Google News falla.
+    print("No se encontraron noticias; se conserva intacto el news.json anterior.")
+    raise SystemExit(0)
+
 payload = {
     "updatedAt": datetime.now(timezone.utc).isoformat(),
     "items": ordered,
 }
 Path("news.json").write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 print(f"Guardadas {len(ordered)} noticias deportivas.")
-if not ordered:
-    raise SystemExit("No se encontraron noticias; no se debe publicar un feed vacío.")
