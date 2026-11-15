@@ -26,6 +26,19 @@ function matchdayNumber(e){
  return null;
 }
 
+const dailyScoreboardCache=new Map();
+async function resolveMatchday(e){
+ if(matchdayNumber(e))return matchdayNumber(e);
+ const date=madridDate(new Date(e.date)).replaceAll("-","");
+ const key=LEAGUE+":"+date;
+ if(!dailyScoreboardCache.has(key))dailyScoreboardCache.set(key,json("https://site.api.espn.com/apis/site/v2/sports/soccer/"+LEAGUE+"/scoreboard?dates="+date).catch(err=>{console.log("Jornada diaria no disponible",date,err.message);return null}));
+ const board=await dailyScoreboardCache.get(key),dailyEvent=board?.events?.find(x=>String(x.id)===String(e.id));
+ if(dailyEvent?.week!=null)e.week=dailyEvent.week;
+ if(dailyEvent?.competitions?.[0]?.week!=null)e.competitions[0].week=dailyEvent.competitions[0].week;
+ e.scoreboardWeek=board?.week||e.scoreboardWeek||null;
+ return matchdayNumber(e);
+}
+
 const now=Date.now(), from=new Date(now-30*86400000), to=new Date(now+9*86400000);
 const tomorrow=new Date(Date.parse(madridDate(new Date(now))+"T12:00:00Z")+86400000).toISOString().slice(0,10);
 const monthKeys=new Set();for(let d=new Date(from);d<=to;d.setUTCDate(d.getUTCDate()+1))monthKeys.add(dateKey(d).slice(0,6));
@@ -60,6 +73,7 @@ return[format(hn,h),format(vn,v)].join("\n")}
 function goals(s){const a=s.keyEvents||s.scoringPlays||[];return [...new Set(a.map(x=>x.text||x.shortText||x.description||"").filter(x=>/gol|goal|penalt/i.test(x)).map(x=>x.replace(/\s+/g," ").trim()))].slice(0,12)}
 let previews=0,lineups=0,results=0;
 for(const e of events){const t=teams(e);if(!t)continue;const kick=new Date(e.date).getTime();if(!Number.isFinite(kick))continue;
+await resolveMatchday(e);
 let post=findPost(e.id,"La Liga");if(post)await ensureMatchdayTitle(post,e,t);const matchDay=madridDate(new Date(kick)),today=madridDate(new Date(now));const missingTodayPreview=matchDay===today&&kick>now&&kick-now<=3*3600000;const previewDue=(matchDay===tomorrow&&kick>now)||missingTodayPreview;if(previewDue&&!post){const id=await openThread(e,t,"La Liga");if(id){previews++;post=posts.find(p=>p.id===id)}}
 if(!post)continue;
 const mirrorDue=previewDue||(matchDay===today&&now-kick<=18*3600000);const targets=[post];
