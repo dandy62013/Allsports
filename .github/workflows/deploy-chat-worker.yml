@@ -1,11 +1,6 @@
 name: Deploy ALLSPORTS Chatbot
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - "cloudflare/**"
-      - ".github/workflows/deploy-chat-worker.yml"
 permissions:
   contents: read
 jobs:
