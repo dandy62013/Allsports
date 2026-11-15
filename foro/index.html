@@ -400,6 +400,10 @@ function forumDisplayTitle(content){
  if(dateLabel&&!titleDate)return (first+' | '+dateLabel).slice(0,150);
  return first.slice(0,150)||'Nuevo tema';
 }
+function isTennisRankingPost(post){
+ const content=String(post?.content||'');
+ return post?.sport==='Tenis'&&['ATP','WTA'].includes(post?.subforum)&&(/RANKING/i.test(content.slice(0,180))||/\\[\\[ASTENIS:RANKING:(ATP|WTA):/.test(content));
+}
 function renderTennisRankingTemplate(target,value){
  const source=String(value||'').replace(/— ALLSPORTS Bot · Datos: ESPN/g,'').replace(/\r/g,'').trim();
  if(!/\[\[ASTENIS:RANKING:(ATP|WTA):/.test(source))return false;
