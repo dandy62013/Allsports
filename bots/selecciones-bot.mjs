@@ -12,8 +12,8 @@ const auth={Authorization:`Bearer ${session.access_token}`};
 await json(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${userId}`,{method:"PATCH",headers:{...auth,Prefer:"return=minimal"},body:JSON.stringify({username:"Informador"})}).catch(e=>console.log("Aviso de perfil:",e.message));
 const since=new Date(Date.now()-30*86400000).toISOString();
 const [pRows,rRows]=await Promise.all([
- json(\`\${SUPABASE_URL}/rest/v1/posts?select=id,content,link_url,created_at&user_id=eq.\${userId}&created_at=gte.\${encodeURIComponent(since)}&order=created_at.desc&limit=500\`,{headers:auth}),
- json(\`\${SUPABASE_URL}/rest/v1/replies?select=id,post_id,content,created_at&user_id=eq.\${userId}&created_at=gte.\${encodeURIComponent(since)}&order=created_at.desc&limit=1000\`,{headers:auth})
+ json(`${SUPABASE_URL}/rest/v1/posts?select=id,content,link_url,created_at&user_id=eq.${userId}&created_at=gte.${encodeURIComponent(since)}&order=created_at.desc&limit=500`,{headers:auth}),
+ json(`${SUPABASE_URL}/rest/v1/replies?select=id,post_id,content,created_at&user_id=eq.${userId}&created_at=gte.${encodeURIComponent(since)}&order=created_at.desc&limit=1000`,{headers:auth})
 ]);
 const posts=Array.isArray(pRows)?pRows:[], replies=Array.isArray(rRows)?rRows:[];
 const madridDate=d=>new Intl.DateTimeFormat("en-CA",{timeZone:ZONE,year:"numeric",month:"2-digit",day:"2-digit"}).format(d);
@@ -33,13 +33,13 @@ async function createPreview(e,t){const kick=new Date(e.date),venue=t.c?.venue?.
 const body=[marker(e.id),"PREVIA DE LA SELECCIÓN",`ENCUENTRO | ${t.sn} vs ${t.on}`,`FECHA Y HORA | ${madridTime(kick)} (hora peninsular)`,`ESTADIO | ${venue}`,`COMPETICIÓN | ${competition}`,"",`CONTEXTO | España afronta un nuevo compromiso internacional ante ${t.on}. Abrimos el hilo para comentar el partido y compartir vuestras expectativas.`,"¿Cómo veis a España? ¡Os leemos!","",FOOTER].join("\n");
 const result=await json(`${SUPABASE_URL}/rest/v1/posts`,{method:"POST",headers:{...auth,Prefer:"return=representation"},body:JSON.stringify({user_id:userId,sport:"Fútbol",subforum:"Selecciones",content:`🇪🇸 ESPAÑA | ${t.sn} vs ${t.on}\n${body}`,link_url:`https://www.espn.com/soccer/match/_/gameId/${e.id}`})});
 const row=Array.isArray(result)?result[0]:result;if(row?.id){posts.unshift(row);console.log("Previa creada:",t.sn,"vs",t.on)}return row?.id||null}
-const replyMark=(kind,id)=>\`[[ASSEL:\${kind}:\${id}]]\`;
+const replyMark=(kind,id)=>`[[ASSEL:${kind}:${id}]]`;
 function hasReply(postId,kind,id){return replies.some(r=>r.post_id===postId&&(r.content||"").includes(replyMark(kind,id)))}
 async function updateThread(postId,kind,id,content){
  if(!postId||hasReply(postId,kind,id))return false;
  const marker=replyMark(kind,id),suffix="\n\n"+FOOTER,maxContent=1000-marker.length-suffix.length-1;
  let safe=String(content);if(safe.length>maxContent){safe=safe.slice(0,maxContent-1).trimEnd()+"…";console.log("Aviso: alineación recortada al límite de 1000 caracteres.",id)}
- await json(\`\${SUPABASE_URL}/rest/v1/replies\`,{method:"POST",headers:{...auth,Prefer:"return=minimal"},body:JSON.stringify({post_id:postId,user_id:userId,content:[marker,safe,"",FOOTER].join("\n")})});
+ await json(`${SUPABASE_URL}/rest/v1/replies`,{method:"POST",headers:{...auth,Prefer:"return=minimal"},body:JSON.stringify({post_id:postId,user_id:userId,content:[marker,safe,"",FOOTER].join("\n")})});
  replies.unshift({post_id:postId,content:marker+safe});console.log("Alineaciones publicadas:",id);return true;
 }
 function sideRoster(side){
@@ -54,8 +54,8 @@ function getLineups(s,homeId,awayId,homeName,awayName){
  if(Array.isArray(root)){for(const x of root){const id=String(x.team?.id||x.teamId||x.id||"");if(id===String(homeId))hr=x;if(id===String(awayId))vr=x}}
  else{hr=root.home||root.Home||root.homeTeam;vr=root.away||root.Away||root.awayTeam;if(!hr||!vr)for(const x of Object.values(root)){if(!x||typeof x!=="object")continue;const id=String(x.team?.id||x.teamId||x.id||"");if(id===String(homeId))hr=x;if(id===String(awayId))vr=x}}
  const h=sideRoster(hr),v=sideRoster(vr);if(!h||!v||h.players.filter(x=>x.starter).length<10||v.players.filter(x=>x.starter).length<10)return null;
- const format=(name,x)=>[\`EQUIPO | \${name}\`,\`SISTEMA | \${x.formation||"No facilitado"}\`,"TITULARES",rosterLines(x.players.filter(p=>p.starter))||"No facilitados","SUPLENTES",rosterLines(x.players.filter(p=>!p.starter))||"No facilitados"].join("\n");
- return["ALINEACIONES OFICIALES",\`PARTIDO | \${homeName} vs \${awayName}\`,format(homeName,h),format(awayName,v),"Fuente: ESPN"].join("\n\n");
+ const format=(name,x)=>[`EQUIPO | ${name}`,`SISTEMA | ${x.formation||"No facilitado"}`,"TITULARES",rosterLines(x.players.filter(p=>p.starter))||"No facilitados","SUPLENTES",rosterLines(x.players.filter(p=>!p.starter))||"No facilitados"].join("\n");
+ return["ALINEACIONES OFICIALES",`PARTIDO | ${homeName} vs ${awayName}`,format(homeName,h),format(awayName,v),"Fuente: ESPN"].join("\n\n");
 }
 let created=0,checked=0,lineups=0;
 for(const e of events){
@@ -66,10 +66,10 @@ for(const e of events){
  if(dueTomorrow||dueSoon){checked++;if(!post&&await createPreview(e,t)){created++;post=findPost(e)}}
  const state=e.status?.type?.state,checkXI=(state==="pre"||state==="in")&&kick>=now-15*60000&&kick-now<=3*3600000;
  if(!post||!checkXI||hasReply(post.id,"ALINEACIONES",e.id))continue;
- const summary=await json(\`https://site.api.espn.com/apis/site/v2/sports/soccer/\${e.allsportsLeague}/summary?event=\${e.id}\`).catch(err=>{console.log("Resumen no disponible",e.id,err.message);return null});
+ const summary=await json(`https://site.api.espn.com/apis/site/v2/sports/soccer/${e.allsportsLeague}/summary?event=${e.id}`).catch(err=>{console.log("Resumen no disponible",e.id,err.message);return null});
  if(!summary)continue;
  const competitors=t.c.competitors||[],home=competitors.find(x=>x.homeAway==="home"),away=competitors.find(x=>x.homeAway==="away");
  const lineup=getLineups(summary,home?.team?.id,away?.team?.id,home?.team?.displayName||"Local",away?.team?.displayName||"Visitante");
  if(lineup&&await updateThread(post.id,"ALINEACIONES",e.id,lineup))lineups++;
 }
-console.log(\`Selecciones España: \${events.length} eventos revisados; \${checked} previas pendientes; \${created} nuevas previas; \${lineups} alineaciones oficiales.\`);
+console.log(`Selecciones España: ${events.length} eventos revisados; ${checked} previas pendientes; ${created} nuevas previas; ${lineups} alineaciones oficiales.`);
