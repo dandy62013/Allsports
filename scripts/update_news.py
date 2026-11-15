@@ -217,7 +217,7 @@ def category_for(title, fallback):
         ("Motor", ("fórmula 1", "formula 1", "f1", "motogp", "moto gp", "rally", "gran premio")),
         ("Baloncesto", ("baloncesto", "nba", "euroliga", "acb", "basket")),
         ("Tenis", ("tenis", "atp", "wta", "alcaraz", "sinner", "swiatek")),
-        ("Fútbol", ("fútbol", "futbol", "laliga", "champions", "premier league", "copa del rey", "selección española")),
+        ("Fútbol", ("fútbol", "futbol", "laliga", "champions", "premier league", "copa del rey", "selección española", "ud logroñés", "malaga cf", "málaga cf", "real murcia", "real zaragoza", "celta", "real madrid", "barcelona", "atletico de madrid", "atlético de madrid", "sevilla", "valencia cf", "villarreal", "betis", "osasuna", "rayo vallecano", "espanyol", "athletic club", "alaves", "alavés", "elche cf", "getafe", "levante ud", "deportivo", "racing de santander", "girona", "oviedo", "arenas club", "jaén")),
     ]
     for category, words in rules:
         if any(word in t for word in words):
@@ -263,6 +263,13 @@ for query, fallback in QUERIES:
             continue
         key = link
         if key in items:
+            # The broad "deportes" query runs first. If the same article appears
+            # later in a specific sport query, keep that more precise category.
+            specific = category_for(title, fallback)
+            if fallback.lower() != "deportes" and specific != "Otros deportes":
+                items[key]["category"] = specific
+                # Discard the broad-query thumbnail; it may belong to another sport.
+                items[key]["image"] = ""
             continue
         image_jobs[key] = (link, source_node.attrib.get("url", "") if source_node is not None else "")
         items[key] = {
@@ -296,6 +303,11 @@ if pending:
                 item["image"] = future.result() or ""
             except Exception as exc:
                 print(f"No se pudo obtener imagen para '{item['title'][:60]}': {exc}")
+
+# Correct a known broken/grey thumbnail with a verified tennis photo from EFE.
+for item in ordered:
+    if "Svitolina arrolla a Noskova" in item["title"]:
+        item["image"] = "https://i0.wp.com/efe.com/wp-content/uploads/2026/11/Svitolina_tenis_Finales_WTA.webp?fit=900%2C600&ssl=1"
 
 payload = {
     "updatedAt": datetime.now(timezone.utc).isoformat(),
