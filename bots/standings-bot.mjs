@@ -39,7 +39,7 @@ const row=Array.isArray(result)?result[0]:result;if(row?.id){posts.unshift(row);
 let published=0;
 for(const league of LEAGUES){
  const calendars=await Promise.all(monthKeys.map(async month=>({month,data:await json(`https://site.api.espn.com/apis/site/v2/sports/soccer/${league.slug}/scoreboard?dates=${month}`).catch(e=>{console.log("Calendario no disponible",league.slug,month,e.message);return null})})));
- const all=new Map();for(const item of calendars)for(const e of (Array.isArray(item.data?.events)?item.data.events:[]))all.set(String(e.id),e);
+ const all=new Map();for(const item of calendars)for(const e of (Array.isArray(item.data?.events)?item.data.events:[]))all.set(String(e.id),{...e,scoreboardWeek:item.data?.week||null});
  const groups=new Map();for(const e of all.values()){const w=weekInfo(e);if(!w)continue;const key=w.number;if(!groups.has(key))groups.set(key,{week:w,events:[]});groups.get(key).events.push(e)}
  const completed=[...groups.values()].filter(g=>g.events.length>0&&g.events.every(isFinal)&&g.events.every(e=>new Date(e.date).getTime()<=now)).map(g=>({...g,last:Math.max(...g.events.map(e=>new Date(e.date).getTime()))})).filter(g=>now-g.last<=48*3600000).sort((a,b)=>b.last-a.last);
  console.log(league.name+":",all.size,"partidos;",groups.size,"jornadas identificadas;",completed.length,"jornadas recién finalizadas.");
