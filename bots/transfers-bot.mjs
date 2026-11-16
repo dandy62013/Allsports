@@ -29,7 +29,7 @@ async function getTeamThread(teamName){
  const keys=new Set((rr||[]).flatMap(x=>[...String(x.content||"").matchAll(/\[\[AS-TRANSFER:([a-f0-9]{16})\]\]/g)].map(m=>m[1])));
  return {id:p.id,keys};
 }
-\nconst posts=await api(U+"/rest/v1/posts?select=id,content&user_id=eq."+uid+"&sport=eq.Mercado%20de%20fichajes&subforum=eq.General&limit=100",{headers:A});
+const posts=await api(U+"/rest/v1/posts?select=id,content&user_id=eq."+uid+"&sport=eq.Mercado%20de%20fichajes&subforum=eq.General&limit=100",{headers:A});
 let thread=(posts||[]).find(x=>(x.content||"").includes("[[AS-TRANSFER:MAIN]]"));
 if(!thread){const content="⚽ MERCADO DE FICHAJES | Primera División\n[[AS-TRANSFER:MAIN]]\n\nFichajes, salidas, cesiones y renovaciones confirmados oficialmente por los clubes de Primera División. Sin rumores.\n\n— ALLSPORTS Informador";const made=await api(U+"/rest/v1/posts",{method:"POST",headers:{...A,Prefer:"return=representation"},body:JSON.stringify({user_id:uid,sport:"Mercado de fichajes",subforum:"General",content})});thread=made[0];}
 if(!thread?.id)throw Error("No se encontró el hilo permanente.");
