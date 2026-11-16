@@ -26,7 +26,7 @@ async function getTeamThread(teamName){
  }
  if(!p?.id)throw Error("No se pudo crear/obtener hilo de "+teamName);
  const rr=await api(U+"/rest/v1/replies?select=content&post_id=eq."+p.id+"&limit=1000",{headers:A});
- const keys=new Set((rr||[]).flatMap(x=>[...String(x.content||"").matchAll(/\\[\\[AS-TRANSFER:([a-f0-9]{16})\\]\\]/g)].map(m=>m[1])));
+ const keys=new Set((rr||[]).flatMap(x=>[...String(x.content||"").matchAll(/\[\[AS-TRANSFER:([a-f0-9]{16})\]\]/g)].map(m=>m[1])));
  return {id:p.id,keys};
 }
 \nconst posts=await api(U+"/rest/v1/posts?select=id,content&user_id=eq."+uid+"&sport=eq.Mercado%20de%20fichajes&subforum=eq.General&limit=100",{headers:A});
