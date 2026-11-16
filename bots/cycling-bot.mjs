@@ -88,7 +88,7 @@ function formatReply(r,type,stage,rows,stageDate){
 async function addReply(r,postId,type,stage,rows,stageDate){
  const mark=markerReply(r,type,stage);if(hasReply(postId,mark))return false;
  const content=formatReply(r,type,stage,rows,stageDate);
- if(content.length>1000){console.log("Aviso: respuesta de ciclismo supera el límite de 1000 caracteres; se omite:",r.name,type,stage);return false}
+ if(content.length>10000){console.log("Aviso: respuesta de ciclismo supera el límite de 10000 caracteres; se omite:",r.name,type,stage);return false}
  await request(SUPABASE_URL+"/rest/v1/replies",{method:"POST",headers:{...auth,Prefer:"return=minimal"},body:JSON.stringify({post_id:postId,user_id:userId,content})});
  replies.unshift({post_id:postId,content});console.log("Clasificación publicada:",r.name,type,"etapa",stage);return true;
 }
