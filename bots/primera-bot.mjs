@@ -139,11 +139,11 @@ function goals(s){const a=s.keyEvents||s.scoringPlays||[];return [...new Set(a.m
 let previews=0,lineups=0,results=0;
 for(const e of events){const t=teams(e);if(!t)continue;const kick=new Date(e.date).getTime();if(!Number.isFinite(kick))continue;
 await resolveMatchday(e);
-let post=findPost(e.id,"La Liga");if(post)await ensureMatchdayTitle(post,e,t);const matchDay=madridDate(new Date(kick)),today=madridDate(new Date(now));const missingTodayPreview=matchDay===today&&kick>now&&kick-now<=3*3600000;const previewDue=(matchDay===tomorrow&&kick>now)||missingTodayPreview;if(previewDue&&!post){const id=await openThread(e,t,"La Liga");if(id){previews++;post=posts.find(p=>p.id===id)}}
+let post=findPost(e.id,"La Liga");if(post)await ensureMatchdayTitle(post,e,t);const matchDay=madridDate(new Date(kick)),today=madridDate(new Date(now));const previewDue=(matchDay===tomorrow&&kick>now)||(matchDay===today&&kick>=now-2*3600000&&kick-now<=24*3600000);if(previewDue&&!post){const id=await openThread(e,t,"La Liga");if(id){previews++;post=posts.find(p=>p.id===id)}}
 if(!post)continue;
-const mirrorDue=previewDue||(matchDay===today&&now-kick<=18*3600000);const targets=[post];
+const mirrorDue=previewDue||(kick<=now&&now-kick<=8*3600000);const targets=[post];
 for(const team of [t.h.team,t.v.team]){const subforum=clubSubforum(team);if(!subforum){console.log("Aviso: no se reconoce el subforo del equipo",team?.displayName||team?.name||"");continue;}let clubPost=findPost(e.id,subforum);if(!clubPost&&mirrorDue){const id=await openThread(e,t,subforum);if(id)clubPost=posts.find(p=>p.id===id)}if(clubPost){await ensureMatchdayTitle(clubPost,e,t);targets.push(clubPost)}}
-const state=e.status?.type?.state,checkXI=(state==="pre"||state==="in")&&kick>=now-15*60*1000&&kick-now<=3*3600000,checkFinal=state==="post"&&now-kick<=18*3600000;if(!checkXI&&!checkFinal)continue;
+const state=e.status?.type?.state,checkXI=kick>=now-8*3600000&&kick-now<=3*3600000,checkFinal=state==="post"&&kick<=now&&now-kick<=72*3600000;if(!checkXI&&!checkFinal)continue;
 const summary=await json(`https://site.api.espn.com/apis/site/v2/sports/soccer/${LEAGUE}/summary?event=${e.id}`).catch(err=>{console.log("Resumen no disponible",e.id,err.message);return null});if(!summary)continue;
 if(checkXI){const xi=getLineups(summary,t.h.team?.id,t.v.team?.id,t.hn,t.vn);if(xi)for(const target of targets)if(await updateThread(target.id,"ALINEACIONES",e.id,["ALINEACIONES OFICIALES",`PARTIDO | ${t.hn} vs ${t.vn}`,xi,"Fuente: ESPN"].join("\n\n")))lineups++}
 if(checkFinal){const score=[`MARCADOR | ${t.hn} | ${t.h.score??"—"} | ${t.v.score??"—"} | ${t.vn}`,`GOLEADORES | ${goals(summary).join(" · ")||"Detalle no disponible en la fuente"}`,`ESTADIO | ${t.c?.venue?.fullName||"No facilitado"}`,"El encuentro ha terminado. ¿Qué valoración hacéis del partido?"];for(const target of targets)if(await updateThread(target.id,"RESULTADO",e.id,["RESULTADO FINAL",...score].join("\n")))results++}
