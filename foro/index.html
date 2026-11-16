@@ -32,6 +32,7 @@ section.content{padding:82px 0}.section-top{display:flex;justify-content:space-b
 .forum-heading{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:15px;margin-bottom:16px}
 .forum-heading h3{font-size:32px;margin:0}
 .forum-heading p{font-size:12px;color:var(--muted);margin:5px 0 0}
+.forum-search{display:flex;align-items:center;gap:10px;margin:0 0 17px;padding:0 13px;background:#090f15;border:1px solid #35414c;border-radius:3px;color:var(--lime)}.forum-search:focus-within{border-color:var(--lime)}.forum-search>span{font-size:23px;line-height:1}.forum-search input{width:100%;min-width:0;padding:13px 0;background:transparent;border:0;outline:0;color:#fff;font:inherit;font-size:13px}.forum-search input::placeholder{color:#82909b}.forum-search button{border:0;background:transparent;color:#aeb9c2;font-size:22px;cursor:pointer;padding:5px 8px}.forum-search button:hover{color:var(--lime)}
 .forum-compose{background:#0b1117;border:1px solid var(--line);padding:15px;margin-bottom:18px}
 .forum-compose textarea,.forum-compose select{width:100%;background:#090f15;border:1px solid #35414c;color:white;padding:11px;margin-bottom:9px}
 .forum-compose textarea{min-height:85px;resize:vertical}
@@ -199,6 +200,7 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
    <aside class="forum-categories"><h3>Todos los deportes</h3><div id="forumCategoryList"></div></aside>
    <section class="forum-main">
     <div class="forum-heading"><div><h3 id="forumCurrentTitle">Todos los debates</h3><p id="forumCurrentDescription">Explora las conversaciones de la comunidad.</p></div></div>
+    <div class="forum-search"><span aria-hidden="true">⌕</span><input id="forumSearch" type="search" placeholder="Buscar en todos los hilos y mensajes…" aria-label="Buscar en todos los hilos y mensajes"><button id="forumSearchClear" type="button" aria-label="Borrar búsqueda">×</button></div>
     <div class="forum-compose">
      <h3>Crear un nuevo tema</h3>
      <textarea id="forumMessage" maxlength="1000" placeholder="¿Qué quieres debatir?"></textarea>
@@ -314,7 +316,10 @@ function selectForum(sport,subforum){
  renderForumTopics();
 }
 const forumReplyPages={};
-let activeThreadId=null;
+let activeThreadId=null;let forumSearchQuery='';
+const forumSearchInput=document.getElementById('forumSearch');
+forumSearchInput.addEventListener('input',()=>{forumSearchQuery=forumSearchInput.value;activeThreadId=null;renderForumTopics();});
+document.getElementById('forumSearchClear').addEventListener('click',()=>{forumSearchInput.value='';forumSearchQuery='';activeThreadId=null;renderForumTopics();forumSearchInput.focus();});
 const FORUM_MESSAGES_PER_PAGE=20;
 function renderBotTemplate(target,value){
  const source=String(value||''); 
@@ -597,9 +602,10 @@ function getCommunityMessageCount(userId){return data.filter(p=>p.user_id===user
 function getBotBody(content){const lines=String(content||'').split('\n');const title=(lines.shift()||'').trim();if((lines[0]||'').trim()===title)lines.shift();return lines.join('\n').replace('\n\n— ALLSPORTS Bot · Datos: ESPN','').trim();}
 function renderForumTopics(){
  forumTopics.replaceChildren();
- const chosen=data.filter(x=>(forumSport==='Todos'||x.sport===forumSport||(forumSport==='Mundial de fútbol 2030'&&x.sport==='Mundial'))&&(forumSubforum==='Todos'||x.subforum===forumSubforum));
+ const q=forumSearchQuery.trim().toLocaleLowerCase('es');
+ const chosen=data.filter(x=>{if(q){const replies=forumReplies.filter(r=>r.post_id===x.id).map(r=>r.content||'').join(' ');const haystack=[forumDisplayTitle(x.content),x.content,x.sport,x.subforum,x.profiles?.username,replies].join(' ').toLocaleLowerCase('es');return haystack.includes(q);}return (forumSport==='Todos'||x.sport===forumSport||(forumSport==='Mundial de fútbol 2030'&&x.sport==='Mundial'))&&(forumSubforum==='Todos'||x.subforum===forumSubforum);});
  if(!activeThreadId){
-  if(!chosen.length){const p=document.createElement('p');p.className='empty';p.textContent='Todavía no hay temas en este subforo. ¡Puedes abrir el primero!';forumTopics.append(p);return;}
+  if(!chosen.length){const p=document.createElement('p');p.className='empty';p.textContent=forumSearchQuery?'No se han encontrado hilos ni mensajes con «'+forumSearchQuery+'».':'Todavía no hay temas en este subforo. ¡Puedes abrir el primero!';forumTopics.append(p);return;}
   chosen.forEach(x=>{const row=document.createElement('article');row.className='forum-topic-row';const isBot=isAllsportsBotContent(x.content);const username=isBot?'Informador':(x.profiles?.username||'Aficionado ALLSPORTS');row.append(createForumAvatar(x.profiles?.avatar_url,username));const main=document.createElement('div');main.className='forum-topic-main';const open=document.createElement('button');open.type='button';open.className='forum-topic-open';open.textContent=forumDisplayTitle(x.content);open.addEventListener('click',()=>{activeThreadId=x.id;renderForumTopics();window.scrollTo({top:0,behavior:'smooth'});});const meta=document.createElement('div');meta.className='forum-topic-meta';meta.textContent=(x.sport||'')+' · '+(x.subforum||'General')+' · '+username+' · '+getCommunityMessageCount(x.user_id)+' mensajes en la comunidad · '+(x.created_at?new Date(x.created_at).toLocaleString('es-ES',{dateStyle:'medium',timeStyle:'short'}):'Fecha no disponible');main.append(open,meta);row.append(main);const count=document.createElement('span');count.className='forum-topic-count';const n=forumReplies.filter(r=>r.post_id===x.id).length;count.textContent=n+' '+(n===1?'respuesta':'respuestas');row.append(count);if(currentUser&&(currentUser.id===x.user_id||isForumAdmin)){const remove=document.createElement('button');remove.type='button';remove.className='forum-text-button';remove.textContent='Borrar';remove.setAttribute('aria-label','Borrar hilo');remove.addEventListener('click',()=>deleteForumPost(x));row.append(remove);}forumTopics.append(row);});return;
  }
  const selectedPost=chosen.find(x=>x.id===activeThreadId);if(!selectedPost){activeThreadId=null;renderForumTopics();return;}
