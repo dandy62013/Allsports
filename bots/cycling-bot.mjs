@@ -131,4 +131,4 @@ async function runRace(r){
  else console.log(r.name+": general aún no confirmada.");
 }
 for(const race of RACES){try{await runRace(race)}catch(e){console.log("Error en "+race.name+":",e.message)}}
-text("Ciclismo: revisión terminada.");
+console.log("Ciclismo: revisión terminada.");
