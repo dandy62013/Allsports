@@ -12,13 +12,30 @@ const decode=x=>String(x||"").replace(/&amp;/g,"&").replace(/&quot;/g,'"').repla
 const get=(x,n)=>{const m=x.match(new RegExp("<"+n+"[^>]*>([\\s\\S]*?)</"+n+">","i"));return m?decode(m[1].replace(/^<!\[CDATA\[|\]\]>$/g,"").trim()):""};
 const relevant=x=>/fichaj|incorpora|firma|contrata|renueva|renovaci[oó]n|cesi[oó]n|traspas|rescind|salida|acuerdo.*jugador/i.test(x);
 const hash=x=>{let h=2166136261;for(const c of x){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return(h>>>0).toString(16).padStart(8,"0")+(Math.imul(h^0x45d9f3b,0x27d4eb2d)>>>0).toString(16).padStart(8,"0")};
-const posts=await api(U+"/rest/v1/posts?select=id,content&user_id=eq."+uid+"&sport=eq.Mercado%20de%20fichajes&subforum=eq.General&limit=100",{headers:A});
+const teamSubforums=[
+["Athletic Club","Athletic Club"],["Atlético de Madrid","Atlético de Madrid"],["Osasuna","CA Osasuna"],["Celta","Celta"],["Alavés","Deportivo Alavés"],["Elche","Elche CF"],["Barcelona","FC Barcelona"],["Getafe","Getafe CF"],["Levante","Levante UD"],["Málaga","Málaga CF"],["Racing","Racing de Santander"],["Rayo","Rayo Vallecano"],["Deportivo","RC Deportivo"],["Espanyol","RCD Espanyol"],["Betis","Real Betis"],["Real Madrid","Real Madrid"],["Real Sociedad","Real Sociedad"],["Sevilla","Sevilla FC"],["Valencia","Valencia CF"],["Villarreal","Villarreal CF"]
+];
+async function getTeamThread(teamName){
+ const rows=await api(U+"/rest/v1/posts?select=id,content&user_id=eq."+uid+"&sport=eq.Fútbol&subforum=eq."+encodeURIComponent(teamName)+"&order=created_at.desc&limit=100",{headers:A});
+ let p=(rows||[]).find(x=>(x.content||"").includes("[[AS-TEAM-TRANSFER:"+teamName.toLowerCase().replace(/[^a-z0-9]+/g,"-")+"]]"));
+ if(!p){
+  const marker="[[AS-TEAM-TRANSFER:"+teamName.toLowerCase().replace(/[^a-z0-9]+/g,"-")+"]]";
+  const content="🔁 MERCADO DE FICHAJES | "+teamName+"\\n"+marker+"\\n\\nFichajes, salidas, cesiones y renovaciones oficiales de "+teamName+".\\n\\n— ALLSPORTS Informador";
+  const made=await api(U+"/rest/v1/posts",{method:"POST",headers:{...A,Prefer:"return=representation"},body:JSON.stringify({user_id:uid,sport:"Fútbol",subforum:teamName,content})});
+  p=made[0];
+ }
+ if(!p?.id)throw Error("No se pudo crear/obtener hilo de "+teamName);
+ const rr=await api(U+"/rest/v1/replies?select=content&post_id=eq."+p.id+"&limit=1000",{headers:A});
+ const keys=new Set((rr||[]).flatMap(x=>[...String(x.content||"").matchAll(/\\[\\[AS-TRANSFER:([a-f0-9]{16})\\]\\]/g)].map(m=>m[1])));
+ return {id:p.id,keys};
+}
+\nconst posts=await api(U+"/rest/v1/posts?select=id,content&user_id=eq."+uid+"&sport=eq.Mercado%20de%20fichajes&subforum=eq.General&limit=100",{headers:A});
 let thread=(posts||[]).find(x=>(x.content||"").includes("[[AS-TRANSFER:MAIN]]"));
 if(!thread){const content="⚽ MERCADO DE FICHAJES | Primera División\n[[AS-TRANSFER:MAIN]]\n\nFichajes, salidas, cesiones y renovaciones confirmados oficialmente por los clubes de Primera División. Sin rumores.\n\n— ALLSPORTS Informador";const made=await api(U+"/rest/v1/posts",{method:"POST",headers:{...A,Prefer:"return=representation"},body:JSON.stringify({user_id:uid,sport:"Mercado de fichajes",subforum:"General",content})});thread=made[0];}
 if(!thread?.id)throw Error("No se encontró el hilo permanente.");
 const replies=await api(U+"/rest/v1/replies?select=content&post_id=eq."+thread.id+"&limit=1000",{headers:A});
 const seen=new Set((replies||[]).flatMap(x=>[...String(x.content||"").matchAll(/\[\[AS-TRANSFER:([a-f0-9]{16})\]\]/g)].map(m=>m[1])));
-let added=0;
+let added=0,teamAdded=0;
 for(const [club,domain] of clubs){
  const q='site:'+domain+' (fichaje OR incorpora OR renueva OR cesión OR traspaso OR firma OR salida) "'+club+'"';
  const url="https://news.google.com/rss/search?q="+encodeURIComponent(q)+"&hl=es&gl=ES&ceid=ES:es";
@@ -30,7 +47,16 @@ for(const [club,domain] of clubs){
   const when=new Date(date),dateText=Number.isNaN(when.getTime())?"Fecha no indicada":when.toLocaleString("es-ES",{timeZone:"Europe/Madrid",dateStyle:"medium",timeStyle:"short"});
   const text=["🟢 "+club+" | "+title,"FECHA | "+dateText,"FUENTE OFICIAL | "+link,"","— ALLSPORTS Informador","[[AS-TRANSFER:"+id+"]]"].join("\n").slice(0,990);
   await api(U+"/rest/v1/replies",{method:"POST",headers:{...A,Prefer:"return=minimal"},body:JSON.stringify({post_id:thread.id,user_id:uid,content:text})});
-  seen.add(id);added++;console.log("Publicado:",club,title);
+  seen.add(id);added++;
+  const teamName=teamSubforums.find(x=>x[0]===club)?.[1];
+  if(teamName){
+   const teamThread=await getTeamThread(teamName);
+   if(!teamThread.keys.has(id)){
+    await api(U+"/rest/v1/replies",{method:"POST",headers:{...A,Prefer:"return=minimal"},body:JSON.stringify({post_id:teamThread.id,user_id:uid,content:text})});
+    teamThread.keys.add(id);teamAdded++;
+   }
+  }
+  console.log("Publicado:",club,title,"(mercado general y foro del equipo)");
  }
 }
-console.log("Mercado de fichajes: "+clubs.length+" clubes comprobados; "+added+" noticias nuevas.");
+console.log("Mercado de fichajes: "+clubs.length+" clubes comprobados; "+added+" noticias nuevas en el hilo general; "+teamAdded+" réplicas en hilos de equipo.");
