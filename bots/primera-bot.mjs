@@ -134,7 +134,7 @@ if(Array.isArray(root)){for(const x of root){const id=String(x.team?.id||x.teamI
 else{hr=root.home||root.Home||root.homeTeam;vr=root.away||root.Away||root.awayTeam;if(!hr||!vr)for(const x of Object.values(root)){if(!x||typeof x!=="object")continue;const id=String(x.team?.id||x.teamId||x.id||"");if(id===String(hid))hr=x;if(id===String(vid))vr=x}}
 const h=sideRoster(hr),v=sideRoster(vr);if(!h||!v||h.players.filter(x=>x.starter).length<10||v.players.filter(x=>x.starter).length<10)return null;
 const format=(name,x)=>[`EQUIPO | ${name}`,`SISTEMA | ${x.formation||"No facilitado"}`,"TITULARES",rosterLines(x.players.filter(p=>p.starter))||"No facilitados","SUPLENTES",rosterLines(x.players.filter(p=>!p.starter))||"No facilitados"].join("\n");
-return[format(hn,h),format(vn,v)].join("\n")}
+return{home:format(hn,h),away:format(vn,v)}}
 function goals(s){const a=s.keyEvents||s.scoringPlays||[];return [...new Set(a.map(x=>x.text||x.shortText||x.description||"").filter(x=>/gol|goal|penalt/i.test(x)).map(x=>x.replace(/\s+/g," ").trim()))].slice(0,12)}
 let previews=0,lineups=0,results=0;
 for(const e of events){const t=teams(e);if(!t)continue;const kick=new Date(e.date).getTime();if(!Number.isFinite(kick))continue;
@@ -145,7 +145,7 @@ const mirrorDue=previewDue||(kick<=now&&now-kick<=8*3600000);const targets=[post
 for(const team of [t.h.team,t.v.team]){const subforum=clubSubforum(team);if(!subforum){console.log("Aviso: no se reconoce el subforo del equipo",team?.displayName||team?.name||"");continue;}let clubPost=findPost(e.id,subforum);if(!clubPost&&mirrorDue){const id=await openThread(e,t,subforum);if(id)clubPost=posts.find(p=>p.id===id)}if(clubPost){await ensureMatchdayTitle(clubPost,e,t);targets.push(clubPost)}}
 const state=e.status?.type?.state,checkXI=kick>=now-8*3600000&&kick-now<=3*3600000,checkFinal=state==="post"&&kick<=now&&now-kick<=72*3600000;if(!checkXI&&!checkFinal)continue;
 const summary=await json(`https://site.api.espn.com/apis/site/v2/sports/soccer/${LEAGUE}/summary?event=${e.id}`).catch(err=>{console.log("Resumen no disponible",e.id,err.message);return null});if(!summary)continue;
-if(checkXI){const xi=getLineups(summary,t.h.team?.id,t.v.team?.id,t.hn,t.vn);if(xi)for(const target of targets)if(await updateThread(target.id,"ALINEACIONES",e.id,["ALINEACIONES OFICIALES",`PARTIDO | ${t.hn} vs ${t.vn}`,xi,"Fuente: ESPN"].join("\n\n")))lineups++}
+if(checkXI){const xi=getLineups(summary,t.h.team?.id,t.v.team?.id,t.hn,t.vn);if(xi)for(const target of targets){let changed=false;if(!hasReply(target.id,"ALINEACIONES_LOCAL",e.id))changed=(await updateThread(target.id,"ALINEACIONES_LOCAL",e.id,["ALINEACIONES OFICIALES",`PARTIDO | ${t.hn} vs ${t.vn}`,xi.home,"Fuente: ESPN"].join("\n\n")))||changed;if(!hasReply(target.id,"ALINEACIONES_VISITANTE",e.id))changed=(await updateThread(target.id,"ALINEACIONES_VISITANTE",e.id,["ALINEACIONES OFICIALES",`PARTIDO | ${t.hn} vs ${t.vn}`,xi.away,"Fuente: ESPN"].join("\n\n")))||changed;if(changed)lineups++}}
 if(checkFinal){const score=[`MARCADOR | ${t.hn} | ${t.h.score??"—"} | ${t.v.score??"—"} | ${t.vn}`,`GOLEADORES | ${goals(summary).join(" · ")||"Detalle no disponible en la fuente"}`,`ESTADIO | ${t.c?.venue?.fullName||"No facilitado"}`,"El encuentro ha terminado. ¿Qué valoración hacéis del partido?"];for(const target of targets)if(await updateThread(target.id,"RESULTADO",e.id,["RESULTADO FINAL",...score].join("\n")))results++}
 }
 console.log(`Primera División: ${events.length} partidos revisados; ${previews} previas; ${lineups} alineaciones; ${results} resultados.`);
