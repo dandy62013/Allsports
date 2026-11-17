@@ -61,8 +61,23 @@ function genderOf(event, spainTeam) {
 const now = Date.now();
 const startDate = madridDate(new Date(now));
 const endDate = madridDate(new Date(now + 14 * 86400000));
-const scoreboard = await json(`https://site.api.espn.com/apis/site/v2/sports/basketball/fiba/scoreboard?dates=${startDate}-${endDate}&limit=500`);
-const events = Array.isArray(scoreboard?.events) ? scoreboard.events : [];
+// Consultamos cada día por separado: el endpoint FIBA puede rechazar rangos de fechas amplios.
+const eventMap = new Map();
+let successfulDays = 0;
+for (let day = 0; day <= 14; day++) {
+  const date = madridDate(new Date(now + day * 86400000));
+  try {
+    const scoreboard = await json(`https://site.api.espn.com/apis/site/v2/sports/basketball/fiba/scoreboard?dates=${date}&limit=500`);
+    successfulDays++;
+    for (const event of (Array.isArray(scoreboard?.events) ? scoreboard.events : [])) {
+      if (event?.id) eventMap.set(String(event.id), event);
+    }
+  } catch (error) {
+    console.log(`Aviso: ESPN FIBA no respondió para ${date}: ${error.message}`);
+  }
+}
+if (successfulDays === 0) throw new Error("ESPN FIBA no respondió correctamente para ninguna de las 15 fechas consultadas.");
+const events = [...eventMap.values()];
 let published = 0, ignored = 0;
 
 for (const event of events) {
@@ -125,4 +140,4 @@ for (const event of events) {
   published++;
   console.log("Previa publicada:", subforum, awayName, "-", homeName, when);
 }
-console.log(`Baloncesto selecciones: ${events.length} partidos FIBA revisados; ${published} previas publicadas; ${ignored} partidos de formación/3x3 descartados.`);
+console.log(`Baloncesto selecciones: ${events.length} partidos FIBA revisados en ${successfulDays}/15 fechas; ${published} previas publicadas; ${ignored} partidos de formación/3x3 descartados.`);
