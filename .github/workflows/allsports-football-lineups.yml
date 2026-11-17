@@ -2,7 +2,8 @@ name: ALLSPORTS Football Lineups
 on:
   workflow_dispatch:
   schedule:
-    - cron: "*/15 * * * *"
+    # Evita el minuto 00 y distribuye las comprobaciones durante la hora.
+    - cron: "9,24,39,54 * * * *"
 permissions:
   contents: read
 concurrency:
