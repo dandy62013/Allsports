@@ -45,7 +45,29 @@ section.content{padding:82px 0}.section-top{display:flex;justify-content:space-b
 .forum-post-meta{font-size:11px;color:var(--muted)}
 .forum-replies{margin-top:17px;padding:13px 15px;background:rgba(255,255,255,.025);border:1px solid var(--line);border-radius:10px}.forum-replies h5{margin:0 0 10px;color:var(--lime);font:700 14px 'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.8px}.forum-reply-list{display:grid;gap:9px;margin-bottom:12px}.forum-reply{padding:10px 12px;background:rgba(255,255,255,.035);border-radius:7px}.forum-reply strong{font-size:12px;color:#f4f6f7}.forum-reply p{margin:5px 0;white-space:pre-wrap;overflow-wrap:anywhere}.forum-reply small,.forum-reply-hint{font-size:10px;color:var(--muted)}.forum-reply-form textarea{width:100%;min-height:58px;resize:vertical;padding:10px;background:#10161b;border:1px solid var(--line);border-radius:7px;color:white;font:inherit}.forum-reply-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px}.forum-reply-actions .btn{padding:8px 13px;font-size:11px}
 .forum-post-tag{font-size:10px;color:var(--lime);font-weight:800;letter-spacing:1px;text-transform:uppercase}
-@media(max-width:1100px){.forum-shell{grid-template-columns:220px minmax(0,1fr)}.forum-live{grid-column:1/-1;position:static;max-height:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 16px}.forum-live-head,.forum-live-updated{grid-column:1/-1}}@media(max-width:800px){.forum-shell{grid-template-columns:1fr}.forum-categories{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.forum-categories h3{grid-column:1/-1}.forum-category{margin:0}.forum-subforums{grid-column:1/-1}.forum-compose-row{grid-template-columns:1fr 1fr}.forum-compose-row button{grid-column:1/-1}.forum-live{display:block;grid-column:auto}}
+.forum-mobile-categories-toggle,.forum-mobile-categories-backdrop,.forum-categories-mobile-head button{display:none}
+@media(max-width:1100px){.forum-shell{grid-template-columns:220px minmax(0,1fr)}.forum-live{grid-column:1/-1;position:static;max-height:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 16px}.forum-live-head,.forum-live-updated{grid-column:1/-1}}
+@media(max-width:800px){
+ .forum-shell{display:flex;flex-direction:column;gap:14px}
+ .forum-main{width:100%;display:flex;flex-direction:column}
+ .forum-heading{order:0;width:100%}
+ .forum-compose{order:1;width:100%;margin-bottom:14px}
+ .forum-search{order:2;width:100%}
+ #forumTopics{order:3;width:100%}
+ .forum-mobile-categories-toggle{display:block;position:fixed;right:0;top:42%;z-index:90;background:var(--lime);color:#10150b;border:0;border-radius:7px 0 0 7px;padding:13px 10px;font-size:11px;font-weight:900;letter-spacing:.4px;writing-mode:vertical-rl;transform:rotate(180deg);box-shadow:0 4px 18px #0008;cursor:pointer}
+ .forum-categories{display:block;position:fixed;z-index:120;top:0;right:0;bottom:0;width:min(86vw,340px);max-height:100dvh;overflow-y:auto;padding:20px 16px 28px;border:0;border-left:1px solid var(--line);background:#101820;box-shadow:-12px 0 35px #0009;transform:translateX(105%);transition:transform .25s ease;visibility:hidden}
+ .forum-categories.mobile-open{transform:translateX(0);visibility:visible}
+ .forum-categories-mobile-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+ .forum-categories-mobile-head h3{margin:0;font:700 25px 'Barlow Condensed',sans-serif;text-transform:uppercase}
+ .forum-categories-mobile-head button{display:block;border:1px solid var(--line);background:#18232d;color:white;font-size:25px;line-height:1;padding:4px 10px;cursor:pointer}
+ .forum-mobile-categories-backdrop{display:block;position:fixed;inset:0;z-index:110;background:#0009;opacity:0;visibility:hidden;transition:opacity .2s ease}
+ .forum-mobile-categories-backdrop.mobile-open{opacity:1;visibility:visible}
+ .forum-category{margin:0 0 7px}
+ .forum-subforums{padding:0 0 10px 12px}
+ .forum-compose-row{grid-template-columns:1fr 1fr}
+ .forum-compose-row button{grid-column:1/-1}
+ .forum-live{display:block;grid-column:auto}
+}
 
 .motor-card{margin:12px 0;padding:18px;border:1px solid #3a4b56;border-radius:14px;background:linear-gradient(145deg,#182832,#0b131a);color:#edf3f6;overflow:hidden}
 .motor-eyebrow{color:var(--lime);font-size:10px;font-weight:900;letter-spacing:2px}
@@ -198,7 +220,9 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
  <div class="wrap">
   <div class="section-top"><div><div class="overline">La comunidad ALLSPORTS</div><h2>El foro de la afición.</h2></div><p>Entra en cada deporte, elige un subforo y abre un tema para compartir tu opinión.</p></div>
   <div class="forum-shell">
-   <aside class="forum-categories"><h3>Todos los deportes</h3><div id="forumCategoryList"></div></aside>
+   <button class="forum-mobile-categories-toggle" id="forumMobileCategoriesToggle" type="button" aria-expanded="false" aria-controls="forumCategoriesPanel">☰ Categorías</button>
+   <div class="forum-mobile-categories-backdrop" id="forumMobileCategoriesBackdrop"></div>
+   <aside class="forum-categories" id="forumCategoriesPanel"><div class="forum-categories-mobile-head"><h3>Todos los deportes</h3><button type="button" id="forumMobileCategoriesClose" aria-label="Cerrar categorías">×</button></div><div id="forumCategoryList"></div></aside>
    <section class="forum-main">
     <div class="forum-heading"><div><h3 id="forumCurrentTitle">Todos los debates</h3><p id="forumCurrentDescription">Explora las conversaciones de la comunidad.</p></div></div>
     <div class="forum-search"><span aria-hidden="true">⌕</span><input id="forumSearch" type="search" placeholder="Buscar en todos los hilos y mensajes…" aria-label="Buscar en todos los hilos y mensajes"><button id="forumSearchClear" type="button" aria-label="Borrar búsqueda">×</button></div>
@@ -304,6 +328,19 @@ const forumStructure={
 let forumSport='Todos',forumSubforum='Todos',forumExpandedSport='';
 const forumCategoryList=document.getElementById('forumCategoryList');
 const forumTopics=document.getElementById('forumTopics');
+const forumCategoriesPanel=document.getElementById('forumCategoriesPanel');
+const forumMobileCategoriesToggle=document.getElementById('forumMobileCategoriesToggle');
+const forumMobileCategoriesBackdrop=document.getElementById('forumMobileCategoriesBackdrop');
+function setForumMobileCategories(open){
+ if(!forumCategoriesPanel||!forumMobileCategoriesToggle)return;
+ forumCategoriesPanel.classList.toggle('mobile-open',open);
+ forumMobileCategoriesBackdrop?.classList.toggle('mobile-open',open);
+ forumMobileCategoriesToggle.setAttribute('aria-expanded',String(open));
+ document.body.classList.toggle('forum-categories-open',open);
+}
+forumMobileCategoriesToggle?.addEventListener('click',()=>setForumMobileCategories(!forumCategoriesPanel.classList.contains('mobile-open')));
+document.getElementById('forumMobileCategoriesClose')?.addEventListener('click',()=>setForumMobileCategories(false));
+forumMobileCategoriesBackdrop?.addEventListener('click',()=>setForumMobileCategories(false));
 function renderForumCategories(){
  forumCategoryList.replaceChildren();
  const all=document.createElement('button');all.className='forum-category'+(forumSport==='Todos'?' active':'');all.textContent='Todos los debates';all.addEventListener('click',()=>selectForum('Todos','Todos'));forumCategoryList.append(all);
@@ -319,6 +356,7 @@ function updateForumSubforums(){
  (forumStructure[sport]||['General']).forEach(sub=>{const option=document.createElement('option');option.value=sub;option.textContent=forumSubforumLabel(sub);select.append(option)});
 }
 function selectForum(sport,subforum){
+ setForumMobileCategories(false);
  activeThreadId=null;forumTopicPage=1;forumSport=sport;forumSubforum=subforum;forumExpandedSport=sport==='Todos'?'':sport;renderForumCategories();
  document.getElementById('forumCurrentTitle').textContent=sport==='Todos'?'Todos los debates':sport+(subforum!=='Todos'?' · '+forumSubforumLabel(subforum):'');
  document.getElementById('forumCurrentDescription').textContent=sport==='Todos'?'Todos los temas publicados en ALLSPORTS.':'Conversaciones y temas de '+(subforum==='Todos'?sport:forumSubforumLabel(subforum))+'.';
