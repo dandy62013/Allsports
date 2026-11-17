@@ -2,7 +2,7 @@ name: ALLSPORTS Bots
 on:
   workflow_dispatch:
   schedule:
-    - cron: "7,37 * * * *"
+    - cron: "*/15 * * * *"
 permissions:
   contents: read
 concurrency:
