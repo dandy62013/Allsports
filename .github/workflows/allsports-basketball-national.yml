@@ -1,0 +1,41 @@
+name: ALLSPORTS Basketball National Previews
+on:
+  workflow_dispatch:
+  schedule:
+    # Revisión cada 15 minutos, desplazada de los minutos de mayor carga.
+    - cron: "12,27,42,57 * * * *"
+permissions:
+  contents: read
+concurrency:
+  group: allsports-basketball-national
+  cancel-in-progress: false
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Comprobar sintaxis del bot
+        run: node --check bots/basketball-national-bot.mjs
+
+  previews:
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Publicar previas de las selecciones españolas de baloncesto
+        run: node bots/basketball-national-bot.mjs
+        env:
+          BOT_EMAIL: ${{ secrets.BOT_EMAIL }}
+          BOT_PASSWORD: ${{ secrets.BOT_PASSWORD }}
