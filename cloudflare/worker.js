@@ -126,31 +126,61 @@ async function fetchNbaData() {
   return "Fuente: ESPN. Partidos NBA del día (hora peninsular española):\n" + lines.join("\n");
 }
 
+async function getEuroLeagueLiveScore(gameCode, seasonCode) {
+  if (!gameCode) return null;
+  try {
+    const payload = await getJson("https://live.euroleague.net/api/PlayByPlay?gamecode=" +
+      encodeURIComponent(gameCode) + "&seasoncode=" + encodeURIComponent(seasonCode));
+    const periods = ["FirstQuarter", "SecondQuarter", "ThirdQuarter", "ForthQuarter", "ExtraTime"];
+    const plays = periods.flatMap(period => Array.isArray(payload?.[period]) ? payload[period] : [])
+      .filter(play => Number.isFinite(Number(play?.POINTS_A)) && Number.isFinite(Number(play?.POINTS_B)))
+      .sort((a, b) => Number(a.NUMBEROFPLAY || 0) - Number(b.NUMBEROFPLAY || 0));
+    if (!plays.length) return null;
+    const last = plays[plays.length - 1];
+    return { local: Number(last.POINTS_A), road: Number(last.POINTS_B) };
+  } catch (error) {
+    console.log("No se pudo leer el marcador jugada a jugada:", error?.message || error);
+    return null;
+  }
+}
+
 async function fetchEuroBasketballData() {
   const year = new Date().getFullYear() - (new Date().getMonth() < 6 ? 1 : 0);
   const now = Date.now();
   const competitions = await Promise.allSettled(["E", "U"].map(async code => {
-    const base = "https://api-live.euroleague.net/v2/competitions/" + code + "/seasons/" + code + year;
+    const seasonCode = code + year;
+    const base = "https://api-live.euroleague.net/v2/competitions/" + code + "/seasons/" + seasonCode;
     const payload = await getJson(base + "/games?limit=500");
     let spanishCodes = new Set();
     if (code === "U") {
       const clubs = await getJson(base + "/clubs");
       spanishCodes = new Set((clubs.data || []).filter(club => club.country?.code === "ESP").map(club => club.code));
     }
-    return { code, games: payload.data || [], spanishCodes };
+    return { code, seasonCode, games: payload.data || [], spanishCodes };
   }));
   const lines = [];
   let failed = 0;
   for (const result of competitions) {
     if (result.status !== "fulfilled") { failed++; continue; }
-    const { code, games, spanishCodes } = result.value;
+    const { code, seasonCode, games, spanishCodes } = result.value;
     for (const game of games.filter(item => euroDateIsRelevant(item, now))) {
       if (code === "U" && !spanishCodes.has(game.local?.club?.code) && !spanishCodes.has(game.road?.club?.code)) continue;
       const local = game.local?.club?.name || "Local";
       const road = game.road?.club?.name || "Visitante";
-      const localScore = game.local?.score ?? "—";
-      const roadScore = game.road?.score ?? "—";
-      const status = game.played === true ? "FINAL" : (game.gameStatus || "HORARIO");
+      const rawStatus = String(game.gameStatus || "").toLowerCase();
+      const isLive = /live|in.?progress|playing|en juego/.test(rawStatus);
+      let localScore = game.played === true ? (game.local?.score ?? "—") : "—";
+      let roadScore = game.played === true ? (game.road?.score ?? "—") : "—";
+      let status = game.played === true ? "FINAL" : (isLive ? "EN JUEGO" : "HORARIO");
+      if (isLive) {
+        const liveScore = await getEuroLeagueLiveScore(game.gameCode, seasonCode);
+        if (liveScore) {
+          localScore = liveScore.local;
+          roadScore = liveScore.road;
+        } else {
+          status = "EN JUEGO · marcador pendiente";
+        }
+      }
       const date = game.utcDate || game.date || game.localDate;
       const time = date ? new Intl.DateTimeFormat("es-ES", { timeZone: "Europe/Madrid", hour: "2-digit", minute: "2-digit" }).format(new Date(date)) : "";
       lines.push((code === "E" ? "Euroliga" : "EuroCup (con equipo español)") + ": " + local + " " + localScore + " - " + roadScore + " " + road + " | " + status + (time ? " | " + time : ""));
@@ -160,7 +190,6 @@ async function fetchEuroBasketballData() {
   return lines.length ? "Fuente: API oficial de EuroLeague. Partidos del día (hora peninsular española):\n" + lines.join("\n") :
     "Las fuentes consultadas no muestran partidos de Euroliga o EuroCup con equipos españoles para hoy.";
 }
-
 async function getLiveContext(question) {
   if (!wantsLiveData(question)) return "";
   const q = question.toLowerCase();
