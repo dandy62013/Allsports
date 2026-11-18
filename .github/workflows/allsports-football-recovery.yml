@@ -1,6 +1,6 @@
 name: ALLSPORTS Football Recovery
 on:
-  # Segunda pasada de recuperación tras corregir los filtros de Europa y Conference.
+  # Tercera pasada: recuperar marcadores finales desde el resumen oficial de cada partido.
   push:
     paths:
       - .github/workflows/allsports-football-recovery.yml
