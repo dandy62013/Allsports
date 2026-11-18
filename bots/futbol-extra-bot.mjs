@@ -119,7 +119,10 @@ async function resolveMatchday(e){
 const now=Date.now(),from=new Date(now-30*86400000),to=new Date(now+45*86400000);
 const monthKeys=new Set();for(let d=new Date(from);d<=to;d.setUTCDate(d.getUTCDate()+1))monthKeys.add(madridDate(d).replaceAll("-","").slice(0,6));
 const calendars=await Promise.all(config.leagues.flatMap(league=>[...monthKeys].map(async month=>({league,data:await json(`https://site.api.espn.com/apis/site/v2/sports/soccer/${league}/scoreboard?dates=${month}`).catch(e=>{console.log("Calendario no disponible",league,month,e.message);return null})}))));
-const allEvents=new Map();for(const item of calendars)for(const e of (Array.isArray(item.data?.events)?item.data.events:[]))allEvents.set(String(e.id),{...e,allsportsLeague:item.league,scoreboardWeek:item.data?.week||null});
+// Copa: ESPN puede mantener partidos aplazados en el calendario mensual con su fecha original.
+// Reconsultamos también los días concretos recientes para recuperar reprogramaciones y resultados.
+const dailyBoards=config.key==="COPA_REY"?await Promise.all(Array.from({length:5},(_,i)=>{const d=new Date(now-i*86400000);const day=madridDate(d).replaceAll("-","");return json(`https://site.api.espn.com/apis/site/v2/sports/soccer/esp.copa_del_rey/scoreboard?dates=${day}`).then(data=>({league:"esp.copa_del_rey",data,day})).catch(err=>{console.log("Calendario diario de Copa no disponible",day,err.message);return null})})):[];
+const allEvents=new Map();for(const item of [...calendars,...dailyBoards.filter(Boolean)])for(const e of (Array.isArray(item.data?.events)?item.data.events:[]))allEvents.set(String(e.id),{...e,allsportsLeague:item.league,scoreboardWeek:item.data?.week||null});
 const events=[...allEvents.values()].filter(e=>{const d=new Date(e.date).getTime();return Number.isFinite(d)&&d>=from.getTime()&&d<=to.getTime()&&config.filter(e)});
 function competitors(e){return e.competitions?.[0]?.competitors||[]}
 function norm(s){return String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim()}
