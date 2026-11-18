@@ -1,11 +1,11 @@
 name: ALLSPORTS Football Recovery
 on:
-  # Tercera pasada: recuperar marcadores finales desde el resumen oficial de cada partido.
-  push:
-    paths:
-      - .github/workflows/allsports-football-recovery.yml
+  workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: allsports-football-lineups
+  cancel-in-progress: false
 jobs:
   recover:
     runs-on: ubuntu-latest
