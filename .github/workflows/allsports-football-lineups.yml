@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   schedule:
     # Evita el minuto 00 y distribuye las comprobaciones durante la hora.
-    - cron: "9,24,39,54 * * * *"
+    - cron: "4,14,24,34,44,54 * * * *"
 permissions:
   contents: read
 concurrency:
