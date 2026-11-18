@@ -536,7 +536,7 @@ function renderFootballPreviewTemplate(target,value){
 function forumDisplayTitle(content){
  const raw=String(content||'');
  const first=(raw.split(/\n/)[0]||'').replace(/\[\[[^\]]+\]\]/g,'').replace(/\bPREVIA\b\s*[·|:–-]?\s*/gi,'').replace(/\s{2,}/g,' ').trim();
- const titleDate=(first.match(/\|\s*(\d{2}\/\d{2}\s*·\s*\d{2}:\d{2})\s*$/)||[])[1]||'';
+ const titleDate=(first.match(/\|\s*(\d{1,2}\/\d{1,2}\s*·\s*\d{2}:\d{2})\s*$/)||[])[1]||'';
  const bodyDate=(raw.match(/(?:FECHA Y HORA\s*\||Inicio previsto:\s*)([^\n]+)/i)||[])[1]||'';
  const dateLabel=titleDate||bodyDate.replace(/\s*\(hora[^)]*\).*$/i,'').trim();
  const roundMatch=raw.match(/(?:^|\n)\s*(?:JORNADA|Jornada)\s*(?:\||:|-)?\s*(?:N[.º°]?\s*)?(\d{1,2})\b/im)||raw.match(/\bJornada\s+(\d{1,2})\b/i);
