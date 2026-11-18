@@ -1,6 +1,6 @@
 name: ALLSPORTS Football Recovery
 on:
-  # Ejecución única al incorporar este workflow; no añade una tarea recurrente.
+  # Segunda pasada de recuperación tras corregir los filtros de Europa y Conference.
   push:
     paths:
       - .github/workflows/allsports-football-recovery.yml
