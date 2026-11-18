@@ -1,0 +1,50 @@
+name: ALLSPORTS Football Recovery
+on:
+  # Ejecución única al incorporar este workflow; no añade una tarea recurrente.
+  push:
+    paths:
+      - .github/workflows/allsports-football-recovery.yml
+permissions:
+  contents: read
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        include:
+          - bot: Primera División
+            command: node bots/primera-bot.mjs
+          - bot: Segunda División
+            command: node bots/segunda-bot.mjs
+          - bot: Copa del Rey
+            command: node bots/futbol-extra-bot.mjs copa-del-rey
+          - bot: Fútbol femenino
+            command: node bots/futbol-extra-bot.mjs futbol-femenino
+          - bot: Selección masculina
+            command: node bots/futbol-extra-bot.mjs seleccion-masculina
+          - bot: Selección femenina
+            command: node bots/futbol-extra-bot.mjs seleccion-femenina
+          - bot: Otras selecciones
+            command: node bots/futbol-extra-bot.mjs selecciones-otros
+          - bot: Champions League
+            command: node bots/champions-bot.mjs
+          - bot: Europa League
+            command: node bots/europa-bot.mjs
+          - bot: Conference League
+            command: node bots/conference-bot.mjs
+    name: Recuperar ${{ matrix.bot }}
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Ejecutar recuperación de partidos
+        run: ${{ matrix.command }}
+        env:
+          BOT_EMAIL: ${{ secrets.BOT_EMAIL }}
+          BOT_PASSWORD: ${{ secrets.BOT_PASSWORD }}
