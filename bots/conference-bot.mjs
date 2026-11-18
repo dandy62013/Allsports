@@ -11,7 +11,7 @@ const auth={Authorization:`Bearer ${session.access_token}`};
 await json(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${userId}`,{method:"PATCH",headers:{...auth,Prefer:"return=minimal"},body:JSON.stringify({username:"Informador"})}).catch(e=>console.log("Aviso de perfil:",e.message));
 const since=new Date(Date.now()-30*86400000).toISOString();
 const [pRows,rRows]=await Promise.all([
- json(`${SUPABASE_URL}/rest/v1/posts?select=id,content,link_url,created_at&user_id=eq.${userId}&created_at=gte.${encodeURIComponent(since)}&order=created_at.desc&limit=500`,{headers:auth}),
+ json(`${SUPABASE_URL}/rest/v1/posts?select=id,content,link_url,created_at,subforum&user_id=eq.${userId}&created_at=gte.${encodeURIComponent(since)}&order=created_at.desc&limit=500`,{headers:auth}),
  json(`${SUPABASE_URL}/rest/v1/replies?select=id,post_id,content,created_at&user_id=eq.${userId}&created_at=gte.${encodeURIComponent(since)}&order=created_at.desc&limit=1000`,{headers:auth})
 ]);
 const posts=Array.isArray(pRows)?pRows:[], replies=Array.isArray(rRows)?rRows:[];
