@@ -43,6 +43,8 @@ for(const [club,domain] of clubs){
  for(const m of xml.matchAll(/<item>([\s\S]*?)<\/item>/gi)){
   const item=m[1],title=get(item,"title"),link=get(item,"link"),date=get(item,"pubDate"),src=item.match(/<source[^>]*url=["']([^"']+)["']/i),source=src?decode(src[1]):"";
   if(!title||!link||!relevant(title)||!official(host(source),domain))continue;
+  // Evita rescatar noticias antiguas del RSS: solo noticias oficiales de los últimos 7 días.
+  const publishedAt=new Date(date);if(!date||!Number.isFinite(publishedAt.getTime())||publishedAt.getTime()<Date.now()-7*86400000||publishedAt.getTime()>Date.now()+86400000)continue;
   const id=hash(link);if(seen.has(id))continue;
   const when=new Date(date),dateText=Number.isNaN(when.getTime())?"Fecha no indicada":when.toLocaleString("es-ES",{timeZone:"Europe/Madrid",dateStyle:"medium",timeStyle:"short"});
   const text=["🟢 "+club+" | "+title,"FECHA | "+dateText,"FUENTE OFICIAL | "+link,"","— ALLSPORTS Informador","[[AS-TRANSFER:"+id+"]]"].join("\n").slice(0,990);
