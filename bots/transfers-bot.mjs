@@ -12,8 +12,9 @@ const decode=x=>String(x||"").replace(/&amp;/g,"&").replace(/&quot;/g,'"').repla
 const get=(x,n)=>{const m=x.match(new RegExp("<"+n+"[^>]*>([\\s\\S]*?)</"+n+">","i"));return m?decode(m[1].replace(/^<!\[CDATA\[|\]\]>$/g,"").trim()):""};
 const relevant=x=>{
  const t=String(x||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
- if(/patrocin|sponsor|colaborador|colaboracion|partner|socio comercial|acuerdo comercial|proveedor|convenio|alianza|fundacion|campana|publicidad|equipacion|merchandising/.test(t))return false;
- return /fichaj|incorpora|firma|contrata|renueva|renovacion|cesion|traspas|rescind|salida|despedida|vuelve al|regresa al/.test(t);
+ if(/patrocin|sponsor|colaborador|colaboracion|partner|socio comercial|acuerdo comercial|proveedor|convenio|alianza|fundacion|campana|publicidad|equipacion|merchandising|iluminacion|instalaciones|terreno de juego|cesped|estadio|tecnologia|operativa deportiva|firma de autografos|autografos|acto promocional|evento con|clinica|academia/.test(t))return false;
+ if(/renuev|renovacion/.test(t)&&!/contrato|jugador|futbolista|tecnico|entrenador|portero|delantero|centrocampista|defensa/.test(t))return false;
+ return /fichaj|incorpora|contrata|firma|renueva|renovacion|cesion|traspas|rescind|salida|despedida|vuelve al|regresa al/.test(t);
 };
 const shortTitle=(raw,club)=>{
  let t=String(raw||"").replace(/\s+-\s+[^-]+$/,"").replace(/\s+/g," ").trim();
@@ -63,8 +64,11 @@ for(const [club,domain] of clubs){
   const publishedAt=new Date(date);if(!date||!Number.isFinite(publishedAt.getTime())||publishedAt.getTime()<Date.now()-7*86400000||publishedAt.getTime()>Date.now()+86400000)continue;
   const id=hash(link);if(seen.has(id))continue;
   const when=new Date(date),dateText=Number.isNaN(when.getTime())?"Fecha no indicada":when.toLocaleString("es-ES",{timeZone:"Europe/Madrid",dateStyle:"medium",timeStyle:"short"});
-  const text=["🟢 "+club+" | "+title,"FECHA | "+dateText,"FUENTE OFICIAL | "+link,"","— ALLSPORTS Informador","[[AS-TRANSFER:"+id+"]]"].join("\n").slice(0,990);
-  await api(U+"/rest/v1/replies",{method:"POST",headers:{...A,Prefer:"return=minimal"},body:JSON.stringify({post_id:thread.id,user_id:uid,content:text})});
+  const cleanTitle=shortTitle(title,club);
+  const imageUrl=imageFrom(item);
+  const text=["🟢 "+club+" | "+cleanTitle,"FECHA | "+dateText,"FUENTE OFICIAL | [Ver noticia]("+link+")","","— ALLSPORTS Informador","[[AS-TRANSFER:"+id+"]]"].join("\n").slice(0,990);
+  const replyPayload={user_id:uid,content:text,...(imageUrl?{media_url:imageUrl,media_type:"image"}:{})};
+  await api(U+"/rest/v1/replies",{method:"POST",headers:{...A,Prefer:"return=minimal"},body:JSON.stringify({...replyPayload,post_id:thread.id})});
   seen.add(id);added++;
   const teamName=teamSubforums.find(x=>x[0]===club)?.[1];
   if(teamName){
