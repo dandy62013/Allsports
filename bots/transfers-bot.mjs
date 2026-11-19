@@ -49,7 +49,7 @@ for(const [club,domain] of clubs){
   const when=new Date(date),dateText=Number.isNaN(when.getTime())?"Fecha no indicada":when.toLocaleString("es-ES",{timeZone:"Europe/Madrid",dateStyle:"medium",timeStyle:"short"});
   const cleanTitle=shortTitle(title,club);
   const imageUrl=imageFrom(item);
-  const text=["🟢 "+club+" | "+cleanTitle,"FECHA | "+dateText,"FUENTE OFICIAL | [Ver noticia]("+link+")","","— ALLSPORTS Informador","[[AS-TRANSFER:"+id+"]]"].join("\n").slice(0,990);
+  const text=["🟢 "+club+" | "+cleanTitle,"FECHA | "+dateText,"COMUNICADO OFICIAL | [Leer noticia]("+link+")","","— ALLSPORTS Informador","[[AS-TRANSFER:"+id+"]]"].join("\n").slice(0,990);
   const replyPayload={user_id:uid,content:text,...(imageUrl?{media_url:imageUrl,media_type:"image"}:{})};
   await api(U+"/rest/v1/replies",{method:"POST",headers:{...A,Prefer:"return=minimal"},body:JSON.stringify({...replyPayload,post_id:thread.id})});
   seen.add(id);added++;
