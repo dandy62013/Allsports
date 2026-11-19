@@ -628,7 +628,7 @@ function renderForumText(target,value){
  const lines=String(value||'').split('\n').filter(line=>!/^\s*\[\[AS[^\]]+\]\]\s*$/.test(line));
  let quoteLines=[];
  const flushQuote=()=>{if(!quoteLines.length)return;const quote=document.createElement('blockquote');quote.textContent=quoteLines.join('\n').replace(/^> ?/gm,'');target.append(quote);quoteLines=[];};
- lines.forEach(line=>{if(line.startsWith('>')){quoteLines.push(line);}else{flushQuote();if(line){const span=document.createElement('span');span.textContent=line;target.append(span);}target.append(document.createElement('br'));}});
+ lines.forEach(line=>{if(line.startsWith('>')){quoteLines.push(line);}else{flushQuote();if(line){const pattern=/\\[([^\\]]+)\\]\\((https?:\\/\\/[^)\\s]+)\\)/g;let last=0,match;while((match=pattern.exec(line))){if(match.index>last)target.append(document.createTextNode(line.slice(last,match.index)));let safeUrl=null;try{const parsed=new URL(match[2]);if(['http:','https:'].includes(parsed.protocol))safeUrl=parsed.href;}catch{}if(safeUrl){const anchor=document.createElement('a');anchor.href=safeUrl;anchor.textContent=match[1];anchor.target='_blank';anchor.rel='noopener noreferrer';anchor.className='forum-inline-link';target.append(anchor);}else target.append(document.createTextNode(match[0]));last=pattern.lastIndex;}if(last<line.length)target.append(document.createTextNode(line.slice(last)));}target.append(document.createElement('br'));}});
  flushQuote();
 }
 function addForumEmojiPicker(field,parent){
