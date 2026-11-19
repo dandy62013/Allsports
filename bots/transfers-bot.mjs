@@ -11,19 +11,20 @@ const official=(h,d)=>h===d||h.endsWith("."+d);
 const decode=x=>String(x||"").replace(/&amp;/g,"&").replace(/&quot;/g,'"').replace(/&lt;/g,"<").replace(/&gt;/g,">");
 const get=(x,n)=>{const m=x.match(new RegExp("<"+n+"[^>]*>([\\s\\S]*?)</"+n+">","i"));return m?decode(m[1].replace(/^<!\[CDATA\[|\]\]>$/g,"").trim()):""};
 const relevant=x=>{
- const t=String(x||"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase();
+ const t=String(x||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
  if(/patrocin|sponsor|colaborador|colaboracion|partner|socio comercial|acuerdo comercial|proveedor|convenio|alianza|fundacion|campana|publicidad|equipacion|merchandising/.test(t))return false;
  return /fichaj|incorpora|firma|contrata|renueva|renovacion|cesion|traspas|rescind|salida|despedida|vuelve al|regresa al/.test(t);
 };
 const shortTitle=(raw,club)=>{
- let t=String(raw||"").replace(/\\s+-\\s+[^-]+$/,"").replace(/\\s+/g," ").trim();
- t=t.replace(new RegExp("^"+club.replace(/[.*+?^${}()|[\\]\\\\]/g,"\\\\const relevant=x=>/fichaj|incorpora|firma|contrata|renueva|renovaci[oó]n|cesi[oó]n|traspas|rescind|salida|acuerdo.*jugador/i.test(x);")+"\\s*[:|–—-]\\s*","i"),"");
- t=t.replace(/\\s*\\([^)]*\\)\\s*$/,"").trim();
- return t.length>105?t.slice(0,102).replace(/\\s+\\S*$/,"")+"…":t;
+ let t=String(raw||"").replace(/\s+-\s+[^-]+$/,"").replace(/\s+/g," ").trim();
+ const prefix=club+" | ";
+ if(t.toLowerCase().startsWith(prefix.toLowerCase()))t=t.slice(prefix.length);
+ t=t.replace(/\s*\([^)]*\)\s*$/,"").trim();
+ return t.length>105?t.slice(0,102).replace(/\s+\S*$/,"")+"…":t;
 };
 const imageFrom=item=>{
  const tags=[...item.matchAll(/<(?:enclosure|media:content|media:thumbnail)[^>]*url=["']([^"']+)["'][^>]*>/gi)];
- for(const m of tags){const u=decode(m[1]);if(/^https:\\/\\//i.test(u)&&/\\.(jpe?g|png|webp)(?:[?#]|$)/i.test(u))return u;}
+ for(const m of tags){const u=decode(m[1]);if(/^https:\/\//i.test(u)&&/\.(jpe?g|png|webp)(?:[?#]|$)/i.test(u))return u;}
  return "";
 };
 const hash=x=>{let h=2166136261;for(const c of x){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return(h>>>0).toString(16).padStart(8,"0")+(Math.imul(h^0x45d9f3b,0x27d4eb2d)>>>0).toString(16).padStart(8,"0")};
