@@ -20,7 +20,7 @@ const shortTitle=(raw,club)=>{
  const prefix=club+" | ";
  if(t.toLowerCase().startsWith(prefix.toLowerCase()))t=t.slice(prefix.length);
  t=t.replace(/\s*\([^)]*\)\s*$/,"").trim();
- return t.length>105?t.slice(0,102).replace(/\s+\S*$/,"")+"…":t;
+ return t.length>75?t.slice(0,72).replace(/\s+\S*$/,"")+"…":t;
 };
 const imageFrom=item=>{
  const tags=[...item.matchAll(/<(?:enclosure|media:content|media:thumbnail)[^>]*url=["']([^"']+)["'][^>]*>/gi)];
