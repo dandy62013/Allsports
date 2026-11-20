@@ -62,29 +62,58 @@ ${FOOTER}`,
     {
       sport: "Golf", subforum: "General", marker: "[[ASGOLF:WEEKEND:2026-11-21]]",
       title: "⛳ GOLF | Torneos internacionales del fin de semana | 19–22/11",
-      content: `⛳ GOLF | Torneos internacionales del fin de semana | 19–22/11
+      content: `⛳ GOLF | TORNEOS INTERNACIONALES DEL FIN DE SEMANA
 [[ASGOLF:WEEKEND:2026-11-21]]
-HILO DE GOLF · 19 AL 22 DE NOVIEMBRE DE 2026
 
-El golf profesional tiene tres citas destacadas este fin de semana:
+━━━━━━━━━━━━━━━━━━━━
+📅 AGENDA · 19 AL 22 DE NOVIEMBRE DE 2026
+━━━━━━━━━━━━━━━━━━━━
 
-PGA TOUR | THE RSM CLASSIC
-19–22 de noviembre · Sea Island Golf Club (Seaside Course), St. Simons Island, Georgia (EE. UU.).
-Última cita de la temporada de otoño del PGA Tour.
+Este fin de semana hay tres citas destacadas en el golf profesional. Estos son los torneos que conviene seguir:
 
-LPGA | CME GROUP TOUR CHAMPIONSHIP
-19–22 de noviembre · Tiburón Golf Club, Naples, Florida (EE. UU.).
-Torneo final de la temporada LPGA.
+🏆 PGA TOUR
+THE RSM CLASSIC
 
-JAPAN GOLF TOUR | DUNLOP PHOENIX TOURNAMENT
-19–22 de noviembre · Phoenix Country Club, Miyazaki (Japón).
+📍 Sea Island Golf Club · Seaside Course
+St. Simons Island, Georgia (Estados Unidos)
+📅 Del 19 al 22 de noviembre
 
-Los horarios de salida y las clasificaciones se incorporarán cuando estén confirmados por los circuitos oficiales.
+Última cita de la temporada de otoño del PGA TOUR.
 
-¿A quién seguís este fin de semana? ¿Qué torneo os parece más interesante? ¡Os leemos!
+━━━━━━━━━━━━━━━━━━━━
 
-FUENTE PGA TOUR | https://www.pgatour.com/schedule
-${FOOTER}`,
+🏆 LPGA
+CME GROUP TOUR CHAMPIONSHIP
+
+📍 Tiburón Golf Club
+Naples, Florida (Estados Unidos)
+📅 Del 19 al 22 de noviembre
+
+Torneo final de la temporada LPGA, con las mejores jugadoras del circuito.
+
+━━━━━━━━━━━━━━━━━━━━
+
+🏆 JAPAN GOLF TOUR
+DUNLOP PHOENIX TOURNAMENT
+
+📍 Phoenix Country Club
+Miyazaki (Japón)
+📅 Del 19 al 22 de noviembre
+
+Una de las pruebas destacadas del calendario japonés.
+
+━━━━━━━━━━━━━━━━━━━━
+📊 HORARIOS Y CLASIFICACIONES
+
+Añadiremos los horarios de salida, resultados y clasificaciones cuando estén confirmados por los circuitos oficiales.
+
+💬 ¿A quién seguís este fin de semana? ¿Qué torneo os parece más interesante? ¡Os leemos!
+
+🔗 FUENTES OFICIALES
+• PGA TOUR: https://www.pgatour.com/schedule
+• LPGA: https://www.lpga.com/tournaments/cme-group-tour-championship/overview
+
+— ALLSPORTS Bot · Informador`,
       link_url: "https://www.pgatour.com/schedule"
     }
   ];
