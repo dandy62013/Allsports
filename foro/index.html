@@ -20,10 +20,11 @@ section.content{padding:82px 0}.section-top{display:flex;justify-content:space-b
 
 
 /* Sports photo backgrounds for category tiles */
-.forum-category-card{position:relative;overflow:hidden;isolation:isolate;min-height:210px;background-size:cover;background-position:center}
+.forum-category-card{position:relative;overflow:hidden;isolation:isolate;height:210px;min-height:210px;background-size:cover;background-position:center}
 .forum-category-card:before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(7,12,16,.52),rgba(7,12,16,.88))}
 .forum-category-card:after{content:"";position:absolute;inset:0;z-index:-2;background:linear-gradient(145deg,#18242d,#0c1218)}
 .forum-category-card-head,.forum-category-card-subforums{position:relative;z-index:1}
+.sport-card-other:after{background-image:url("https://images.unsplash.com/photo-1667983091531-72affee1bf69?auto=format&fit=crop&fm=jpg&q=60&w=1200")}
 .sport-card-football:after{background-image:url("https://images.unsplash.com/photo-1667983091531-72affee1bf69?auto=format&fit=crop&fm=jpg&q=60&w=1200")}
 .sport-card-basketball:after{background-image:url("https://images.unsplash.com/photo-1688449997229-48de67a51a4e?auto=format&fit=crop&fm=jpg&q=60&w=1200")}
 .sport-card-tennis:after{background-image:url("https://images.unsplash.com/photo-1719328860642-59a2e5ff3128?auto=format&fit=crop&fm=jpg&q=60&w=1200")}
@@ -46,7 +47,7 @@ section.content{padding:82px 0}.section-top{display:flex;justify-content:space-b
 .forum-category-card:hover{border-color:var(--lime);transform:translateY(-2px)}
 .forum-category-card-head{width:100%;border:0;background:none;color:#f5f7f8;text-align:center;font:900 27px 'Barlow Condensed',sans-serif;letter-spacing:.6px;padding:4px 0 12px;cursor:pointer}
 .forum-category-card-head:hover{color:var(--lime)}
-.forum-category-card-subforums{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin-top:auto}
+.forum-category-card-subforums{display:flex;flex-wrap:wrap;justify-content:center;align-content:flex-start;gap:7px;margin-top:auto;max-height:92px;overflow-y:auto;padding-right:2px}
 .forum-category-card-subforums button{background:#202d37;border:1px solid #34434f;border-radius:20px;color:#bdc7ce;padding:7px 10px;font-size:11px;cursor:pointer}
 .forum-category-card-subforums button:hover{border-color:var(--lime);color:var(--lime)}
 .forum-back-categories{display:inline-block;border:1px solid #36434d;background:#17232d;color:var(--lime);padding:8px 12px;border-radius:5px;margin-bottom:10px;cursor:pointer;font-size:13px}
