@@ -32,6 +32,48 @@ section.content{padding:82px 0}.section-top{display:flex;justify-content:space-b
 .sport-card-hockey:after{background-image:url("https://images.unsplash.com/photo-1522602043785-821a161a5238?auto=format&fit=crop&fm=jpg&q=60&w=1200")}
 .sport-card-golf:after,.sport-card-rugby:after,.sport-card-cycling:after,.sport-card-swimming:after,.sport-card-volleyball:after,.sport-card-handball:after,.sport-card-athletics:after{background-image:url("https://images.unsplash.com/photo-1667983091531-72affee1bf69?auto=format&fit=crop&fm=jpg&q=60&w=1200")}
 .forum-category-card-subforums button{background:rgba(10,16,22,.82);border-color:rgba(255,255,255,.22);color:#f2f5f7;backdrop-filter:blur(3px)}
+/* Lime labels and query-specific sport photos */
+.forum-category-card-head{color:#C6FF00!important}
+.forum-category-card-subforums button{color:#C6FF00!important;border-color:rgba(198,255,0,.45)!important;background:rgba(9,14,18,.84)!important}
+.sport-card-football:after{background-image:url("https://images.unsplash.com/featured/?football")}
+.sport-card-basketball:after{background-image:url("https://images.unsplash.com/featured/?basketball")}
+.sport-card-motor:after{background-image:url("https://images.unsplash.com/featured/?motorsport")}
+.sport-card-tennis:after{background-image:url("https://images.unsplash.com/featured/?tennis")}
+.sport-card-hockey:after{background-image:url("https://images.unsplash.com/featured/?icehockey")}
+.sport-card-golf:after{background-image:url("https://images.unsplash.com/featured/?golf")}
+.sport-card-rugby:after{background-image:url("https://images.unsplash.com/featured/?rugby")}
+.sport-card-cycling:after{background-image:url("https://images.unsplash.com/featured/?cycling")}
+.sport-card-swimming:after{background-image:url("https://images.unsplash.com/featured/?swimming")}
+.sport-card-volleyball:after{background-image:url("https://images.unsplash.com/featured/?volleyball")}
+.sport-card-handball:after{background-image:url("https://images.unsplash.com/featured/?handball")}
+.sport-card-athletics:after{background-image:url("https://images.unsplash.com/featured/?athletics")}
+.sport-card-gymnastics:after{background-image:url("https://images.unsplash.com/featured/?gymnastics")}
+.sport-card-martial:after{background-image:url("https://images.unsplash.com/featured/?martialarts")}
+.sport-card-water:after{background-image:url("https://images.unsplash.com/featured/?sailing")}
+.sport-card-surf:after{background-image:url("https://images.unsplash.com/featured/?surfing")}
+.sport-card-tabletennis:after{background-image:url("https://images.unsplash.com/featured/?tabletennis")}
+.sport-card-waterpolo:after{background-image:url("https://images.unsplash.com/featured/?waterpolo")}
+.sport-card-baseball:after{background-image:url("https://images.unsplash.com/featured/?baseball")}
+.sport-card-americanfootball:after{background-image:url("https://images.unsplash.com/featured/?americanfootball")}
+.sport-card-esports:after{background-image:url("https://images.unsplash.com/featured/?esports")}
+.sport-card-chess:after{background-image:url("https://images.unsplash.com/featured/?chess")}
+.sport-card-urban:after{background-image:url("https://images.unsplash.com/featured/?skateboarding")}
+.sport-card-cricket:after{background-image:url("https://images.unsplash.com/featured/?cricket")}
+.sport-card-fencing:after{background-image:url("https://images.unsplash.com/featured/?fencing")}
+.sport-card-climbing:after{background-image:url("https://images.unsplash.com/featured/?climbing")}
+.sport-card-triathlon:after{background-image:url("https://images.unsplash.com/featured/?triathlon")}
+.sport-card-weightlifting:after{background-image:url("https://images.unsplash.com/featured/?weightlifting")}
+.sport-card-skating:after{background-image:url("https://images.unsplash.com/featured/?iceskating")}
+.sport-card-winter:after{background-image:url("https://images.unsplash.com/featured/?skiing")}
+.sport-card-worldcup:after{background-image:url("https://images.unsplash.com/featured/?footballstadium")}
+.sport-card-euro:after{background-image:url("https://images.unsplash.com/featured/?footballfans")}
+.sport-card-olympics:after{background-image:url("https://images.unsplash.com/featured/?olympics")}
+.sport-card-womensworld:after{background-image:url("https://images.unsplash.com/featured/?womensfootball")}
+.sport-card-worldbasket:after{background-image:url("https://images.unsplash.com/featured/?basketballcourt")}
+.sport-card-worldathletics:after{background-image:url("https://images.unsplash.com/featured/?trackandfield")}
+.sport-card-community:after{background-image:url("https://images.unsplash.com/featured/?sportsfans")}
+.sport-card-other:after{background-image:url("https://images.unsplash.com/featured/?sport")}
+
 .forum-category-card-head{font-size:30px;text-shadow:0 2px 12px #000}
 
 /* Category-first forum layout */
@@ -389,7 +431,7 @@ function renderForumCategories(){
  Object.entries(forumStructure).forEach(([sport,subs])=>{
   const card=document.createElement('article');card.className='forum-category-card';
   const heading=document.createElement('button');heading.type='button';heading.className='forum-category-card-head';heading.textContent=sport;heading.addEventListener('click',()=>selectForum(sport,'Todos'));card.append(heading);
-  const sportCardClass=({'Fútbol':'football','Baloncesto':'basketball','Motor':'motor','Tenis':'tennis','Hockey':'hockey','Golf':'golf','Rugby':'rugby','Ciclismo':'cycling','Natación':'swimming','Voleibol':'volleyball','Balonmano':'handball','Atletismo':'athletics'})[sport]||'other';card.className='forum-category-card sport-card-'+sportCardClass;
+  const sportCardClass=({'Fútbol':'football','Baloncesto':'basketball','Motor':'motor','Tenis':'tennis','Hockey':'hockey','Golf':'golf','Rugby':'rugby','Ciclismo':'cycling','Natación':'swimming','Voleibol':'volleyball','Balonmano':'handball','Atletismo':'athletics','Gimnasia':'gymnastics','Artes marciales':'martial','Deportes náuticos':'water','Surf':'surf','Tenis de mesa':'tabletennis','Waterpolo':'waterpolo','Béisbol y sóftbol':'baseball','Fútbol americano':'americanfootball','Esports':'esports','Ajedrez':'chess','Deportes urbanos':'urban','Críquet':'cricket','Esgrima':'fencing','Escalada':'climbing','Triatlón':'triathlon','Halterofilia':'weightlifting','Patinaje':'skating','Deportes de invierno':'winter','Mundial fútbol 2030':'worldcup','Eurocopa fútbol 2028':'euro','JJOO Los Ángeles 2028':'olympics','Mundial Femenino 2027':'womensworld','Mundial Baloncesto Masculino 2027':'worldbasket','Mundial Atletismo 2027':'worldathletics','Comunidad':'community'})[sport]||'other';card.className='forum-category-card sport-card-'+sportCardClass;
   const subgrid=document.createElement('div');subgrid.className='forum-category-card-subforums';
   const visibleSubs=sport==='Fútbol'?[['Primera','Primera'],['Segunda','Segunda'],['Selecciones','Selecciones'],['Femenino','Femenino'],['General','General']]:subs.map(sub=>[forumSubforumLabel(sub),sub]);
   visibleSubs.forEach(([label,sub])=>{const sb=document.createElement('button');sb.type='button';sb.textContent=label;sb.addEventListener('click',()=>selectForum(sport,sub));subgrid.append(sb)});card.append(subgrid);grid.append(card);
