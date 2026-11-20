@@ -525,16 +525,9 @@ function renderForumCategories(){
  Object.entries(forumStructure).forEach(([sport])=>{
   const card=document.createElement('article');card.className='forum-category-card '+forumSportClass(sport);card.style.setProperty('--sport-photo','url("'+forumSportPhoto(sport)+'")');
   const heading=document.createElement('h3');heading.className='forum-category-card-head';heading.textContent=sport;card.append(heading);
-  if(sport==='Fútbol'||sport==='Baloncesto'){
-   card.classList.add('forum-category-card-expandable');card.tabIndex=0;card.setAttribute('role','button');card.setAttribute('aria-label','Ver todas las categorías de '+sport);
-   const hint=document.createElement('p');hint.className='forum-category-card-hint';hint.textContent='Ver todas las categorías';card.append(hint);
-   card.addEventListener('click',()=>showForumSubforums(sport));
-   card.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();showForumSubforums(sport);}});
-  }else{
-   const list=document.createElement('div');list.className='forum-category-card-subforums';
-   forumVisibleSubforums(sport).forEach(sub=>{const button=document.createElement('button');button.type='button';button.textContent=forumSubforumLabel(sub);button.addEventListener('click',event=>{event.stopPropagation();selectForum(sport,sub);});list.append(button);});
-   card.append(list);
-  }
+  const list=document.createElement('div');list.className='forum-category-card-subforums';
+  forumVisibleSubforums(sport).forEach(sub=>{const button=document.createElement('button');button.type='button';button.textContent=forumSubforumLabel(sub);button.addEventListener('click',event=>{event.stopPropagation();selectForum(sport,sub);});list.append(button);});
+  card.append(list);
   grid.append(card);
   const group=document.createElement('div');const nav=document.createElement('button');nav.className='forum-category'+(forumSport===sport?' active':'');nav.textContent=sport;nav.addEventListener('click',()=>showForumSubforums(sport));group.append(nav);forumCategoryList.append(group);
  });
