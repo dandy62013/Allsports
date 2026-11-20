@@ -636,11 +636,7 @@ function renderForumText(target,value){
   .replace(/\s*(!\[[^\]]*\]\(https?:\/\/[^)]+\))\s*/g,'\n$1\n');
  const lines=normalized.split(/\r?\n/).filter(line=>!/^\s*\[\[AS[^\]]+\]\]\s*$/.test(line));
  const isGolf=/⛳\s*GOLF|PGA TOUR|CME GROUP TOUR CHAMPIONSHIP|DUNLOP PHOENIX/i.test(normalized);
- if(isGolf){
-  const card=document.createElement('section');card.className='forum-golf-card';target.append(card);
-  const originalAppend=target.append.bind(target);
-  target.append=(...nodes)=>card.append(...nodes);
- }
+ if(isGolf){const card=document.createElement('section');card.className='forum-golf-card';target.append(card);target=card;}
  let quoteLines=[];
  const flushQuote=()=>{if(!quoteLines.length)return;const quote=document.createElement('blockquote');quote.textContent=quoteLines.join('\n').replace(/^> ?/gm,'');target.append(quote);quoteLines=[];};
  const appendInline=line=>{
