@@ -77,11 +77,11 @@ section.content{padding:82px 0}.section-top{display:flex;justify-content:space-b
 .forum-category-card-head{font-size:30px;text-shadow:0 2px 12px #000}
 
 /* Category-first forum layout */
-.forum-shell{display:grid!important;grid-template-columns:minmax(0,1fr) 285px;gap:16px;align-items:start}
+.forum-shell{display:block!important}
 .forum-categories,.forum-mobile-categories-toggle,.forum-mobile-categories-backdrop{display:none!important}
 .forum-main{width:100%;max-width:1240px;margin:0 auto;min-height:450px}
 #forumCategoryLanding{display:block}
-.forum-live{display:block!important;min-width:0}
+.forum-live{display:none!important}
 .forum-category-landing-title{text-align:center;color:var(--lime);font:900 36px 'Barlow Condensed',sans-serif;letter-spacing:1.5px;margin:6px 0 8px!important}
 .forum-category-landing-subtitle{text-align:center;color:var(--muted);margin:0 0 24px;font-size:14px}
 #forumCategoryGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
@@ -97,8 +97,7 @@ section.content{padding:82px 0}.section-top{display:flex;justify-content:space-b
 #forumThreadsView[hidden],#forumSubforumsView[hidden],#forumComposePanel[hidden],#forumCategoryLanding[hidden]{display:none!important}
 #forumComposePanel{margin-top:12px}
 @media(max-width:950px){#forumCategoryGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:1100px){.forum-shell{grid-template-columns:minmax(0,1fr) 260px!important}}
-@media(max-width:800px){.forum-shell{display:flex!important;flex-direction:column!important}.forum-main,.forum-live{width:100%!important;max-width:none}.forum-live{position:static;max-height:none}}
+
 @media(max-width:560px){#forumCategoryGrid{grid-template-columns:1fr}.forum-category-card{min-height:150px}.forum-category-landing-title{font-size:29px}}
 
 /* Foro ALLSPORTS */
