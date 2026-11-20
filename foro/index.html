@@ -371,7 +371,7 @@ document.querySelectorAll('[data-sport]').forEach(c=>c.addEventListener('click',
 const laLigaTeams=["Athletic Club","Atlético de Madrid","CA Osasuna","Celta","Deportivo Alavés","Elche CF","FC Barcelona","Getafe CF","Levante UD","Málaga CF","Racing de Santander","Rayo Vallecano","RC Deportivo","RCD Espanyol","Real Betis","Real Madrid","Real Sociedad","Sevilla FC","Valencia CF","Villarreal CF"];
 function forumSubforumLabel(sub){return laLigaTeams.includes(sub)?'La Liga · '+sub:sub}
 const forumStructure={
- 'Fútbol':['General','La Liga',...laLigaTeams,'Segunda División','Copa del Rey','Premier League','Champions League','Europa League','Conference League','Nations League','Fútbol femenino','Selección masculina','Selección femenina','Selecciones','Fútbol internacional'],
+ 'Fútbol':['General','Primera','Segunda','Copa del Rey',...laLigaTeams,'Premier League','Champions League','Europa League','Conference League','Nations League','Fútbol femenino','Selección masculina','Selección femenina','Selecciones','Fútbol internacional'],
  'Mercado de fichajes':['General'],
  'Mercado de fichajes':['General'],
  'Baloncesto':['General','NBA','ACB','Euroliga','Selección masculina','Selección femenina','Baloncesto internacional'],
@@ -786,7 +786,7 @@ function createForumAvatar(url,username){const avatar=document.createElement('sp
 function setProfileAvatar(url){const preview=document.getElementById('profileAvatarPreview');if(!preview)return;preview.replaceChildren();if(url){const img=document.createElement('img');img.src=url;img.alt='Mi avatar';preview.append(img);}else preview.textContent=(document.getElementById('accountUsername')?.textContent||'A').trim().charAt(0).toUpperCase();}
 function getCommunityMessageCount(userId){return data.filter(p=>p.user_id===userId).length+forumReplies.filter(r=>r.user_id===userId).length;}
 function getBotBody(content){const lines=String(content||'').split('\n');const title=(lines.shift()||'').trim();if((lines[0]||'').trim()===title)lines.shift();return lines.join('\n').replace('\n\n— ALLSPORTS Bot · Datos: ESPN','').trim();}
-function forumSubforumMatches(sport,filter,actual){if(filter==='Todos')return true;if(sport==='Fútbol'){if(filter==='Primera')return actual==='La Liga'||laLigaTeams.includes(actual);if(filter==='Segunda')return actual==='Segunda División';if(filter==='Selecciones')return ['Selecciones','Selección masculina','Selección femenina'].includes(actual);if(filter==='Femenino')return ['Fútbol femenino','Selección femenina'].includes(actual);if(filter==='General')return actual==='General';}return actual===filter;}
+function forumSubforumMatches(sport,filter,actual){if(filter==='Todos')return true;if(sport==='Fútbol'){if(filter==='Primera')return ['Primera','La Liga','Primera División'].includes(actual)||laLigaTeams.includes(actual);if(filter==='Segunda')return ['Segunda','Segunda División'].includes(actual);if(filter==='Selecciones')return ['Selecciones','Selección masculina','Selección femenina'].includes(actual);if(filter==='Femenino')return ['Fútbol femenino','Selección femenina'].includes(actual);if(filter==='General')return actual==='General';}return actual===filter;}
 function renderForumTopics(){
  forumTopics.replaceChildren();
  const q=forumSearchQuery.trim().toLocaleLowerCase('es');
