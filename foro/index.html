@@ -498,7 +498,7 @@ forumMobileCategoriesToggle?.addEventListener('click',()=>setForumMobileCategori
 document.getElementById('forumMobileCategoriesClose')?.addEventListener('click',()=>setForumMobileCategories(false));
 forumMobileCategoriesBackdrop?.addEventListener('click',()=>setForumMobileCategories(false));
 function forumVisibleSubforums(sport){
- if(sport==='Fútbol')return ['Primera','Segunda','General','Copa del Rey','Selecciones','Champions'];
+ if(sport==='Fútbol')return ['Primera','Segunda','Fútbol femenino','Champions League','Copa del Rey','General'];
  if(sport==='Baloncesto')return ['ACB','NBA','General','EuroLeague'];
  return (forumStructure[sport]||['General']).filter(x=>!['EuroCup','Eurocup','Basketball Champions League (BCL)','BCL'].includes(x));
 }
