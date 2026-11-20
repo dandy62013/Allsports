@@ -523,8 +523,8 @@ function renderForumCategories(){
  forumCategoryList.replaceChildren();
  const grid=document.getElementById('forumCategoryGrid');if(!grid)return;grid.replaceChildren();
  Object.entries(forumStructure).forEach(([sport])=>{
-  const card=document.createElement('article');card.className='forum-category-card '+forumSportClass(sport);card.style.setProperty('--sport-photo','url("'+forumSportPhoto(sport)+'")');
-  const heading=document.createElement('h3');heading.className='forum-category-card-head';heading.textContent=sport;card.append(heading);
+  const card=document.createElement('article');card.className='forum-category-card '+forumSportClass(sport);card.style.setProperty('--sport-photo','url("'+forumSportPhoto(sport)+'")');card.style.cursor='pointer';card.addEventListener('click',()=>showForumSubforums(sport));
+  const heading=document.createElement('h3');heading.className='forum-category-card-head';heading.textContent=sport;heading.setAttribute('role','button');heading.tabIndex=0;heading.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();showForumSubforums(sport);}});card.append(heading);
   const list=document.createElement('div');list.className='forum-category-card-subforums';
   forumVisibleSubforums(sport).forEach(sub=>{const button=document.createElement('button');button.type='button';button.textContent=forumSubforumLabel(sub);button.addEventListener('click',event=>{event.stopPropagation();selectForum(sport,sub);});list.append(button);});
   card.append(list);
