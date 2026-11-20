@@ -161,7 +161,11 @@ async function loadPosts(){posts.textContent='Cargando debates…';const {data:r
 function setFilter(v){filter=v;document.querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter===v));draw()}
 document.getElementById('send').addEventListener('click',async()=>{const field=document.getElementById('msg'),value=field.value.trim();if(!value){field.focus();return;}if(!currentUser){authMessage('Inicia sesión para publicar un debate.',true);document.getElementById('loginEmail').focus();return;}const button=document.getElementById('send');button.disabled=true;button.textContent='Publicando…';const {error}=await supabaseClient.from('posts').insert({user_id:currentUser.id,sport:document.getElementById('sport').value,content:value});button.disabled=false;button.textContent='Publicar debate ↗';if(error){authMessage('No se pudo publicar: '+error.message,true);return;}field.value='';authMessage('¡Debate publicado! Ya es visible para la comunidad.');await loadPosts();setFilter('Todos');});
 document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>setFilter(b.dataset.filter)));
-document.querySelectorAll('[data-sport]').forEach(card=>card.addEventListener('click',e=>{e.preventDefault();const sport=card.dataset.sport;selectForum(sport,'Todos');showPage('foro');}));loadPosts();
+document.querySelectorAll('[data-sport]').forEach(card=>card.addEventListener('click',e=>{
+ e.preventDefault();
+ const sport=card.dataset.sport==='Otros'?'Comunidad':card.dataset.sport;
+ window.location.href='./foro/?sport='+encodeURIComponent(sport);
+}));loadPosts();
 
 
 /* Navegación y temas del foro */
