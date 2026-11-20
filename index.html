@@ -63,11 +63,34 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
 .home-live-section{padding:42px 0 48px;background:#0d131a;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .home-live-heading{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:18px}.home-live-heading h2{font:900 clamp(34px,4vw,48px)/.95 'Barlow Condensed',sans-serif;text-transform:uppercase;margin:0}.home-live-heading h2 span{color:var(--lime)}.home-live-status{font-size:10px;font-weight:800;letter-spacing:1.2px;color:#aeb9c2;padding-bottom:5px}.home-live-status i{display:inline-block;width:8px;height:8px;border-radius:50%;background:#d5ff3f;box-shadow:0 0 10px #d5ff3f;margin-right:7px}.home-live-panel{background:var(--surface);border:1px solid var(--line);padding:16px}.home-live-matches{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:14px}.home-live-matches:empty{display:none}.home-live-matches .live-league{min-width:0;border:1px solid #2c3944;border-radius:7px;padding:12px;background:#0d141b}.home-live-matches .live-league h4{font:800 13px 'Barlow Condensed',sans-serif;color:var(--lime);text-transform:uppercase;letter-spacing:1px;margin:0 0 7px}.home-live-matches .live-match{padding:9px 0;border-top:1px solid #ffffff12}.home-live-matches .live-match:first-of-type{border-top:0}.home-live-matches .live-match-competition{font-size:9px;color:var(--lime);font-weight:800;letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px}.home-live-matches .live-match-top{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.5px;margin-bottom:6px}.home-live-matches .live-match-top .is-live{color:#ff6b58}.home-live-matches .live-team-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;font-size:11px;font-weight:700;padding:2px 0}.home-live-matches .live-team-name{display:flex;align-items:center;gap:6px;min-width:0}.home-live-matches .live-team-name img{width:17px;height:17px;object-fit:contain}.home-live-matches .live-team-name span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.home-live-matches .live-score{font:800 14px 'Barlow Condensed',sans-serif;font-variant-numeric:tabular-nums}.home-live-matches .live-empty,.home-live-matches .live-loading{font-size:12px;color:var(--muted);line-height:1.5;padding:8px 0}.home-live-panel .live-updated{font-size:9px;color:var(--muted);margin-top:12px;text-align:right}
 @media(max-width:620px){.home-live-section{padding:34px 0}.home-live-heading{align-items:start;flex-direction:column;gap:8px}.home-live-panel{padding:11px}.home-live-matches{grid-template-columns:1fr}}
+
+/* Marcador compacto: acompaña la cabecera sin cubrir el banner ni ocupar media pantalla */
+.home-live-section{padding:15px 0 17px!important;background:#0d131a;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.home-live-heading{align-items:center!important;margin:0 0 9px!important}
+.home-live-heading h2{font-size:clamp(21px,2.5vw,27px)!important;line-height:1!important}
+.home-live-heading .overline{font-size:9px;margin-bottom:3px}
+.home-live-status{font-size:9px;padding:0}
+.home-live-panel{padding:9px 11px!important}
+.home-live-matches{display:flex!important;gap:9px!important;overflow-x:auto;overflow-y:hidden;padding-bottom:3px;scroll-snap-type:x proximity}
+.home-live-matches .live-league{flex:0 0 min(285px,82vw);scroll-snap-align:start;padding:9px 11px!important}
+.home-live-panel .live-updated{margin-top:5px!important;font-size:9px}
+@media(max-width:620px){.home-live-section{padding:12px 0!important}.home-live-heading{flex-direction:row!important;align-items:center!important}.home-live-heading h2{font-size:22px!important}.home-live-panel{padding:7px!important}.home-live-matches .live-league{flex-basis:84vw}}
+
 </style>
 </head>
 <body>
 <header><div class="wrap top"><a class="logo" href="./"><i>◆</i> ALLSPORTS</a><nav aria-label="Navegación"><a class="news-nav active" href="./">INICIO</a><a class="news-nav" href="./foro/">FORO</a><a href="#noticias" class="news-nav">NOTICIAS</a><a href="#comunidad" class="nav-cta">ÚNETE ↗</a></nav></div></header>
 <main>
+<section class="home-live-section" id="marcadores">
+ <div class="wrap">
+  <div class="home-live-heading"><div><span class="overline">Sigue la acción</span><h2>Marcadores <span>LIVE</span></h2></div><div class="home-live-status"><i></i> ACTUALIZACIÓN AUTOMÁTICA</div></div>
+  <div class="home-live-panel">
+   <div id="forumLiveMatches" class="home-live-matches"><p class="live-loading">Consultando marcadores…</p></div>
+   <div class="live-updated" id="forumLiveUpdated">Actualización automática cada minuto</div>
+  </div>
+ </div>
+</section>
+<section class="hero"><div class="wrap hero-inner"><div class="kicker">La casa de todos los deportes</div><h1>NO SOLO<br>LO MIRES.<br><span>VÍVELO.</span></h1><p class="hero-copy">La pasión no entiende de disciplinas. El lugar donde la afición se encuentra, las opiniones cuentan y cada deporte tiene su sitio.</p><div class="hero-actions"><a class="btn primary" href="#deportes">Explora los deportes ↘</a><a class="btn" href="#comunidad">Entra en la comunidad</a></div><div class="hero-stamp">ALLSPORTS · DESDE LA GRADA HASTA LA CANCHA</div></div></section>
 <section class="home-live-section" id="marcadores">
  <div class="wrap">
   <div class="home-live-heading"><div><span class="overline">Sigue la acción</span><h2>Marcadores <span>LIVE</span></h2></div><div class="home-live-status"><i></i> ACTUALIZACIÓN AUTOMÁTICA</div></div>
