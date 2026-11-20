@@ -497,8 +497,6 @@ function setForumMobileCategories(open){
 forumMobileCategoriesToggle?.addEventListener('click',()=>setForumMobileCategories(!forumCategoriesPanel.classList.contains('mobile-open')));
 document.getElementById('forumMobileCategoriesClose')?.addEventListener('click',()=>setForumMobileCategories(false));
 forumMobileCategoriesBackdrop?.addEventListener('click',()=>setForumMobileCategories(false));
-const forumSportClassMap={'Fútbol':'football','Baloncesto':'basketball','Motor':'motor','Tenis':'tennis','Hockey':'hockey','Golf':'golf','Rugby':'rugby','Ciclismo':'cycling','Natación':'swimming','Voleibol':'volleyball','Balonmano':'handball','Atletismo':'athletics','Gimnasia':'gymnastics','Artes marciales':'martial','Deportes náuticos':'water','Surf':'surf','Tenis de mesa':'tabletennis','Waterpolo':'waterpolo','Béisbol y sóftbol':'baseball','Fútbol americano':'americanfootball','Esports':'esports','Ajedrez':'chess','Deportes urbanos':'urban','Críquet':'cricket','Esgrima':'fencing','Escalada':'climbing','Triatlón':'triathlon','Halterofilia':'weightlifting','Patinaje':'skating','Deportes de invierno':'winter','Mundial fútbol 2030':'worldcup','Eurocopa fútbol 2028':'euro','JJOO Los Ángeles 2028':'olympics','Mundial Femenino 2027':'womensworld','Mundial Baloncesto Masculino 2027':'worldbasket','Mundial Atletismo 2027':'worldathletics','Comunidad':'community'};
-function forumSportClass(sport){return 'sport-card-'+(forumSportClassMap[sport]||'other');}
 function forumVisibleSubforums(sport){
  if(sport==='Fútbol')return ['Primera','Segunda','General','Copa del Rey','Selecciones','Champions'];
  if(sport==='Baloncesto')return ['ACB','NBA','General','EuroLeague'];
@@ -519,7 +517,7 @@ function forumSportPhoto(sport){
  if(sport==='Baloncesto')return FORUM_HOME_SPORT_PHOTOS[1];
  if(sport==='Tenis')return FORUM_HOME_SPORT_PHOTOS[2];
  if(sport==='Motor')return FORUM_HOME_SPORT_PHOTOS[3];
- return FORUM_HOME_SPORT_PHOTOS[(index%5)];
+ return FORUM_HOME_SPORT_PHOTOS[4];
 }
 function forumVisibleSubforums(sport){return (forumStructure[sport]||['General']).slice();}
 function renderForumCategories(){
