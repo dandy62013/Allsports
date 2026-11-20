@@ -42,7 +42,7 @@ section.content{padding:82px 0}.section-top{display:flex;justify-content:space-b
 .forum-post{border-top:1px solid var(--line);padding:16px 0}
 .forum-post h4{font:700 21px 'Barlow Condensed',sans-serif;margin:7px 0;color:#f5f7f8}
 .forum-post p{white-space:pre-wrap;overflow-wrap:anywhere;color:#d8dfe4;margin:8px 0}
-.forum-post-body{white-space:normal;overflow-wrap:anywhere;line-height:1.85;color:#d8dfe4;font-size:14px}.forum-post-body .forum-text-spacer{height:13px}.forum-post-body .forum-inline-image{display:block;width:100%;max-width:620px;max-height:340px;object-fit:cover;border:1px solid var(--line);border-radius:8px;margin:14px 0 18px}.forum-post-body br{display:block;content:'';margin-top:3px}
+.forum-post-body{white-space:normal;overflow-wrap:anywhere;line-height:1.85;color:#d8dfe4;font-size:14px}.forum-post-body .forum-text-spacer{height:13px}.forum-post-body .forum-inline-image{display:block;width:100%;max-width:620px;max-height:340px;object-fit:cover;border:1px solid var(--line);border-radius:8px;margin:14px 0 18px}.forum-post-body br{display:block;content:'';margin-top:3px}.forum-post-body .forum-content-divider{border:0;border-top:1px solid var(--line);margin:20px 0}.forum-post-body .forum-golf-tour{margin:22px 0 4px;color:var(--lime);font:800 12px 'Barlow Condensed',sans-serif;letter-spacing:1.5px}.forum-post-body .forum-golf-event{margin:0 0 12px;color:#fff;font:800 25px/1.1 'Barlow Condensed',sans-serif}.forum-post-body .forum-content-meta{margin:8px 0;color:#c5ced5;font-size:13px}.forum-post-body .forum-content-line{margin:8px 0;line-height:1.7}
 .forum-post-meta{font-size:11px;color:var(--muted)}
 .forum-replies{margin-top:17px;padding:13px 15px;background:rgba(255,255,255,.025);border:1px solid var(--line);border-radius:10px}.forum-replies h5{margin:0 0 10px;color:var(--lime);font:700 14px 'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.8px}.forum-reply-list{display:grid;gap:9px;margin-bottom:12px}.forum-reply{padding:10px 12px;background:rgba(255,255,255,.035);border-radius:7px}.forum-reply strong{font-size:12px;color:#f4f6f7}.forum-reply p{margin:5px 0;white-space:pre-wrap;overflow-wrap:anywhere}.forum-reply small,.forum-reply-hint{font-size:10px;color:var(--muted)}.forum-reply-form textarea{width:100%;min-height:58px;resize:vertical;padding:10px;background:#10161b;border:1px solid var(--line);border-radius:7px;color:white;font:inherit}.forum-reply-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px}.forum-reply-actions .btn{padding:8px 13px;font-size:11px}
 .forum-post-tag{font-size:10px;color:var(--lime);font-weight:800;letter-spacing:1px;text-transform:uppercase}
@@ -626,7 +626,14 @@ function renderMotorTemplate(target,value){
 }
 function renderForumText(target,value){
  target.replaceChildren();target.classList.add('forum-post-body');
- const lines=String(value||'').split('\n').filter(line=>!/^\s*\[\[AS[^\]]+\]\]\s*$/.test(line));
+ // Algunos contenidos antiguos llegan con los saltos de línea colapsados.
+ // Recuperamos los bloques del boletín de golf antes de pintarlos.
+ const normalized=String(value||'')
+  .replace(/\s*(━{5,})\s*/g,'\n$1\n')
+  .replace(/\s*(🏆\s*(?:PGA TOUR|LPGA|JAPAN GOLF TOUR))\s*/g,'\n$1\n')
+  .replace(/\s*(📅|📍|📊|💬|🔗)\s*/g,'\n$1 ')
+  .replace(/\s*(!\[[^\]]*\]\(https?:\/\/[^)]+\))\s*/g,'\n$1\n');
+ const lines=normalized.split(/\r?\n/).filter(line=>!/^\s*\[\[AS[^\]]+\]\]\s*$/.test(line));
  let quoteLines=[];
  const flushQuote=()=>{if(!quoteLines.length)return;const quote=document.createElement('blockquote');quote.textContent=quoteLines.join('\n').replace(/^> ?/gm,'');target.append(quote);quoteLines=[];};
  const appendInline=line=>{
@@ -642,12 +649,29 @@ function renderForumText(target,value){
   if(last<line.length)target.append(document.createTextNode(line.slice(last)));
  };
  lines.forEach(line=>{
-  if(line.startsWith('>')){quoteLines.push(line);return;}
+  const clean=line.trim();
+  if(clean.startsWith('>')){quoteLines.push(clean);return;}
   flushQuote();
-  if(!line.trim()){const spacer=document.createElement('div');spacer.className='forum-text-spacer';spacer.setAttribute('aria-hidden','true');target.append(spacer);return;}
-  appendInline(line);target.append(document.createElement('br'));
+  if(!clean){const spacer=document.createElement('div');spacer.className='forum-text-spacer';spacer.setAttribute('aria-hidden','true');target.append(spacer);return;}
+  if(/^━{5,}$/.test(clean)){const divider=document.createElement('hr');divider.className='forum-content-divider';target.append(divider);return;}
+  if(/^🏆\s*(PGA TOUR|LPGA|JAPAN GOLF TOUR)$/i.test(clean)){const heading=document.createElement('h5');heading.className='forum-golf-tour';heading.textContent=clean;target.append(heading);continue;}
+  if(/^(THE RSM CLASSIC|CME GROUP TOUR CHAMPIONSHIP|DUNLOP PHOENIX TOURNAMENT)$/i.test(clean)){const heading=document.createElement('h4');heading.className='forum-golf-event';heading.textContent=clean;target.append(heading);continue;}
+  const row=document.createElement('div');row.className=/^(📅|📍|📊|💬|🔗)/.test(clean)?'forum-content-meta':'forum-content-line';appendInlineInto(row,clean);target.append(row);
  });
  flushQuote();
+ function appendInlineInto(parent,line){
+  const before=target;const holder=document.createElement('span');const pattern=/(!?)\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g;let last=0,match;
+  while((match=pattern.exec(line))){
+   if(match.index>last)holder.append(document.createTextNode(line.slice(last,match.index)));
+   let safeUrl=null;try{const parsed=new URL(match[3]);if(['http:','https:'].includes(parsed.protocol))safeUrl=parsed.href;}catch{}
+   if(safeUrl&&match[1]==='!'){const img=document.createElement('img');img.src=safeUrl;img.alt=match[2];img.loading='lazy';img.className='forum-inline-image';holder.append(img);}
+   else if(safeUrl){const a=document.createElement('a');a.href=safeUrl;a.textContent=match[2];a.target='_blank';a.rel='noopener noreferrer';holder.append(a);}
+   else holder.append(document.createTextNode(match[0]));
+   last=pattern.lastIndex;
+  }
+  if(last<line.length)holder.append(document.createTextNode(line.slice(last)));
+  parent.append(holder);
+ }
 }
 function addForumEmojiPicker(field,parent){
  const tools=document.createElement('div');tools.className='forum-emoji-tools';
