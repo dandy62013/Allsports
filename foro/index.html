@@ -654,8 +654,8 @@ function renderForumText(target,value){
   flushQuote();
   if(!clean){const spacer=document.createElement('div');spacer.className='forum-text-spacer';spacer.setAttribute('aria-hidden','true');target.append(spacer);return;}
   if(/^━{5,}$/.test(clean)){const divider=document.createElement('hr');divider.className='forum-content-divider';target.append(divider);return;}
-  if(/^🏆\s*(PGA TOUR|LPGA|JAPAN GOLF TOUR)$/i.test(clean)){const heading=document.createElement('h5');heading.className='forum-golf-tour';heading.textContent=clean;target.append(heading);continue;}
-  if(/^(THE RSM CLASSIC|CME GROUP TOUR CHAMPIONSHIP|DUNLOP PHOENIX TOURNAMENT)$/i.test(clean)){const heading=document.createElement('h4');heading.className='forum-golf-event';heading.textContent=clean;target.append(heading);continue;}
+  if(/^🏆\s*(PGA TOUR|LPGA|JAPAN GOLF TOUR)$/i.test(clean)){const heading=document.createElement('h5');heading.className='forum-golf-tour';heading.textContent=clean;target.append(heading);return;}
+  if(/^(THE RSM CLASSIC|CME GROUP TOUR CHAMPIONSHIP|DUNLOP PHOENIX TOURNAMENT)$/i.test(clean)){const heading=document.createElement('h4');heading.className='forum-golf-event';heading.textContent=clean;target.append(heading);return;}
   const row=document.createElement('div');row.className=/^(📅|📍|📊|💬|🔗)/.test(clean)?'forum-content-meta':'forum-content-line';appendInlineInto(row,clean);target.append(row);
  });
  flushQuote();
