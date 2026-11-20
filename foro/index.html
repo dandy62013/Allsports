@@ -42,7 +42,7 @@ section.content{padding:82px 0}.section-top{display:flex;justify-content:space-b
 .forum-post{border-top:1px solid var(--line);padding:16px 0}
 .forum-post h4{font:700 21px 'Barlow Condensed',sans-serif;margin:7px 0;color:#f5f7f8}
 .forum-post p{white-space:pre-wrap;overflow-wrap:anywhere;color:#d8dfe4;margin:8px 0}
-.forum-post-body{white-space:normal;overflow-wrap:anywhere;line-height:1.85;color:#d8dfe4;font-size:14px}.forum-post-body .forum-text-spacer{height:13px}.forum-post-body .forum-inline-image{display:block;width:100%;max-width:620px;max-height:340px;object-fit:cover;border:1px solid var(--line);border-radius:8px;margin:14px 0 18px}.forum-post-body br{display:block;content:'';margin-top:3px}.forum-post-body .forum-content-divider{border:0;border-top:1px solid var(--line);margin:20px 0}.forum-post-body .forum-golf-tour{margin:22px 0 4px;color:var(--lime);font:800 12px 'Barlow Condensed',sans-serif;letter-spacing:1.5px}.forum-post-body .forum-golf-event{margin:0 0 12px;color:#fff;font:800 25px/1.1 'Barlow Condensed',sans-serif}.forum-post-body .forum-content-meta{margin:8px 0;color:#c5ced5;font-size:13px}.forum-post-body .forum-content-line{margin:8px 0;line-height:1.7}
+.forum-post-body{white-space:normal;overflow-wrap:anywhere;line-height:1.85;color:#d8dfe4;font-size:14px}.forum-post-body .forum-text-spacer{height:13px}.forum-post-body .forum-inline-image{display:block;width:100%;max-width:620px;max-height:340px;object-fit:cover;border:1px solid var(--line);border-radius:8px;margin:14px 0 18px}.forum-post-body br{display:block;content:'';margin-top:3px}.forum-post-body .forum-content-divider{border:0;border-top:1px solid var(--line);margin:20px 0}.forum-post-body .forum-golf-tour{margin:22px 0 4px;color:var(--lime);font:800 12px 'Barlow Condensed',sans-serif;letter-spacing:1.5px}.forum-post-body .forum-golf-event{margin:0 0 12px;color:#fff;font:800 25px/1.1 'Barlow Condensed',sans-serif}.forum-post-body .forum-content-meta{margin:8px 0;color:#c5ced5;font-size:13px}.forum-post-body .forum-content-line{margin:8px 0;line-height:1.7}.forum-golf-card{display:grid;gap:5px;padding:18px;margin:8px 0 14px;background:linear-gradient(145deg,rgba(198,255,0,.07),rgba(255,255,255,.025));border:1px solid rgba(198,255,0,.28);border-left:4px solid #C6FF00;border-radius:12px}.forum-golf-card .forum-content-line:first-child{font-weight:800;color:#fff;font-size:16px}.forum-golf-card .forum-content-meta{margin:2px 0 12px}.forum-golf-card .forum-golf-tour{margin:13px 0 0;padding-top:10px;border-top:1px solid rgba(255,255,255,.1)}.forum-golf-card .forum-golf-event{font-size:20px;margin:0 0 2px}.forum-golf-card .forum-text-spacer{height:3px}
 .forum-post-meta{font-size:11px;color:var(--muted)}
 .forum-replies{margin-top:17px;padding:13px 15px;background:rgba(255,255,255,.025);border:1px solid var(--line);border-radius:10px}.forum-replies h5{margin:0 0 10px;color:var(--lime);font:700 14px 'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.8px}.forum-reply-list{display:grid;gap:9px;margin-bottom:12px}.forum-reply{padding:10px 12px;background:rgba(255,255,255,.035);border-radius:7px}.forum-reply strong{font-size:12px;color:#f4f6f7}.forum-reply p{margin:5px 0;white-space:pre-wrap;overflow-wrap:anywhere}.forum-reply small,.forum-reply-hint{font-size:10px;color:var(--muted)}.forum-reply-form textarea{width:100%;min-height:58px;resize:vertical;padding:10px;background:#10161b;border:1px solid var(--line);border-radius:7px;color:white;font:inherit}.forum-reply-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px}.forum-reply-actions .btn{padding:8px 13px;font-size:11px}
 .forum-post-tag{font-size:10px;color:var(--lime);font-weight:800;letter-spacing:1px;text-transform:uppercase}
@@ -632,8 +632,15 @@ function renderForumText(target,value){
   .replace(/\s*(━{5,})\s*/g,'\n$1\n')
   .replace(/\s*(🏆\s*(?:PGA TOUR|LPGA|JAPAN GOLF TOUR))\s*/g,'\n$1\n')
   .replace(/\s*(📅|📍|📊|💬|🔗)\s*/g,'\n$1 ')
+  .replace(/\s*(THE RSM CLASSIC|CME GROUP TOUR CHAMPIONSHIP|DUNLOP PHOENIX TOURNAMENT)\s*/gi,'\n$1\n')
   .replace(/\s*(!\[[^\]]*\]\(https?:\/\/[^)]+\))\s*/g,'\n$1\n');
  const lines=normalized.split(/\r?\n/).filter(line=>!/^\s*\[\[AS[^\]]+\]\]\s*$/.test(line));
+ const isGolf=/⛳\s*GOLF|PGA TOUR|CME GROUP TOUR CHAMPIONSHIP|DUNLOP PHOENIX/i.test(normalized);
+ if(isGolf){
+  const card=document.createElement('section');card.className='forum-golf-card';target.append(card);
+  const originalAppend=target.append.bind(target);
+  target.append=(...nodes)=>card.append(...nodes);
+ }
  let quoteLines=[];
  const flushQuote=()=>{if(!quoteLines.length)return;const quote=document.createElement('blockquote');quote.textContent=quoteLines.join('\n').replace(/^> ?/gm,'');target.append(quote);quoteLines=[];};
  const appendInline=line=>{
