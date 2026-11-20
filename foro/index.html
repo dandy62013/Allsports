@@ -227,7 +227,7 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
    <div class="forum-mobile-categories-backdrop" id="forumMobileCategoriesBackdrop"></div>
    <aside class="forum-categories" id="forumCategoriesPanel"><div class="forum-categories-mobile-head"><h3>Todos los deportes</h3><button type="button" id="forumMobileCategoriesClose" aria-label="Cerrar categorías">×</button></div><div id="forumCategoryList"></div></aside>
    <section class="forum-main">
-    <div class="forum-heading"><div><h3 id="forumCurrentTitle">Todos los debates</h3><p id="forumCurrentDescription">Explora las conversaciones de la comunidad.</p></div></div>
+    <div class="forum-heading"><div><h3 id="forumCurrentTitle">Selecciona un deporte</h3><p id="forumCurrentDescription">Elige una categoría para ver únicamente sus debates.</p></div></div>
     <div class="forum-search"><span aria-hidden="true">⌕</span><input id="forumSearch" type="search" placeholder="Buscar en todos los hilos y mensajes…" aria-label="Buscar en todos los hilos y mensajes"><button id="forumSearchClear" type="button" aria-label="Borrar búsqueda">×</button></div>
     <div class="forum-compose">
      <h3>Crear un nuevo tema</h3>
@@ -328,7 +328,7 @@ const forumStructure={
  'Mundial Atletismo 2027':['General','Calendario y pruebas','Resultados','Atletas españoles','Noticias y debate'],
  'Comunidad':['General','Presentaciones','Debate general','Sugerencias']
 };
-let forumSport='Todos',forumSubforum='Todos',forumExpandedSport='';
+let forumSport='',forumSubforum='Todos',forumExpandedSport='';
 const forumCategoryList=document.getElementById('forumCategoryList');
 const forumTopics=document.getElementById('forumTopics');
 const forumCategoriesPanel=document.getElementById('forumCategoriesPanel');
@@ -346,7 +346,6 @@ document.getElementById('forumMobileCategoriesClose')?.addEventListener('click',
 forumMobileCategoriesBackdrop?.addEventListener('click',()=>setForumMobileCategories(false));
 function renderForumCategories(){
  forumCategoryList.replaceChildren();
- const all=document.createElement('button');all.className='forum-category'+(forumSport==='Todos'?' active':'');all.textContent='Todos los debates';all.addEventListener('click',()=>selectForum('Todos','Todos'));forumCategoryList.append(all);
  Object.entries(forumStructure).forEach(([sport,subs])=>{
   const group=document.createElement('div');
   const button=document.createElement('button');button.className='forum-category'+(forumSport===sport?' active':'');button.textContent=sport;button.addEventListener('click',()=>{if(forumExpandedSport===sport){forumExpandedSport='';renderForumCategories();}else{forumExpandedSport=sport;selectForum(sport,'Todos');}});group.append(button);
@@ -361,8 +360,8 @@ function updateForumSubforums(){
 function selectForum(sport,subforum){
  setForumMobileCategories(false);
  activeThreadId=null;forumTopicPage=1;forumSport=sport;forumSubforum=subforum;forumExpandedSport=sport==='Todos'?'':sport;renderForumCategories();
- document.getElementById('forumCurrentTitle').textContent=sport==='Todos'?'Todos los debates':sport+(subforum!=='Todos'?' · '+forumSubforumLabel(subforum):'');
- document.getElementById('forumCurrentDescription').textContent=sport==='Todos'?'Todos los temas publicados en ALLSPORTS.':'Conversaciones y temas de '+(subforum==='Todos'?sport:forumSubforumLabel(subforum))+'.';
+ document.getElementById('forumCurrentTitle').textContent=sport+(subforum!=='Todos'?' · '+forumSubforumLabel(subforum):'');
+ document.getElementById('forumCurrentDescription').textContent='Conversaciones y temas de '+(subforum==='Todos'?sport:forumSubforumLabel(subforum))+'.';
  renderForumTopics();
 }
 const forumReplyPages={};
@@ -696,9 +695,9 @@ function getBotBody(content){const lines=String(content||'').split('\n');const t
 function renderForumTopics(){
  forumTopics.replaceChildren();
  const q=forumSearchQuery.trim().toLocaleLowerCase('es');
- const chosen=data.filter(x=>{if(q){const replies=forumReplies.filter(r=>r.post_id===x.id).map(r=>r.content||'').join(' ');const haystack=[forumDisplayTitle(x.content),x.content,x.sport,x.subforum,x.profiles?.username,replies].join(' ').toLocaleLowerCase('es');return haystack.includes(q);}return (forumSport==='Todos'||x.sport===forumSport||(forumSport==='Mundial de fútbol 2030'&&x.sport==='Mundial'))&&(forumSubforum==='Todos'||x.subforum===forumSubforum);});
+ const chosen=data.filter(x=>(!forumSport||x.sport===forumSport||(forumSport==='Mundial de fútbol 2030'&&x.sport==='Mundial'))&&(forumSubforum==='Todos'||x.subforum===forumSubforum)&&(!q||(()=>{const replies=forumReplies.filter(r=>r.post_id===x.id).map(r=>r.content||'').join(' ');const haystack=[forumDisplayTitle(x.content),x.content,x.sport,x.subforum,x.profiles?.username,replies].join(' ').toLocaleLowerCase('es');return haystack.includes(q);})));
  if(!activeThreadId){
-  if(!chosen.length){forumTopicPage=1;const p=document.createElement('p');p.className='empty';p.textContent=forumSearchQuery?'No se han encontrado hilos ni mensajes con «'+forumSearchQuery+'».':'Todavía no hay temas en este subforo. ¡Puedes abrir el primero!';forumTopics.append(p);return;}
+  if(!chosen.length){forumTopicPage=1;const p=document.createElement('p');p.className='empty';p.textContent=forumSearchQuery?'No se han encontrado hilos ni mensajes con «'+forumSearchQuery+'».':!forumSport?'Selecciona un deporte en Categorías para ver sus debates.':'Todavía no hay temas en este subforo. ¡Puedes abrir el primero!';forumTopics.append(p);return;}
   chosen.sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0));
   const totalPages=Math.max(1,Math.ceil(chosen.length/FORUM_TOPICS_PER_PAGE));forumTopicPage=Math.min(Math.max(1,forumTopicPage),totalPages);
   const start=(forumTopicPage-1)*FORUM_TOPICS_PER_PAGE;
