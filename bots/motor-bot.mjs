@@ -25,9 +25,9 @@ const kickoffLabel=d=>new Date(d).toLocaleString("es-ES",{timeZone:ZONE,day:"2-d
 const marker=(kind,id)=>"[[ASMOTOR:"+MODE.toUpperCase()+":"+kind+":"+id+"]]";
 function findPost(id){return posts.find(p=>p.subforum===CONFIG.subforum&&(p.content||"").includes(marker("PREVIA",id)))}
 function hasReply(postId,kind,id){return replies.some(r=>r.post_id===postId&&(r.content||"").includes(marker(kind,id)))}
-async function createThread(id,title,venue,country,start,end,sessions,sourceUrl){
+async function createThread(id,title,venue,country,start,end,sessions,sourceUrl,displayLabel=null){
  const body=[marker("PREVIA",id),"PREVIA DEL GRAN PREMIO","GRAN PREMIO | "+title,"LUGAR | "+venue+(country?" · "+country:""),"FECHAS | "+madridTime(start)+" — "+madridTime(end),"","HORARIOS DE SESIONES",sessions||"Los horarios oficiales se incorporarán cuando estén disponibles.","Abrimos este hilo para seguir todo el Gran Premio. Aquí iremos añadiendo la parrilla, el resultado final y la clasificación del campeonato.","¡Os leemos!","",FOOTER].join("\n");
- const res=await json(SUPABASE_URL+"/rest/v1/posts",{method:"POST",headers:{...auth,Prefer:"return=representation"},body:JSON.stringify({user_id:userId,sport:"Motor",subforum:CONFIG.subforum,content:"🏁 "+CONFIG.name+" | "+title+" | "+kickoffLabel(start)+"\n"+body,link_url:sourceUrl||null})});
+ const res=await json(SUPABASE_URL+"/rest/v1/posts",{method:"POST",headers:{...auth,Prefer:"return=representation"},body:JSON.stringify({user_id:userId,sport:"Motor",subforum:CONFIG.subforum,content:"🏁 "+CONFIG.name+" | "+title+" | "+(displayLabel||kickoffLabel(start))+"\n"+body,link_url:sourceUrl||null})});
  const row=Array.isArray(res)?res[0]:res;if(row?.id){posts.unshift(row);console.log("Hilo creado:",title)}return row?.id||null;
 }
 async function addReply(postId,kind,id,title,lines){
@@ -55,18 +55,23 @@ async function runMoto(){
   const eventUuid=eventId;
   const ss=await json(base+"/results/sessions?eventUuid="+encodeURIComponent(eventUuid)+"&categoryUuid="+encodeURIComponent(category.id),{headers:h});
   if(!Array.isArray(ss)||!ss.length)continue;
-  const ordered=ss.filter(x=>x.date).sort((a,b)=>new Date(a.date)-new Date(b.date));if(!ordered.length)continue;
-  const start=ordered[0].date,end=ordered[ordered.length-1].date;
-  if(!dateWithin(start)&&!(new Date(end).getTime()>=from.getTime()&&new Date(start).getTime()<=to.getTime()))continue;
+  const apiOrdered=ss.filter(x=>x.date).sort((a,b)=>new Date(a.date)-new Date(b.date));if(!apiOrdered.length)continue;
   const venue=ev.circuit?.name||ev.circuit_name||"Circuito por confirmar",country=ev.country?.name||"",title=ev.sponsored_name||ev.name||ev.short_name||"Gran Premio";
+  const isValencia=/valencia/i.test(title)||/ricardo tormo/i.test(venue);
+  const ordered=isValencia?[]:apiOrdered;
+  const start=isValencia?"2026-11-27T00:00:00+01:00":ordered[0].date;
+  const end=isValencia?"2026-11-29T23:59:00+01:00":ordered[ordered.length-1].date;
+  if(!dateWithin(start)&&!(new Date(end).getTime()>=from.getTime()&&new Date(start).getTime()<=to.getTime()))continue;
   const key=String(eventId)+"-"+String(category.id);let post=findPost(key);
   const firstTime=new Date(start).getTime();
-  if(!post&&firstTime-now<=5*86400000&&firstTime>=now-86400000){
-   const schedule=ordered.map(s=>(s.type||"SESIÓN")+" | "+madridTime(s.date)).join("\n");
-   const id=await createThread(key,title,venue,country,start,end,schedule,"https://www.motogp.com/");
+  if(!post&&firstTime-now<=8*86400000&&firstTime>=now-86400000){
+   const schedule=isValencia?"Los horarios oficiales detallados se publicarán cuando MotoGP los confirme.":ordered.map(s=>(s.type||"SESIÓN")+" | "+madridTime(s.date)).join("\n");
+   const displayLabel=isValencia?"27–29/11 · horario por confirmar":null;
+   const id=await createThread(key,title,venue,country,start,end,schedule,"https://www.motogp.com/",displayLabel);
    if(id){created++;post=posts.find(p=>p.id===id)}
   }
   if(!post)continue;
+  if(isValencia)continue;
   const grid=await json(base+"/results/event/"+encodeURIComponent(eventId)+"/category/"+encodeURIComponent(category.id)+"/grid",{headers:h}).catch(()=>null);
   if(Array.isArray(grid)&&grid.length){
    const lines=fmtRows(grid.sort((a,b)=>(a.qualifying_position||999)-(b.qualifying_position||999)),x=>{const rider=x.rider?.full_name||x.rider?.name;if(!rider)return null;return (x.qualifying_position||x.position||"—")+". "+(x.rider?.number||x.number||"")+" "+rider+(x.qualifying_time?" · "+x.qualifying_time:"")});
