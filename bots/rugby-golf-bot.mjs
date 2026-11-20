@@ -74,8 +74,12 @@ Este fin de semana hay tres citas destacadas en el golf profesional. Estos son l
 🏆 PGA TOUR
 THE RSM CLASSIC
 
+![Sea Island Golf Club · The RSM Classic](https://res.cloudinary.com/pgatour-prod/w_854%2Ch_480%2Cc_fill%2Cf_auto%2Cq_auto/pgatour/news/editorial/2023/11/15/the-rsm-classic-sea-island-scenic.jpg)
+
 📍 Sea Island Golf Club · Seaside Course
+
 St. Simons Island, Georgia (Estados Unidos)
+
 📅 Del 19 al 22 de noviembre
 
 Última cita de la temporada de otoño del PGA TOUR.
@@ -85,8 +89,12 @@ St. Simons Island, Georgia (Estados Unidos)
 🏆 LPGA
 CME GROUP TOUR CHAMPIONSHIP
 
+![Tiburón Golf Club · CME Group Tour Championship](https://media.koobit.com/cme-group-tour-championship-grounds-6121-w1023.jpg)
+
 📍 Tiburón Golf Club
+
 Naples, Florida (Estados Unidos)
+
 📅 Del 19 al 22 de noviembre
 
 Torneo final de la temporada LPGA, con las mejores jugadoras del circuito.
@@ -96,8 +104,12 @@ Torneo final de la temporada LPGA, con las mejores jugadoras del circuito.
 🏆 JAPAN GOLF TOUR
 DUNLOP PHOENIX TOURNAMENT
 
+![Dunlop Phoenix Tournament · Phoenix Country Club](https://seagaia.co.jp/storage/articles/445/images/FEPAWg9UB8qHkzHkm1qStikzYpAuWWWllGFoN3PI.jpeg)
+
 📍 Phoenix Country Club
+
 Miyazaki (Japón)
+
 📅 Del 19 al 22 de noviembre
 
 Una de las pruebas destacadas del calendario japonés.
