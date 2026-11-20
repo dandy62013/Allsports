@@ -439,7 +439,7 @@ document.querySelectorAll('[data-sport]').forEach(c=>c.addEventListener('click',
  const selectedSport=c.dataset.sport;
  const forumCategory=selectedSport==='Otros'?'Comunidad':selectedSport;
  if(!forumStructure[forumCategory])return;
- document.getElementById('foro').scrollIntoView({behavior:'smooth',block:'start'});
+ showPage('foro');
  showForumSubforums(forumCategory);
 }));loadPosts();
 
