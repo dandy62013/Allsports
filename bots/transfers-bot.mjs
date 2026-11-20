@@ -12,9 +12,14 @@ const decode=x=>String(x||"").replace(/&amp;/g,"&").replace(/&quot;/g,'"').repla
 const get=(x,n)=>{const m=x.match(new RegExp("<"+n+"[^>]*>([\\s\\S]*?)</"+n+">","i"));return m?decode(m[1].replace(/^<!\[CDATA\[|\]\]>$/g,"").trim()):""};
 const relevant=x=>{
  const t=String(x||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+ // Los clubes multideportivos publican noticias de hockey, balonmano, basket, etc.
+ // No deben entrar en el feed de fichajes de fútbol aunque el título use "salida".
+ if(/hockey|hierba|junior hc|balonmano|basket|baloncesto|waterpolo|rugby|futbol sala|futsal|atletismo|pelota vasca/.test(t))return false;
  if(/patrocin|sponsor|colaborador|colaboracion|partner|socio comercial|acuerdo comercial|proveedor|convenio|alianza|fundacion|campana|publicidad|equipacion|merchandising|iluminacion|instalaciones|terreno de juego|cesped|estadio|tecnologia|operativa deportiva|firma de autografos|autografos|acto promocional|evento con|clinica|academia/.test(t))return false;
  if(/renuev|renovacion/.test(t)&&!/contrato|jugador|futbolista|tecnico|entrenador|portero|delantero|centrocampista|defensa/.test(t))return false;
- return /fichaj|incorpora|contrata|firma|renueva|renovacion|cesion|traspas|rescind|salida|despedida|vuelve al|regresa al/.test(t);
+ // "Salida complicada" puede ser una previa de un partido; solo aceptar salidas de plantilla expresas.
+ const transferExit=/\b(salida|sale|saldria|abandona|despedida)\b/.test(t)&&/jugador|futbolista|plantilla|equipo|club|contrato|delantero|centrocampista|defensa|portero/.test(t);
+ return /fichaj|incorpora|contrata|firma|renueva|renovacion|cesion|traspas|rescind|vuelve al|regresa al/.test(t)||transferExit;
 };
 const shortTitle=(raw,club)=>{
  let t=String(raw||"").replace(/\s+-\s+[^-]+$/,"").replace(/\s+/g," ").trim();
