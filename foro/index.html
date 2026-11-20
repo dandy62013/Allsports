@@ -499,7 +499,7 @@ document.getElementById('forumMobileCategoriesClose')?.addEventListener('click',
 forumMobileCategoriesBackdrop?.addEventListener('click',()=>setForumMobileCategories(false));
 function forumVisibleSubforums(sport){
  if(sport==='Fútbol')return ['Primera','Segunda','Fútbol femenino','Champions League','Copa del Rey','General'];
- if(sport==='Baloncesto')return ['ACB','NBA','General','EuroLeague'];
+ if(sport==='Baloncesto')return ['ACB','NBA','EuroLeague','General'];
  return (forumStructure[sport]||['General']).filter(x=>!['EuroCup','Eurocup','Basketball Champions League (BCL)','BCL'].includes(x));
 }
 const FORUM_HOME_SPORT_PHOTOS=[
@@ -519,7 +519,6 @@ function forumSportPhoto(sport){
  if(sport==='Motor')return FORUM_HOME_SPORT_PHOTOS[3];
  return FORUM_HOME_SPORT_PHOTOS[4];
 }
-function forumVisibleSubforums(sport){return (forumStructure[sport]||['General']).slice();}
 function renderForumCategories(){
  forumCategoryList.replaceChildren();
  const grid=document.getElementById('forumCategoryGrid');if(!grid)return;grid.replaceChildren();
