@@ -375,7 +375,6 @@ function renderForumCategories(){
   const heading=document.createElement('button');heading.type='button';heading.className='forum-category-card-head';heading.textContent=sport;heading.addEventListener('click',()=>selectForum(sport,'Todos'));card.append(heading);
   const subgrid=document.createElement('div');subgrid.className='forum-category-card-subforums';subs.forEach(sub=>{const sb=document.createElement('button');sb.type='button';sb.textContent=forumSubforumLabel(sub);sb.addEventListener('click',()=>selectForum(sport,sub));subgrid.append(sb)});card.append(subgrid);grid.append(card);
   const group=document.createElement('div');
-  const group=document.createElement('div');
   const button=document.createElement('button');button.className='forum-category'+(forumSport===sport?' active':'');button.textContent=sport;button.addEventListener('click',()=>{if(forumExpandedSport===sport){forumExpandedSport='';renderForumCategories();}else{forumExpandedSport=sport;selectForum(sport,'Todos');}});group.append(button);
   if(forumExpandedSport===sport){const sublist=document.createElement('div');sublist.className='forum-subforums';subs.forEach(sub=>{const sb=document.createElement('button');sb.textContent='↳ '+forumSubforumLabel(sub);sb.className=forumSubforum===sub?'active':'';sb.addEventListener('click',()=>selectForum(sport,sub));sublist.append(sb)});group.append(sublist);}
   forumCategoryList.append(group);
@@ -388,7 +387,7 @@ function updateForumSubforums(){
 function selectForum(sport,subforum){
  setForumMobileCategories(false);
  document.getElementById('forumCategoryLanding').hidden=true;document.getElementById('forumThreadsView').hidden=false;document.getElementById('forumComposePanel').hidden=true;
- activeThreadId=null;forumTopicPage=1;forumSport=sport;forumSubforum=subforum;forumExpandedSport=sport==='Todos'?'':sport;renderForumCategories();
+ activeThreadId=null;forumTopicPage=1;forumSport=sport;forumSubforum=subforum;forumExpandedSport=sport==='Todos'?'':sport;const sportSelect=document.getElementById('forumSport');sportSelect.value=sport;updateForumSubforums();document.getElementById('forumSubforum').value=subforum;renderForumCategories();
  document.getElementById('forumCurrentTitle').textContent=sport+(subforum!=='Todos'?' · '+forumSubforumLabel(subforum):'');
  document.getElementById('forumCurrentDescription').textContent='Conversaciones y temas de '+(subforum==='Todos'?sport:forumSubforumLabel(subforum))+'.';
  renderForumTopics();
