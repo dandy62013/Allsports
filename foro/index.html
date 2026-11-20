@@ -18,6 +18,28 @@ section.content{padding:82px 0}.section-top{display:flex;justify-content:space-b
 .news-nav{color:var(--lime);padding:11px 10px;font-size:13px;font-weight:800}.news-section{background:#0d131a;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.news-filters{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 22px}.news-filters button{border:1px solid #35414c;background:transparent;color:#c7d0d7;padding:9px 14px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;cursor:pointer}.news-filters button.active,.news-filters button:hover{background:var(--lime);border-color:var(--lime);color:#10150b}.news-layout{display:grid;grid-template-columns:1.25fr 1fr;gap:16px}.news-feature,.news-card{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--line)}.news-feature{min-height:390px;display:flex;align-items:end;background:linear-gradient(135deg,#18232d,#101820 65%,#26313b)}.news-feature:before{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(3,7,11,.97) 0%,rgba(3,7,11,.78) 48%,rgba(3,7,11,.28) 100%)}.news-feature>div{position:relative;z-index:1}.news-feature-content{position:relative;padding:28px}.news-feature h3{color:#fff;text-shadow:0 2px 12px #000}.news-feature p{color:#f0f3f5;text-shadow:0 1px 8px #000}.news-label{display:inline-block;background:var(--lime);color:#111;padding:6px 9px;font-size:10px;font-weight:900;letter-spacing:1.5px;text-transform:uppercase}.news-meta{font-size:10px;color:#aeb9c2;text-transform:uppercase;letter-spacing:1.2px;font-weight:700;margin-top:10px}.news-feature h3{font:800 clamp(32px,4vw,48px)/.98 'Barlow Condensed',sans-serif;text-transform:uppercase;margin:14px 0 10px}.news-feature p{color:#d1d8dd;line-height:1.6;font-size:13px;max-width:560px}.news-read{display:inline-block;color:var(--lime);font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-top:7px}.news-list{display:grid;grid-template-columns:1fr 1fr;gap:12px}.news-card{min-height:188px;padding:19px;display:flex;flex-direction:column;justify-content:space-between;transition:border-color .2s,transform .2s;background-size:cover;background-position:center;isolation:isolate}.news-card:before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(0deg,rgba(3,7,11,.96),rgba(3,7,11,.68))}.news-card>div{position:relative;z-index:1}.news-card h3{color:#fff;text-shadow:0 2px 10px #000}.news-card p{color:#e1e7eb}.news-card .news-source{color:#e1e7eb}.news-card:hover{border-color:var(--lime);transform:translateY(-3px)}.news-card h3{font:700 23px/1.02 'Barlow Condensed',sans-serif;text-transform:uppercase;margin:12px 0}.news-card p{font-size:11px;line-height:1.5;color:var(--muted);margin-bottom:8px}.news-card[hidden]{display:none}.news-source{font-size:10px;color:#8e9aa4;text-transform:uppercase;letter-spacing:1px}.news-footnote{font-size:11px;color:var(--muted);margin:16px 0 0}@media(max-width:900px){.news-layout{grid-template-columns:1fr}.news-feature{min-height:340px}}@media(max-width:620px){.news-nav{white-space:nowrap;font-size:11px;padding:8px 9px}.news-list{grid-template-columns:1fr}.news-card{min-height:160px}.news-feature-content{padding:20px}.news-feature{min-height:370px}}
 .community{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:18px}.panel{background:var(--surface);border:1px solid var(--line);padding:24px}.panel h3{font:700 25px 'Barlow Condensed',sans-serif;text-transform:uppercase;margin-bottom:15px}.composer textarea{width:100%;min-height:110px;resize:vertical;background:#090f15;border:1px solid #34414d;padding:14px;color:white;outline:none}.composer textarea:focus{border-color:var(--lime)}.compose-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px}.compose-row select{background:#1c2731;border:1px solid #3b4854;color:white;padding:12px}.post{border-top:1px solid var(--line);padding:17px 0 3px;margin-top:16px}.post-top{display:flex;justify-content:space-between;gap:12px}.post-tag{font-size:11px;color:var(--lime);font-weight:800;text-transform:uppercase;letter-spacing:1px}.post p{white-space:pre-wrap;overflow-wrap:anywhere;color:#d8dfe4;margin:9px 0}.post-meta,.muted{font-size:12px;color:var(--muted)}.empty{padding:20px 0;color:var(--muted)}.sidebox+.sidebox{margin-top:14px}.sidebox p{color:var(--muted);font-size:13px;line-height:1.7}.sport-links{display:grid;grid-template-columns:1fr 1fr;gap:8px}.sport-links a{background:#1a2631;padding:12px;font-size:12px;font-weight:700}.sport-links a:hover{color:var(--lime)}.live-label{display:inline-block;background:#263b24;color:var(--lime);padding:5px 8px;font-size:10px;font-weight:800;letter-spacing:1px;margin-bottom:10px}
 
+
+/* Category-first forum layout */
+.forum-shell{display:block!important}
+.forum-categories,.forum-mobile-categories-toggle,.forum-mobile-categories-backdrop{display:none!important}
+.forum-main{width:100%;max-width:1240px;margin:0 auto;min-height:450px}
+#forumCategoryLanding{display:block}
+.forum-category-landing-title{text-align:center;color:var(--lime);font:900 36px 'Barlow Condensed',sans-serif;letter-spacing:1.5px;margin:6px 0 8px!important}
+.forum-category-landing-subtitle{text-align:center;color:var(--muted);margin:0 0 24px;font-size:14px}
+#forumCategoryGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.forum-category-card{display:flex;flex-direction:column;min-height:190px;padding:18px;background:linear-gradient(145deg,#18242d,#0c1218);border:1px solid #303d47;border-radius:12px;transition:border-color .18s,transform .18s}
+.forum-category-card:hover{border-color:var(--lime);transform:translateY(-2px)}
+.forum-category-card-head{width:100%;border:0;background:none;color:#f5f7f8;text-align:center;font:900 27px 'Barlow Condensed',sans-serif;letter-spacing:.6px;padding:4px 0 12px;cursor:pointer}
+.forum-category-card-head:hover{color:var(--lime)}
+.forum-category-card-subforums{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin-top:auto}
+.forum-category-card-subforums button{background:#202d37;border:1px solid #34434f;border-radius:20px;color:#bdc7ce;padding:7px 10px;font-size:11px;cursor:pointer}
+.forum-category-card-subforums button:hover{border-color:var(--lime);color:var(--lime)}
+.forum-back-categories{display:inline-block;border:1px solid #36434d;background:#17232d;color:var(--lime);padding:8px 12px;border-radius:5px;margin-bottom:10px;cursor:pointer;font-size:13px}
+#forumThreadsView[hidden],#forumComposePanel[hidden],#forumCategoryLanding[hidden]{display:none!important}
+#forumComposePanel{margin-top:12px}
+@media(max-width:950px){#forumCategoryGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){#forumCategoryGrid{grid-template-columns:1fr}.forum-category-card{min-height:150px}.forum-category-landing-title{font-size:29px}}
+
 /* Foro ALLSPORTS */
 #comunidad .composer{display:none}
 .forum-section{background:#0d131a;border-top:1px solid var(--line)}
@@ -227,9 +249,10 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
    <div class="forum-mobile-categories-backdrop" id="forumMobileCategoriesBackdrop"></div>
    <aside class="forum-categories" id="forumCategoriesPanel"><div class="forum-categories-mobile-head"><h3>Todos los deportes</h3><button type="button" id="forumMobileCategoriesClose" aria-label="Cerrar categorías">×</button></div><div id="forumCategoryList"></div></aside>
    <section class="forum-main">
-    <div class="forum-heading"><div><h3 id="forumCurrentTitle">Selecciona un deporte</h3><p id="forumCurrentDescription">Elige una categoría para ver únicamente sus debates.</p></div></div>
+    <div id="forumCategoryLanding"><h3 class="forum-category-landing-title">ELIGE TU DEPORTE</h3><p class="forum-category-landing-subtitle">Entra en una categoría para ver sus debates y subcategorías.</p><div id="forumCategoryGrid"></div></div>
+    <div id="forumThreadsView" hidden><div class="forum-heading"><div><button type="button" class="forum-back-categories" id="forumBackCategories">← Categorías</button><h3 id="forumCurrentTitle"></h3><p id="forumCurrentDescription"></p></div><button type="button" class="btn primary" id="forumOpenCompose">＋ Crear tema</button></div>
     <div class="forum-search"><span aria-hidden="true">⌕</span><input id="forumSearch" type="search" placeholder="Buscar en todos los hilos y mensajes…" aria-label="Buscar en todos los hilos y mensajes"><button id="forumSearchClear" type="button" aria-label="Borrar búsqueda">×</button></div>
-    <div class="forum-compose">
+    <div class="forum-compose" id="forumComposePanel" hidden>
      <h3>Crear un nuevo tema</h3>
      <textarea id="forumMessage" maxlength="10000" placeholder="¿Qué quieres debatir?"></textarea>
       <div id="forumTopicEmoji"></div>
@@ -244,7 +267,7 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
      </div>
      <p class="muted" id="forumStatus" aria-live="polite">Inicia sesión para publicar. La lectura es pública.</p>
     </div>
-    <div id="forumTopics" aria-live="polite"></div>
+    <div id="forumTopics" aria-live="polite"></div></div>
    </section>
    <aside class="forum-live" id="forumLiveScores" aria-label="Marcadores de fútbol en directo">
     <div class="forum-live-head"><h3>Marcadores</h3><span class="forum-live-state">EN DIRECTO</span></div>
@@ -346,7 +369,12 @@ document.getElementById('forumMobileCategoriesClose')?.addEventListener('click',
 forumMobileCategoriesBackdrop?.addEventListener('click',()=>setForumMobileCategories(false));
 function renderForumCategories(){
  forumCategoryList.replaceChildren();
+ const grid=document.getElementById('forumCategoryGrid');if(!grid)return;grid.replaceChildren();
  Object.entries(forumStructure).forEach(([sport,subs])=>{
+  const card=document.createElement('article');card.className='forum-category-card';
+  const heading=document.createElement('button');heading.type='button';heading.className='forum-category-card-head';heading.textContent=sport;heading.addEventListener('click',()=>selectForum(sport,'Todos'));card.append(heading);
+  const subgrid=document.createElement('div');subgrid.className='forum-category-card-subforums';subs.forEach(sub=>{const sb=document.createElement('button');sb.type='button';sb.textContent=forumSubforumLabel(sub);sb.addEventListener('click',()=>selectForum(sport,sub));subgrid.append(sb)});card.append(subgrid);grid.append(card);
+  const group=document.createElement('div');
   const group=document.createElement('div');
   const button=document.createElement('button');button.className='forum-category'+(forumSport===sport?' active':'');button.textContent=sport;button.addEventListener('click',()=>{if(forumExpandedSport===sport){forumExpandedSport='';renderForumCategories();}else{forumExpandedSport=sport;selectForum(sport,'Todos');}});group.append(button);
   if(forumExpandedSport===sport){const sublist=document.createElement('div');sublist.className='forum-subforums';subs.forEach(sub=>{const sb=document.createElement('button');sb.textContent='↳ '+forumSubforumLabel(sub);sb.className=forumSubforum===sub?'active':'';sb.addEventListener('click',()=>selectForum(sport,sub));sublist.append(sb)});group.append(sublist);}
@@ -359,6 +387,7 @@ function updateForumSubforums(){
 }
 function selectForum(sport,subforum){
  setForumMobileCategories(false);
+ document.getElementById('forumCategoryLanding').hidden=true;document.getElementById('forumThreadsView').hidden=false;document.getElementById('forumComposePanel').hidden=true;
  activeThreadId=null;forumTopicPage=1;forumSport=sport;forumSubforum=subforum;forumExpandedSport=sport==='Todos'?'':sport;renderForumCategories();
  document.getElementById('forumCurrentTitle').textContent=sport+(subforum!=='Todos'?' · '+forumSubforumLabel(subforum):'');
  document.getElementById('forumCurrentDescription').textContent='Conversaciones y temas de '+(subforum==='Todos'?sport:forumSubforumLabel(subforum))+'.';
@@ -755,6 +784,8 @@ addForumEmojiPicker(document.getElementById('forumMessage'),document.getElementB
  document.getElementById('forumSport').innerHTML=Object.keys(forumStructure).map(s=>'<option value="'+s+'">'+s+'</option>').join('');
 document.getElementById('forumSport').addEventListener('change',updateForumSubforums);
 updateForumSubforums();renderForumCategories();renderForumTopics();
+document.getElementById("forumBackCategories").addEventListener("click",()=>{forumSport="";forumSubforum="Todos";activeThreadId=null;forumTopicPage=1;document.getElementById("forumThreadsView").hidden=true;document.getElementById("forumComposePanel").hidden=true;document.getElementById("forumCategoryLanding").hidden=false;renderForumCategories();});
+document.getElementById("forumOpenCompose").addEventListener("click",()=>{const panel=document.getElementById("forumComposePanel");panel.hidden=!panel.hidden;if(!panel.hidden)document.getElementById("forumMessage").focus();});
 function renderForumAttachments(post,container){
  if(post.media_type==='image'&&post.media_url){const img=document.createElement('img');img.className='forum-media-image';img.src=post.media_url;img.alt='Imagen adjunta al debate';img.loading='lazy';container.append(img);}
  if(post.link_url){
