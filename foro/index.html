@@ -954,7 +954,7 @@ addForumEmojiPicker(document.getElementById('forumMessage'),document.getElementB
  document.getElementById('forumSport').innerHTML=Object.keys(forumStructure).map(s=>'<option value="'+s+'">'+s+'</option>').join('');
 document.getElementById('forumSport').addEventListener('change',updateForumSubforums);
 updateForumSubforums();renderForumCategories();renderForumTopics();
-document.getElementById("forumBackCategories").addEventListener("click",()=>{activeThreadId=null;forumTopicPage=1;document.getElementById("forumThreadsView").hidden=true;document.getElementById("forumComposePanel").hidden=true;showForumSubforums(forumSport);});
+document.getElementById("forumBackCategories").addEventListener("click",()=>{activeThreadId=null;forumTopicPage=1;document.getElementById("forumThreadsView").hidden=true;document.getElementById("forumComposePanel").hidden=true;if(forumSport==="Fútbol"||forumSport==="Baloncesto"){showForumSubforums(forumSport);}else{document.getElementById("forumCategoryLanding").hidden=false;document.getElementById("forumSubforumsView").hidden=true;renderForumCategories();}});
 document.getElementById("forumBackToSports").addEventListener("click",()=>{forumSport="";forumSubforum="Todos";activeThreadId=null;forumTopicPage=1;document.getElementById("forumSubforumsView").hidden=true;document.getElementById("forumCategoryLanding").hidden=false;renderForumCategories();});
 document.getElementById("forumOpenCompose").addEventListener("click",()=>{const panel=document.getElementById("forumComposePanel");panel.hidden=!panel.hidden;if(!panel.hidden)document.getElementById("forumMessage").focus();});
 function renderForumAttachments(post,container){
