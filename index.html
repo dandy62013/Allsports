@@ -77,6 +77,26 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
 @media(max-width:620px){.home-live-section{padding:12px 0!important}.home-live-heading{flex-direction:row!important;align-items:center!important}.home-live-heading h2{font-size:22px!important}.home-live-panel{padding:7px!important}.home-live-matches .live-league{flex-basis:84vw}}
 
 
+
+/* Portada: tarjetas renovadas para los temas populares */
+#comunidad .section-top[style] h2{font-size:clamp(32px,4vw,42px)!important;letter-spacing:.2px}
+#comunidad .section-top[style] .btn{padding:11px 16px;border-color:#46535f;border-radius:4px;transition:background .2s,border-color .2s,color .2s}
+#comunidad .section-top[style] .btn:hover{background:var(--lime);border-color:var(--lime);color:#10150b}
+#posts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:15px}
+#posts .post{position:relative;min-width:0;margin:0;padding:17px 18px 15px;background:linear-gradient(145deg,#17232d 0%,#111820 78%);border:1px solid #2b3945;border-radius:7px;transition:transform .2s,border-color .2s,background .2s;overflow:hidden}
+#posts .post:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lime);opacity:.72}
+#posts .post:hover{transform:translateY(-2px);border-color:#82934b;background:linear-gradient(145deg,#1b2934 0%,#121b24 78%)}
+#posts .post-top{align-items:center;flex-wrap:wrap;gap:8px}
+#posts .post-top strong{font-size:11px;font-weight:800;color:#e9eef1;letter-spacing:.25px}
+#posts .post-tag{display:inline-flex;align-items:center;max-width:100%;padding:5px 8px;border:1px solid #43532a;border-radius:3px;background:#26351b;color:var(--lime);font-size:9px;letter-spacing:.8px}
+#posts .popular-thread-title{font-size:clamp(21px,2vw,25px);line-height:1.08;margin:13px 0 8px}
+#posts .post p{font-size:12px;line-height:1.6;color:#bfc9d0;margin:0 0 11px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+#posts .post-meta{font-size:10px;color:#95a2ac;padding-top:10px;border-top:1px solid #ffffff12}
+#posts .forum-text-button{display:inline-flex;align-items:center;margin-top:10px;padding:7px 0;color:var(--lime);font-size:10px;letter-spacing:.7px;text-transform:uppercase}
+#posts .forum-text-button:hover{color:#fff}
+#posts .empty{grid-column:1/-1;margin:0;padding:24px;background:#111a22;border:1px dashed #354451;border-radius:7px;line-height:1.6}
+@media(max-width:620px){#posts{grid-template-columns:1fr;gap:10px}#posts .post{padding:15px 15px 13px}#posts .popular-thread-title{font-size:22px}}
+
 </style>
 </head>
 <body>
