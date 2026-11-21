@@ -79,7 +79,7 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
 </style>
 </head>
 <body>
-<header><div class="wrap top"><a class="logo" href="./"><i>◆</i> ALLSPORTS</a><nav aria-label="Navegación"><a class="news-nav active" href="./">INICIO</a><a class="news-nav" href="./foro/">FORO</a><a href="#noticias" class="news-nav">NOTICIAS</a><a href="./foro/#foro" class="nav-cta">ABRE UN DEBATE ↗</a></nav></div></header>
+<header><div class="wrap top"><a class="logo" href="./"><i>◆</i> ALLSPORTS</a><nav aria-label="Navegación"><a class="news-nav active" href="./">INICIO</a><a class="news-nav" href="./foro/">FORO</a><a href="#noticias" class="news-nav">NOTICIAS</a><a href="#cuenta" class="news-nav">CREA UNA CUENTA</a><a href="./foro/#foro" class="nav-cta">ÚNETE A LA COMUNIDAD ↗</a></nav></div></header>
 <main>
 <section class="hero"><div class="wrap hero-inner"><div class="kicker">La casa de todos los deportes</div><h1>NO SOLO<br>LO MIRES.<br><span>VÍVELO.</span></h1><p class="hero-copy">La pasión no entiende de disciplinas. El lugar donde la afición se encuentra, las opiniones cuentan y cada deporte tiene su sitio.</p><div class="hero-actions"><a class="btn primary" href="./foro/#foro">Entra en la comunidad ↗</a><a class="btn" href="#deportes">Explora los deportes ↓</a></div><div class="hero-stamp">ALLSPORTS · DESDE LA GRADA HASTA LA CANCHA</div></div></section>
 <section class="home-live-section" id="marcadores">
@@ -111,7 +111,7 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
 </div></section>
 <section class="content wrap" id="comunidad"><div class="section-top"><div><div class="overline">La conversación empieza aquí</div><h2>La grada es tuya.</h2></div><p>Opina, debate y comparte tu pasión con otros aficionados.</p></div><div class="community"><section class="panel"><div class="composer"><h3>Lanza el debate</h3><textarea id="msg" maxlength="10000" placeholder="¿Qué tienes que decir del mundo del deporte?"></textarea><div class="compose-row"><select id="sport" aria-label="Selecciona deporte"><option>Fútbol</option><option>Baloncesto</option><option>Tenis</option><option>Motor</option><option>Otros</option></select><button class="btn primary" id="send">Publicar debate ↗</button></div></div><div class="section-top" style="margin:30px 0 10px"><div><div class="overline">Los debates con más participación</div><h2 style="font-size:34px">Foros populares</h2></div><button class="btn" data-filter="Todos">Ver todos</button></div><div id="posts" aria-live="polite"></div></section>
 <aside>
-<div class="panel sidebox auth-panel">
+<div class="panel sidebox auth-panel" id="cuenta">
 <span class="live-label">CUENTA ALLSPORTS</span><h3>Únete a la grada</h3>
 <div id="authGuest">
 <div class="auth-tabs"><button type="button" class="active" id="showRegister">Registrarme</button><button type="button" id="showLogin">Entrar</button></div>
