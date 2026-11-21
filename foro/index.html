@@ -81,7 +81,7 @@ section.content{padding:82px 0}.section-top{display:flex;justify-content:space-b
 .forum-categories,.forum-mobile-categories-toggle,.forum-mobile-categories-backdrop{display:none!important}
 .forum-main{width:100%;max-width:1240px;margin:0 auto;min-height:450px}
 #forumCategoryLanding{display:block}
-.forum-live{display:none!important}
+/* El marcador lateral permanece visible en la vista del foro. */
 .forum-category-landing-title{text-align:center;color:var(--lime);font:900 36px 'Barlow Condensed',sans-serif;letter-spacing:1.5px;margin:6px 0 8px!important}
 .forum-category-landing-subtitle{text-align:center;color:var(--muted);margin:0 0 24px;font-size:14px}
 #forumCategoryGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
@@ -618,6 +618,7 @@ function updateForumSubforums(){
 }
 function selectForum(sport,subforum){
  setForumMobileCategories(false);
+ forumSearchQuery='';const searchBox=document.getElementById('forumSearch');if(searchBox)searchBox.value='';
  document.getElementById('forumCategoryLanding').hidden=true;document.getElementById('forumSubforumsView').hidden=true;document.getElementById('forumThreadsView').hidden=false;document.getElementById('forumComposePanel').hidden=true;
  activeThreadId=null;forumTopicPage=1;forumSport=sport;forumSubforum=subforum;forumExpandedSport=sport==='Todos'?'':sport;const sportSelect=document.getElementById('forumSport');sportSelect.value=sport;updateForumSubforums();document.getElementById('forumSubforum').value=subforum;renderForumCategories();
  document.getElementById('forumCurrentTitle').textContent=sport+(subforum!=='Todos'?' · '+forumSubforumLabel(subforum):'');
