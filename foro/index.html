@@ -605,10 +605,11 @@ function forumSubforumPhoto(sport,sub,index){
  };
  const photoSport=disciplineBySubcategory[sub]||sport;
  const sportPool=FORUM_SUBCATEGORY_PHOTO_POOLS[photoSport];
- const allPhotos=[...new Set(Object.values(FORUM_SUBCATEGORY_PHOTO_POOLS).flat())];
- const pool=sportPool&&sportPool.length>1?sportPool:allPhotos;
- const offset=(Number.isFinite(index)?Math.max(0,index):0)%pool.length;
- return "https://images.unsplash.com/"+pool[offset]+"?auto=format&fit=crop&w=1000&q=82";
+ // Nunca recurrir a fotografías de otro deporte: si no existe una colección específica,
+ // se conserva la imagen de la disciplina principal en lugar de mostrar una foto aleatoria.
+ if(!sportPool||!sportPool.length)return forumSportPhoto(photoSport in FORUM_SUBCATEGORY_PHOTO_POOLS?photoSport:sport);
+ const offset=(Number.isFinite(index)?Math.max(0,index):0)%sportPool.length;
+ return "https://images.unsplash.com/"+sportPool[offset]+"?auto=format&fit=crop&w=1000&q=82";
 }
 function renderForumCategories(){
  forumCategoryList.replaceChildren();
@@ -628,7 +629,7 @@ function showForumSubforums(sport){
  setForumMobileCategories(false);forumSport=sport;forumSubforum='Todos';activeThreadId=null;forumTopicPage=1;
  document.getElementById('forumCategoryLanding').hidden=true;document.getElementById('forumThreadsView').hidden=true;document.getElementById('forumSubforumsView').hidden=false;document.getElementById('forumComposePanel').hidden=true;
  document.getElementById('forumSubforumsTitle').textContent=sport;const grid=document.getElementById('forumSubforumsGrid');grid.replaceChildren();
- forumVisibleSubforums(sport).forEach((sub,index)=>{const tile=document.createElement('button');tile.type='button';tile.className='forum-subforum-tile '+forumSportClass(sport);const photo=document.createElement('img');photo.className='forum-subforum-photo';photo.src=forumSubforumPhoto(sport,sub,index);photo.alt='';photo.loading='lazy';photo.onerror=()=>{photo.onerror=null;photo.style.display='none';};tile.append(photo);if(sport==='Fútbol'&&laLigaTeams.includes(sub)){const crestUrl=forumClubCrestUrl(sub);if(crestUrl){const crest=document.createElement('img');crest.className='forum-subforum-crest';crest.src=crestUrl;crest.alt='Escudo oficial de '+sub;crest.loading='lazy';crest.onerror=()=>{crest.remove();};tile.append(crest);}const label=document.createElement('span');label.className='forum-subforum-label';label.textContent=sub;tile.append(label);}else{const label=document.createElement('span');label.className='forum-subforum-label';label.textContent=forumSubforumLabel(sub);tile.append(label);}tile.addEventListener('click',()=>selectForum(sport,sub));grid.append(tile);});
+ forumVisibleSubforums(sport).forEach((sub,index)=>{const tile=document.createElement('button');tile.type='button';tile.className='forum-subforum-tile '+forumSportClass(sport);const photo=document.createElement('img');photo.className='forum-subforum-photo';photo.src=forumSubforumPhoto(sport,sub,index);photo.alt='';photo.loading='lazy';photo.onerror=()=>{if(photo.dataset.fallbackApplied!=='1'){photo.dataset.fallbackApplied='1';photo.src=forumSportPhoto(sport);return;}photo.style.opacity='0';tile.style.background='linear-gradient(145deg,#182631,#0b1117)';};tile.append(photo);if(sport==='Fútbol'&&laLigaTeams.includes(sub)){const crestUrl=forumClubCrestUrl(sub);if(crestUrl){const crest=document.createElement('img');crest.className='forum-subforum-crest';crest.src=crestUrl;crest.alt='Escudo oficial de '+sub;crest.loading='lazy';crest.onerror=()=>{crest.remove();};tile.append(crest);}const label=document.createElement('span');label.className='forum-subforum-label';label.textContent=sub;tile.append(label);}else{const label=document.createElement('span');label.className='forum-subforum-label';label.textContent=forumSubforumLabel(sub);tile.append(label);}tile.addEventListener('click',()=>selectForum(sport,sub));grid.append(tile);});
  renderForumCategories();
 }
 function updateForumSubforums(){
