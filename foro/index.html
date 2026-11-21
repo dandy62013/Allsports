@@ -548,6 +548,25 @@ const FORUM_HOME_SPORT_PHOTOS=[
 const forumSportClassMap={'Fútbol':'football','Baloncesto':'basketball','Motor':'motor','Tenis':'tennis','Hockey':'hockey','Golf':'golf','Rugby':'rugby','Ciclismo':'cycling','Natación':'swimming','Voleibol':'volleyball','Balonmano':'handball','Atletismo':'athletics','Gimnasia':'gymnastics','Artes marciales':'martial','Deportes náuticos':'water','Surf':'surf','Tenis de mesa':'tabletennis','Waterpolo':'waterpolo','Béisbol y sóftbol':'baseball','Fútbol americano':'americanfootball','Esports':'esports','Ajedrez':'chess','Deportes urbanos':'urban','Críquet':'cricket','Esgrima':'fencing','Escalada':'climbing','Triatlón':'triathlon','Halterofilia':'weightlifting','Patinaje':'skating','Deportes de invierno':'winter','Mundial fútbol 2030':'worldcup','Eurocopa fútbol 2028':'euro','JJOO Los Ángeles 2028':'olympics','Mundial Femenino 2027':'womensworld','Mundial Baloncesto Masculino 2027':'worldbasket','Mundial Atletismo 2027':'worldathletics','Comunidad':'community'};
 function forumSportClass(sport){return 'sport-card-'+(forumSportClassMap[sport]||'other');}
 function forumSportPhoto(sport){
+ const customPhotos={
+  "Deportes náuticos":"sailboat",
+  "Tenis de mesa":"table-tennis-pingpong",
+  "Waterpolo":"water-polo",
+  "Fútbol americano":"american-football",
+  "Deportes urbanos":"skateboard-street-sport",
+  "Críquet":"cricket",
+  "Esgrima":"fencing",
+  "Triatlón":"triathlon",
+  "Halterofilia":"weightlifting",
+  "Patinaje":"roller-skating",
+  "Deportes de invierno":"skiing-snowboard",
+  "JJOO Los Ángeles 2028":"olympic-stadium",
+  "Mundial Atletismo 2027":"track-and-field-athletics",
+  "Comunidad":"sports-fans-stadium"
+ };
+ if(customPhotos[sport]){
+  return 'https://loremflickr.com/1000/600/'+customPhotos[sport];
+ }
  const photoId={"Fútbol":"photo-1574629810360-7efbbe195018","Mercado de fichajes":"photo-1522778119026-d647f0596c20","Baloncesto":"photo-1546519638-68e109498ffc","Motor":"photo-1761092993029-70ab4bc9983d","Tenis":"photo-1622279457486-62dcc4a431d6","Ciclismo":"photo-1775638946697-fb4b8bb1dc88","Balonmano":"photo-1584196825674-e6f64590b914","Atletismo":"photo-1769317991565-1494c6f5c1f1","Rugby":"photo-1770009534034-85be3c774f60","Golf":"photo-1730372645289-a1b54da81e98","Natación":"photo-1762392050946-685f2dec9da7","Voleibol":"photo-1765910226872-e8811bd45d3e","Gimnasia":"photo-1668361920298-e3ebb0798819","Hockey":"photo-1768483070177-0650b5f9d5f2","Artes marciales":"photo-1555597673-b21d5c935865","Deportes náuticos":"photo-1666378837986-ea35fbde33f0","Surf":"photo-1666378837986-ea35fbde33f0","Tenis de mesa":"photo-1622279457486-62dcc4a431d6","Waterpolo":"photo-1762392050946-685f2dec9da7","Béisbol y sóftbol":"photo-1531415074968-036ba1b575da","Fútbol americano":"photo-1770009534034-85be3c774f60","Esports":"photo-1542751371-adc38448a05e","Ajedrez":"photo-1674208732345-3feee91806ac","Deportes urbanos":"photo-1679783024493-07b9df0b60ea","Críquet":"photo-1531415074968-036ba1b575da","Esgrima":"photo-1555597673-b21d5c935865","Escalada":"photo-1679783024493-07b9df0b60ea","Triatlón":"photo-1775638946697-fb4b8bb1dc88","Halterofilia":"photo-1668361920298-e3ebb0798819","Patinaje":"photo-1735656244000-d1cf2d44297a","Deportes de invierno":"photo-1735656244000-d1cf2d44297a","Mundial fútbol 2030":"photo-1574629810360-7efbbe195018","Eurocopa fútbol 2028":"photo-1522778119026-d647f0596c20","JJOO Los Ángeles 2028":"photo-1769317991565-1494c6f5c1f1","Mundial Femenino 2027":"photo-1574629810360-7efbbe195018","Mundial Baloncesto Masculino 2027":"photo-1546519638-68e109498ffc","Mundial Atletismo 2027":"photo-1769317991565-1494c6f5c1f1","Comunidad":"photo-1765910226872-e8811bd45d3e"};
  const id=photoId[sport]||'photo-1461896836934-ffe607ba8211';
  return 'https://images.unsplash.com/'+id+'?auto=format&fit=crop&w=1000&q=82';
