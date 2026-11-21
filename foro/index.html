@@ -586,10 +586,32 @@ FORUM_SUBCATEGORY_PHOTO_POOLS={
  "Surf":["photo-1666378837986-ea35fbde33f0","photo-1502680390469-be75c86b636f","photo-1455729552865-3658a5d39692"]
 };
 function forumSubforumPhoto(sport,sub,index){
+ // Los escudos/fotografías de los clubes de fútbol se conservan sin cambios.
  if(sport==='Fútbol'&&laLigaTeams.includes(sub))return forumSportPhoto(sport);
- const pool=FORUM_SUBCATEGORY_PHOTO_POOLS[sport];
- if(pool&&pool.length)return "https://images.unsplash.com/"+pool[index%pool.length]+"?auto=format&fit=crop&w=1000&q=82";
- return forumSportPhoto(sport);
+ // Algunas subcategorías representan una disciplina distinta de su categoría
+ // contenedora; se asigna entonces la fotografía de esa disciplina.
+ const disciplineBySubcategory={
+  'Skateboarding':'Deportes urbanos','BMX':'Deportes urbanos','Parkour':'Deportes urbanos',
+  'Surf':'Surf','Escalada':'Escalada','Dificultad':'Escalada','Bloque':'Escalada','Velocidad':'Patinaje',
+  'Snowboard':'Deportes de invierno','Esquí freestyle':'Deportes de invierno',
+  'Esquí alpino':'Deportes de invierno','Esquí de fondo':'Deportes de invierno','Biathlon y hielo':'Deportes de invierno',
+  'Natación en piscina':'Natación','Aguas abiertas':'Natación','Saltos':'Natación',
+  'Remo':'Deportes náuticos','Vela':'Deportes náuticos','Regatas':'Deportes náuticos','Copa América':'Deportes náuticos','Piragüismo':'Deportes náuticos','Kayak':'Deportes náuticos',
+  'Judo':'Artes marciales','Taekwondo':'Artes marciales','Karate':'Artes marciales',
+  'Béisbol':'Béisbol y sóftbol','Sóftbol':'Béisbol y sóftbol',
+  'Patinaje artístico':'Patinaje','Patinaje de velocidad':'Patinaje','En línea':'Patinaje',
+  'Fórmula 1':'Motor','MotoGP':'Motor','Moto2':'Motor','Moto3':'Motor','Rally':'Motor',
+  'ATP':'Tenis','WTA':'Tenis','Grand Slams':'Tenis','Copa Davis':'Tenis','Billie Jean King Cup':'Tenis',
+  'NBA':'Baloncesto','ACB':'Baloncesto','Euroliga':'Baloncesto','EuroLeague':'Baloncesto',
+  'NFL':'Fútbol americano','Fútbol americano universitario':'Fútbol americano',
+  'League of Legends':'Esports','Valorant':'Esports','Counter-Strike 2':'Esports','EA Sports FC':'Esports','Call of Duty':'Esports','Rocket League':'Esports',
+  'Florete':'Esgrima','Espada':'Esgrima','Sable':'Esgrima',
+  'Rugby XV':'Rugby','Rugby 7':'Rugby',
+  'Gimnasia artística':'Gimnasia','Gimnasia rítmica':'Gimnasia','Trampolín y otras modalidades':'Gimnasia',
+  'Hockey hierba':'Hockey','Hockey hielo':'Hockey'
+ };
+ const photoSport=disciplineBySubcategory[sub]||sport;
+ return forumSportPhoto(photoSport);
 }
 function renderForumCategories(){
  forumCategoryList.replaceChildren();
