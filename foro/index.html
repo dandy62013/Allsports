@@ -336,9 +336,9 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
 
 /* Imágenes de subcategorías y escudos oficiales de clubes */
 .forum-subforum-tile{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;min-height:112px;padding:14px 10px;color:#fff;text-shadow:0 2px 8px #000;background:#15212a!important;border-color:rgba(198,255,0,.48)}
-.forum-subforum-tile:before{content:"";position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,rgba(5,10,15,.35),rgba(5,10,15,.82));pointer-events:none}
-.forum-subforum-photo{position:absolute;inset:0;width:100%;height:100%;z-index:-1;object-fit:cover;object-position:center}
-.forum-subforum-tile>*:not(.forum-subforum-photo){position:relative;z-index:1}
+.forum-subforum-tile:before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(5,10,15,.35),rgba(5,10,15,.82));pointer-events:none}
+.forum-subforum-photo{position:absolute;inset:0;width:100%;height:100%;z-index:0;object-fit:cover;object-position:center}
+.forum-subforum-tile>*:not(.forum-subforum-photo){position:relative;z-index:2}
 .forum-subforum-crest{display:block;width:48px;height:48px;object-fit:contain;filter:drop-shadow(0 2px 5px rgba(0,0,0,.8))}
 .forum-subforum-label{font:800 15px 'DM Sans',sans-serif;line-height:1.2;text-align:center}
 @media(max-width:560px){.forum-subforum-tile{min-height:105px}.forum-subforum-crest{width:42px;height:42px}}
@@ -540,8 +540,13 @@ forumMobileCategoriesToggle?.addEventListener('click',()=>setForumMobileCategori
 document.getElementById('forumMobileCategoriesClose')?.addEventListener('click',()=>setForumMobileCategories(false));
 forumMobileCategoriesBackdrop?.addEventListener('click',()=>setForumMobileCategories(false));
 function forumVisibleSubforums(sport){
- // Lista completa que aparece dentro de la pantalla de cada deporte.
- return [...new Set(forumStructure[sport]||['General'])];
+ // Los clubes aparecen al final del listado de subcategorías de Fútbol.
+ const items=[...new Set(forumStructure[sport]||['General'])];
+ if(sport==='Fútbol'){
+  const clubs=items.filter(item=>laLigaTeams.includes(item));
+  return [...items.filter(item=>!laLigaTeams.includes(item)),...clubs];
+ }
+ return items;
 }
 function forumCardSubforums(sport){
  // En la portada solo se muestran las subcategorías destacadas de Fútbol.
@@ -558,26 +563,33 @@ const FORUM_HOME_SPORT_PHOTOS=[
 const forumSportClassMap={'Fútbol':'football','Baloncesto':'basketball','Motor':'motor','Tenis':'tennis','Hockey':'hockey','Golf':'golf','Rugby':'rugby','Ciclismo':'cycling','Natación':'swimming','Voleibol':'volleyball','Balonmano':'handball','Atletismo':'athletics','Gimnasia':'gymnastics','Artes marciales':'martial','Deportes náuticos':'water','Surf':'surf','Tenis de mesa':'tabletennis','Waterpolo':'waterpolo','Béisbol y sóftbol':'baseball','Fútbol americano':'americanfootball','Esports':'esports','Ajedrez':'chess','Deportes urbanos':'urban','Críquet':'cricket','Esgrima':'fencing','Escalada':'climbing','Triatlón':'triathlon','Halterofilia':'weightlifting','Patinaje':'skating','Deportes de invierno':'winter','Mundial fútbol 2030':'worldcup','Eurocopa fútbol 2028':'euro','JJOO Los Ángeles 2028':'olympics','Mundial Femenino 2027':'womensworld','Mundial Baloncesto Masculino 2027':'worldbasket','Mundial Atletismo 2027':'worldathletics','Comunidad':'community'};
 function forumSportClass(sport){return 'sport-card-'+(forumSportClassMap[sport]||'other');}
 function forumSportPhoto(sport){
- const photoUrl={
-  "Deportes náuticos":"https://unsplash.com/photos/dhGFLj3rI0Q/download?force=true",
-  "Tenis de mesa":"https://unsplash.com/photos/JwxatcF2Oec/download?force=true",
-  "Waterpolo":"https://unsplash.com/photos/hu7sGvswNqA/download?force=true",
-  "Fútbol americano":"https://unsplash.com/photos/-nATH0CrkMU/download?force=true",
-  "Deportes urbanos":"https://unsplash.com/photos/fQELbkwlyLM/download?force=true",
-  "Críquet":"https://unsplash.com/photos/mUtQXjjLPbw/download?force=true",
-  "Esgrima":"https://unsplash.com/photos/-Gn8f-0BuP8/download?force=true",
-  "Triatlón":"https://images.unsplash.com/photo-1658748721978-68fc04f3739b?auto=format&fit=crop&w=1200&q=85",
-  "Halterofilia":"https://unsplash.com/photos/WvDYdXDzkhs/download?force=true",
-  "Patinaje":"https://unsplash.com/photos/hQtWeolOAoc/download?force=true",
-  "Deportes de invierno":"https://images.unsplash.com/photo-1708115106914-65655e8414da?auto=format&fit=crop&w=1200&q=85",
-  "JJOO Los Ángeles 2028":"https://unsplash.com/photos/iFy6Nx6-mRQ/download?force=true",
-  "Mundial Atletismo 2027":"https://images.unsplash.com/photo-1769317991565-1494c6f5c1f1?auto=format&fit=crop&w=1200&q=85",
-  "Comunidad":"https://images.unsplash.com/photo-1769859177914-f66488d71193?auto=format&fit=crop&w=1200&q=85"
- };
+ const photoUrl={"Deportes náuticos":"https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1000&q=82","Tenis de mesa":"https://images.unsplash.com/photo-1611251135345-18c56206b863?auto=format&fit=crop&w=1000&q=82","Waterpolo":"https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&w=1000&q=82","Fútbol americano":"https://images.unsplash.com/photo-1504016798967-59a258e9386d?auto=format&fit=crop&w=1000&q=82","Deportes urbanos":"https://images.unsplash.com/photo-1520045892732-304bc3ac5d8e?auto=format&fit=crop&w=1000&q=82","Críquet":"https://images.unsplash.com/photo-1531415074968-036ba1b575da?auto=format&fit=crop&w=1000&q=82","Esgrima":"https://images.unsplash.com/photo-1569517282132-25d22f4573e6?auto=format&fit=crop&w=1000&q=82","Triatlón":"https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&w=1000&q=82","Halterofilia":"https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1000&q=82","Patinaje":"https://images.unsplash.com/photo-1518604666860-9edb2e3a6c8b?auto=format&fit=crop&w=1000&q=82","Deportes de invierno":"https://images.unsplash.com/photo-1708115106914-65655e8414da?auto=format&fit=crop&w=1000&q=82","JJOO Los Ángeles 2028":"https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1000&q=82","Mundial Atletismo 2027":"https://images.unsplash.com/photo-1769317991565-1494c6f5c1f1?auto=format&fit=crop&w=1000&q=82","Comunidad":"https://images.unsplash.com/photo-1769859177914-f66488d71193?auto=format&fit=crop&w=1000&q=82"};
  const photoId={"Fútbol":"photo-1574629810360-7efbbe195018","Mercado de fichajes":"photo-1522778119026-d647f0596c20","Baloncesto":"photo-1546519638-68e109498ffc","Motor":"photo-1761092993029-70ab4bc9983d","Tenis":"photo-1622279457486-62dcc4a431d6","Ciclismo":"photo-1775638946697-fb4b8bb1dc88","Balonmano":"photo-1584196825674-e6f64590b914","Atletismo":"photo-1769317991565-1494c6f5c1f1","Rugby":"photo-1770009534034-85be3c774f60","Golf":"photo-1730372645289-a1b54da81e98","Natación":"photo-1762392050946-685f2dec9da7","Voleibol":"photo-1765910226872-e8811bd45d3e","Gimnasia":"photo-1668361920298-e3ebb0798819","Hockey":"photo-1768483070177-0650b5f9d5f2","Artes marciales":"photo-1555597673-b21d5c935865","Surf":"photo-1666378837986-ea35fbde33f0","Béisbol y sóftbol":"photo-1531415074968-036ba1b575da","Esports":"photo-1542751371-adc38448a05e","Ajedrez":"photo-1674208732345-3feee91806ac","Escalada":"photo-1678591128084-489276dffb42","Mundial fútbol 2030":"photo-1574629810360-7efbbe195018","Eurocopa fútbol 2028":"photo-1522778119026-d647f0596c20","Mundial Femenino 2027":"photo-1574629810360-7efbbe195018","Mundial Baloncesto Masculino 2027":"photo-1546519638-68e109498ffc"};
  if(photoUrl[sport])return photoUrl[sport];
  const id=photoId[sport]||"photo-1461896836934-ffe607ba8211";
  return "https://images.unsplash.com/"+id+"?auto=format&fit=crop&w=1000&q=82";
+}
+const FORUM_SUBCATEGORY_PHOTO_POOLS={
+ "Fútbol":["photo-1574629810360-7efbbe195018","photo-1522778119026-d647f0596c20","photo-1508098682722-e99c643e7f0b","photo-1517466787929-bc90951d0974","photo-1579952363873-27f3bade9f55","photo-1521412644187-c49fa049e84d","photo-1431324155629-1a6deb1dec8d","photo-1461896836934-ffe607ba8211"],
+ "Baloncesto":["photo-1546519638-68e109498ffc","photo-1519861531473-9200262188bf","photo-1504450758481-7338eba7524a","photo-1518604666860-9edb2e3a6c8b"],
+ "Motor":["photo-1761092993029-70ab4bc9983d","photo-1552519507-da3b142c6e3d","photo-1503376780353-7e6692767b70","photo-1492144534655-ae79c964c9d7"],
+ "Tenis":["photo-1622279457486-62dcc4a431d6","photo-1554068865-24cecd4e34b8","photo-1595435934249-5df7ed86e1c0","photo-1560012057-4372e14c5085"],
+ "Ciclismo":["photo-1775638946697-fb4b8bb1dc88","photo-1517649763962-0c623066013b","photo-1541625602330-2277a4c46182","photo-1471506480208-91b3a4cc78be"],
+ "Balonmano":["photo-1584196825674-e6f64590b914","photo-1546519638-68e109498ffc","photo-1461896836934-ffe607ba8211"],
+ "Atletismo":["photo-1769317991565-1494c6f5c1f1","photo-1461896836934-ffe607ba8211","photo-1538805060514-97d9cc17730c","photo-1552674605-db6ffd4facb5"],
+ "Rugby":["photo-1770009534034-85be3c774f60","photo-1521412644187-c49fa049e84d","photo-1579952363873-27f3bade9f55"],
+ "Golf":["photo-1730372645289-a1b54da81e98","photo-1535131749006-b7f58c99034b","photo-1587174486073-ae5e5cff23aa"],
+ "Natación":["photo-1762392050946-685f2dec9da7","photo-1530549387789-4c1017266635","photo-150泳"],
+ "Voleibol":["photo-1765910226872-e8811bd45d3e","photo-1612872087720-bb876e2e67d1","photo-1592656094267-764a45160876"],
+ "Gimnasia":["photo-1668361920298-e3ebb0798819","photo-1518611012118-696072aa579a","photo-1517963628607-235ccdd5476c"],
+ "Hockey":["photo-1768483070177-0650b5f9d5f2","photo-1522602043785-821a161a5238","photo-1515703407324-5f753afd8be8"],
+ "Surf":["photo-1666378837986-ea35fbde33f0","photo-1502680390469-be75c86b636f","photo-1455729552865-3658a5d39692"]
+};
+function forumSubforumPhoto(sport,sub,index){
+ if(sport==='Fútbol'&&laLigaTeams.includes(sub))return forumSportPhoto(sport);
+ const pool=FORUM_SUBCATEGORY_PHOTO_POOLS[sport];
+ if(pool&&pool.length)return "https://images.unsplash.com/"+pool[index%pool.length]+"?auto=format&fit=crop&w=1000&q=82";
+ return forumSportPhoto(sport);
 }
 function renderForumCategories(){
  forumCategoryList.replaceChildren();
@@ -597,7 +609,7 @@ function showForumSubforums(sport){
  setForumMobileCategories(false);forumSport=sport;forumSubforum='Todos';activeThreadId=null;forumTopicPage=1;
  document.getElementById('forumCategoryLanding').hidden=true;document.getElementById('forumThreadsView').hidden=true;document.getElementById('forumSubforumsView').hidden=false;document.getElementById('forumComposePanel').hidden=true;
  document.getElementById('forumSubforumsTitle').textContent=sport;const grid=document.getElementById('forumSubforumsGrid');grid.replaceChildren();
- forumVisibleSubforums(sport).forEach((sub,index)=>{const tile=document.createElement('button');tile.type='button';tile.className='forum-subforum-tile '+forumSportClass(sport);const photo=document.createElement('img');photo.className='forum-subforum-photo';photo.src=forumSportPhoto(sport);photo.alt='';photo.loading='lazy';photo.onerror=()=>{photo.style.display='none';};tile.append(photo);if(sport==='Fútbol'&&laLigaTeams.includes(sub)){const crestUrl=forumClubCrestUrl(sub);if(crestUrl){const crest=document.createElement('img');crest.className='forum-subforum-crest';crest.src=crestUrl;crest.alt='Escudo oficial de '+sub;crest.loading='lazy';crest.onerror=()=>{crest.remove();};tile.append(crest);}const label=document.createElement('span');label.className='forum-subforum-label';label.textContent=sub;tile.append(label);}else{const label=document.createElement('span');label.className='forum-subforum-label';label.textContent=forumSubforumLabel(sub);tile.append(label);}tile.addEventListener('click',()=>selectForum(sport,sub));grid.append(tile);});
+ forumVisibleSubforums(sport).forEach((sub,index)=>{const tile=document.createElement('button');tile.type='button';tile.className='forum-subforum-tile '+forumSportClass(sport);const photo=document.createElement('img');photo.className='forum-subforum-photo';photo.src=forumSubforumPhoto(sport,sub,index);photo.alt='';photo.loading='lazy';photo.onerror=()=>{photo.style.display='none';};tile.append(photo);if(sport==='Fútbol'&&laLigaTeams.includes(sub)){const crestUrl=forumClubCrestUrl(sub);if(crestUrl){const crest=document.createElement('img');crest.className='forum-subforum-crest';crest.src=crestUrl;crest.alt='Escudo oficial de '+sub;crest.loading='lazy';crest.onerror=()=>{crest.remove();};tile.append(crest);}const label=document.createElement('span');label.className='forum-subforum-label';label.textContent=sub;tile.append(label);}else{const label=document.createElement('span');label.className='forum-subforum-label';label.textContent=forumSubforumLabel(sub);tile.append(label);}tile.addEventListener('click',()=>selectForum(sport,sub));grid.append(tile);});
  renderForumCategories();
 }
 function updateForumSubforums(){
