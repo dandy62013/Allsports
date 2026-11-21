@@ -76,6 +76,20 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
 .home-live-panel .live-updated{margin-top:5px!important;font-size:9px}
 @media(max-width:620px){.home-live-section{padding:12px 0!important}.home-live-heading{flex-direction:row!important;align-items:center!important}.home-live-heading h2{font-size:22px!important}.home-live-panel{padding:7px!important}.home-live-matches .live-league{flex-basis:84vw}}
 
+
+/* Allsports Events */
+.events-agent{padding:34px 0 40px;background:linear-gradient(120deg,#121c24,#0c1218);border-bottom:1px solid var(--line)}
+.events-agent-card{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(240px,.7fr);gap:24px;align-items:center;padding:clamp(22px,4vw,38px);background:linear-gradient(115deg,rgba(198,255,0,.10),rgba(16,25,33,.94) 54%);border:1px solid rgba(198,255,0,.28);border-radius:12px}
+.events-agent-card:after{content:"";position:absolute;width:230px;height:230px;right:12%;top:-145px;border:1px solid rgba(198,255,0,.17);border-radius:50%;box-shadow:0 0 0 24px rgba(198,255,0,.025),0 0 0 48px rgba(198,255,0,.02);pointer-events:none}
+.events-agent-kicker{color:var(--lime);font-size:11px;font-weight:900;letter-spacing:2px;text-transform:uppercase}
+.events-agent h2{margin:8px 0 10px;font:900 clamp(32px,4vw,48px)/.95 'Barlow Condensed',sans-serif;text-transform:uppercase}
+.events-agent p{max-width:610px;margin:0;color:#b9c4cd;line-height:1.65}
+.events-agent-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.events-agent-actions .btn{cursor:pointer}
+.events-agent-side{position:relative;z-index:1;display:grid;gap:10px}
+.events-agent-prompt{display:flex;gap:12px;align-items:center;padding:13px 15px;background:rgba(8,14,19,.72);border:1px solid #34414b;border-radius:8px;color:#f4f7f9;font-size:13px;font-weight:700}
+.events-agent-prompt b{display:grid;place-items:center;flex:0 0 34px;width:34px;height:34px;border-radius:8px;background:rgba(198,255,0,.12);color:var(--lime);font-size:18px}
+@media(max-width:700px){.events-agent{padding:22px 0}.events-agent-card{grid-template-columns:1fr;gap:20px}.events-agent-side{grid-template-columns:1fr 1fr}.events-agent-prompt{align-items:flex-start;font-size:12px;padding:10px}.events-agent-prompt b{flex-basis:30px;width:30px;height:30px}}
 </style>
 </head>
 <body>
@@ -91,6 +105,8 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
  </div>
 </section>
 <section class="hero"><div class="wrap hero-inner"><div class="kicker">La casa de todos los deportes</div><h1>NO SOLO<br>LO MIRES.<br><span>VÍVELO.</span></h1><p class="hero-copy">La pasión no entiende de disciplinas. El lugar donde la afición se encuentra, las opiniones cuentan y cada deporte tiene su sitio.</p><div class="hero-actions"><a class="btn primary" href="./foro/#foro">Entra en la comunidad ↗</a><a class="btn" href="#deportes">Explora los deportes ↓</a></div><div class="hero-stamp">ALLSPORTS · DESDE LA GRADA HASTA LA CANCHA</div></div></section>
+<section class="events-agent" id="allsports-events"><div class="wrap"><div class="events-agent-card"><div><div class="events-agent-kicker">◆ Allsports Events · Tu agenda deportiva</div><h2>No te pierdas <span style="color:var(--lime)">ningún evento.</span></h2><p>Pregunta por partidos, carreras, torneos y competiciones de hoy o de los próximos días. El asistente te ayudará a encontrar qué merece la pena seguir.</p><div class="events-agent-actions"><button class="btn primary" id="eventsAgentToday" type="button">¿Qué hay hoy? ↗</button><button class="btn" id="eventsAgentWeekend" type="button">Eventos del fin de semana</button></div></div><div class="events-agent-side"><div class="events-agent-prompt"><b>◷</b><span>Horarios y próximos acontecimientos</span></div><div class="events-agent-prompt"><b>◎</b><span>Filtra por tu deporte favorito</span></div></div></div></div></section>
+
 on>
 
 <div id="homeView" class="app-view active">
@@ -428,6 +444,10 @@ chatLaunch.addEventListener('click',()=>toggleChat(!chatPanel.classList.contains
 document.getElementById('chatClose').addEventListener('click',()=>toggleChat(false));
 function chatReply(q){const s=q.toLowerCase();if(/noticia|actualidad|titular/.test(s))return 'En la sección Noticias encontrarás titulares recientes y enlaces a los medios originales.';if(/public|debate|comunidad|opinar/.test(s))return 'Ve a “La grada es tuya”, inicia sesión, escribe tu mensaje, elige el deporte y pulsa “Publicar debate”. Los debates se comparten con toda la comunidad.';if(/deporte|seccion|categor/.test(s))return 'En ALLSPORTS encontrarás secciones de fútbol, baloncesto, tenis, motor y otros deportes.';return 'Estoy preparado para responder preguntas deportivas cuando se conecte el servicio de IA. Mientras tanto puedo orientarte sobre cómo usar ALLSPORTS.'}
 document.getElementById('chatForm').addEventListener('submit',async e=>{e.preventDefault();const input=document.getElementById('chatInput'),q=input.value.trim();if(!q)return;const u=document.createElement('div');u.className='chat-bubble user';u.textContent=q;chatLog.append(u);input.value='';const a=document.createElement('div');a.className='chat-bubble';a.textContent='Pensando…';chatLog.append(a);chatLog.scrollTop=chatLog.scrollHeight;try{if(!CHAT_API_URL){a.textContent=chatReply(q)+' Para activar respuestas libres, falta desplegar el servicio Cloudflare indicado en cloudflare/SETUP.md.';}else{const response=await fetch(CHAT_API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q})});const result=await response.json();if(!response.ok)throw new Error(result.error||'Error de conexión');a.textContent=result.answer||'No he recibido respuesta.';}}catch(error){a.textContent='Error del asistente: '+(error?.message||'No se pudo conectar')+'.';}chatLog.scrollTop=chatLog.scrollHeight});
+function openEventsAgent(question){toggleChat(true);const eventInput=document.getElementById('chatInput');eventInput.value=question;document.getElementById('chatForm').requestSubmit();}
+document.getElementById('eventsAgentToday')?.addEventListener('click',()=>openEventsAgent('¿Cuáles son los eventos deportivos más importantes de hoy? Indica deporte, competición, hora local y dónde seguirlos.'));
+document.getElementById('eventsAgentWeekend')?.addEventListener('click',()=>openEventsAgent('Hazme una agenda de los eventos deportivos más interesantes de este fin de semana, con deporte, competición, fecha, hora local y dónde seguirlos.'));
+
 
 </script>
 <script>
