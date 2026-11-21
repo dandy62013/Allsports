@@ -586,32 +586,42 @@ FORUM_SUBCATEGORY_PHOTO_POOLS={
  "Surf":["photo-1666378837986-ea35fbde33f0","photo-1502680390469-be75c86b636f","photo-1455729552865-3658a5d39692"]
 };
 function forumSubforumPhoto(sport,sub,index){
- // Los escudos/fotografías de los clubes de fútbol se conservan sin cambios.
  if(sport==='Fútbol'&&laLigaTeams.includes(sub))return forumSportPhoto(sport);
- // Algunas subcategorías representan una disciplina distinta de su categoría
- // contenedora; se asigna entonces la fotografía de esa disciplina.
- const disciplineBySubcategory={
-  'Skateboarding':'Deportes urbanos','BMX':'Deportes urbanos','Parkour':'Deportes urbanos',
-  'Surf':'Surf','Escalada':'Escalada','Dificultad':'Escalada','Bloque':'Escalada','Velocidad':'Patinaje',
-  'Snowboard':'Deportes de invierno','Esquí freestyle':'Deportes de invierno',
-  'Esquí alpino':'Deportes de invierno','Esquí de fondo':'Deportes de invierno','Biathlon y hielo':'Deportes de invierno',
-  'Natación en piscina':'Natación','Aguas abiertas':'Natación','Saltos':'Natación',
-  'Remo':'Deportes náuticos','Vela':'Deportes náuticos','Regatas':'Deportes náuticos','Copa América':'Deportes náuticos','Piragüismo':'Deportes náuticos','Kayak':'Deportes náuticos',
-  'Judo':'Artes marciales','Taekwondo':'Artes marciales','Karate':'Artes marciales',
-  'Béisbol':'Béisbol y sóftbol','Sóftbol':'Béisbol y sóftbol',
-  'Patinaje artístico':'Patinaje','Patinaje de velocidad':'Patinaje','En línea':'Patinaje',
-  'Fórmula 1':'Motor','MotoGP':'Motor','Moto2':'Motor','Moto3':'Motor','Rally':'Motor',
-  'ATP':'Tenis','WTA':'Tenis','Grand Slams':'Tenis','Copa Davis':'Tenis','Billie Jean King Cup':'Tenis',
-  'NBA':'Baloncesto','ACB':'Baloncesto','Euroliga':'Baloncesto','EuroLeague':'Baloncesto',
-  'NFL':'Fútbol americano','Fútbol americano universitario':'Fútbol americano',
-  'League of Legends':'Esports','Valorant':'Esports','Counter-Strike 2':'Esports','EA Sports FC':'Esports','Call of Duty':'Esports','Rocket League':'Esports',
-  'Florete':'Esgrima','Espada':'Esgrima','Sable':'Esgrima',
-  'Rugby XV':'Rugby','Rugby 7':'Rugby',
-  'Gimnasia artística':'Gimnasia','Gimnasia rítmica':'Gimnasia','Trampolín y otras modalidades':'Gimnasia',
-  'Hockey hierba':'Hockey','Hockey hielo':'Hockey'
+ const photoTagBySport={
+  'Fútbol':'football','Mercado de fichajes':'football','Baloncesto':'basketball','Motor':'motorsport','Tenis':'tennis','Ciclismo':'cycling','Balonmano':'handball','Atletismo':'athletics','Rugby':'rugby','Golf':'golf','Natación':'swimming','Voleibol':'volleyball','Gimnasia':'gymnastics','Hockey':'hockey','Artes marciales':'martialarts','Deportes náuticos':'watersports','Surf':'surfing','Tenis de mesa':'tabletennis','Waterpolo':'waterpolo','Béisbol y sóftbol':'baseball','Fútbol americano':'americanfootball','Esports':'esports','Ajedrez':'chess','Deportes urbanos':'skateboarding','Críquet':'cricket','Esgrima':'fencing','Escalada':'climbing','Triatlón':'triathlon','Halterofilia':'weightlifting','Patinaje':'skating','Deportes de invierno':'skiing','Mundial fútbol 2030':'football','Eurocopa fútbol 2028':'football','JJOO Los Ángeles 2028':'olympics','Mundial Femenino 2027':'football','Mundial Baloncesto Masculino 2027':'basketball','Mundial Atletismo 2027':'athletics','Comunidad':'sports'
  };
- const photoSport=disciplineBySubcategory[sub]||sport;
- return forumSportPhoto(photoSport);
+ const photoTagBySubforum={
+  'Tenis|ATP':'tennis','Tenis|WTA':'womens tennis','Tenis|Grand Slams':'tennis championship','Tenis|Copa Davis':'davis cup tennis','Tenis|Billie Jean King Cup':'womens tennis',
+  'Hockey|Hockey hielo':'ice hockey','Hockey|Hockey hierba':'field hockey',
+  'Deportes urbanos|Skateboarding':'skateboarding','Deportes urbanos|BMX':'bmx racing','Deportes urbanos|Surf':'surfing','Deportes urbanos|Escalada':'rock climbing','Deportes urbanos|Parkour':'parkour','Deportes urbanos|Snowboard':'snowboarding','Deportes urbanos|Esquí freestyle':'freestyle skiing',
+  'Motor|Fórmula 1':'formula one racing','Motor|MotoGP':'motogp racing','Motor|Moto2':'motorcycle racing','Motor|Moto3':'motorcycle racing','Motor|Rally':'rally racing',
+  'Ciclismo|Tour de Francia':'tour de france cycling','Ciclismo|Giro de Italia':'giro ditalia cycling','Ciclismo|Vuelta a España':'road cycling','Ciclismo|Clásicas':'cycling race','Ciclismo|Ciclismo en pista y MTB':'mountain biking',
+  'Natación|Natación en piscina':'competitive swimming','Natación|Aguas abiertas':'open water swimming','Natación|Saltos':'diving sport',
+  'Deportes náuticos|Remo':'rowing','Deportes náuticos|Vela':'sailing','Deportes náuticos|Regatas':'sailing regatta','Deportes náuticos|Copa América':'americas cup sailing','Deportes náuticos|Piragüismo':'canoeing','Deportes náuticos|Kayak':'kayaking',
+  'Artes marciales|Judo':'judo','Artes marciales|Taekwondo':'taekwondo','Artes marciales|Karate':'karate',
+  'Escalada|Dificultad':'lead climbing','Escalada|Bloque':'bouldering','Escalada|Velocidad':'speed climbing',
+  'Patinaje|Patinaje artístico':'figure skating','Patinaje|Velocidad':'speed skating','Patinaje|En línea':'inline skating',
+  'Deportes de invierno|Esquí alpino':'alpine skiing','Deportes de invierno|Esquí de fondo':'cross country skiing','Deportes de invierno|Snowboard':'snowboarding','Deportes de invierno|Biathlon y hielo':'biathlon',
+  'Béisbol y sóftbol|Béisbol':'baseball','Béisbol y sóftbol|Sóftbol':'softball',
+  'Fútbol americano|NFL':'american football','Fútbol americano|Fútbol americano universitario':'college football',
+  'Esgrima|Florete':'fencing foil','Esgrima|Espada':'epee fencing','Esgrima|Sable':'sabre fencing',
+  'Atletismo|Pista y campo':'track and field','Atletismo|Maratón y ruta':'marathon running','Atletismo|Cross y trail':'trail running',
+  'Triatlón|Series mundiales':'triathlon race','Triatlón|Ironman y larga distancia':'ironman triathlon','Triatlón|Du / acuatlón':'aquathlon',
+  'Gimnasia|Gimnasia artística':'artistic gymnastics','Gimnasia|Gimnasia rítmica':'rhythmic gymnastics','Gimnasia|Trampolín y otras modalidades':'trampoline gymnastics',
+  'Rugby|Rugby XV':'rugby union','Rugby|Rugby 7':'rugby sevens',
+  'Críquet|Internacional':'international cricket','Ajedrez|Grandes maestros':'chess grandmaster','Ajedrez|Aperturas y estrategia':'chess board','Ajedrez|Ajedrez online':'online chess',
+  'Esports|League of Legends':'league of legends esports','Esports|Valorant':'valorant esports','Esports|Counter-Strike 2':'counter strike esports','Esports|EA Sports FC':'football video game esports','Esports|Call of Duty':'call of duty esports','Esports|Rocket League':'rocket league esports'
+ };
+ const key=sport+'|'+sub,tag=photoTagBySubforum[key]||photoTagBySport[sport]||'sports';
+ let lock=24000;
+ for(const [category,items] of Object.entries(forumStructure)){
+  for(const item of [...new Set(items)]){
+   if(category==='Fútbol'&&laLigaTeams.includes(item))continue;
+   if(category===sport&&item===sub)return 'https://loremflickr.com/1000/600/'+encodeURIComponent(tag)+'?lock='+lock;
+   lock++;
+  }
+ }
+ return 'https://loremflickr.com/1000/600/'+encodeURIComponent(tag)+'?lock='+(24000+index);
 }
 function renderForumCategories(){
  forumCategoryList.replaceChildren();
