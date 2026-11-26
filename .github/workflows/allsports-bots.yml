@@ -1,5 +1,11 @@
 name: ALLSPORTS Bots
 on:
+  push:
+    branches: [main]
+    paths:
+      - "bots/motor-bot.mjs"
+      - "bots/transfers-bot.mjs"
+      - ".github/workflows/allsports-bots.yml"
   workflow_dispatch:
   schedule:
     # Minutos desplazados para reducir retrasos del programador de GitHub.
