@@ -98,91 +98,7 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
 @media(max-width:620px){#posts{grid-template-columns:1fr;gap:10px}#posts .post{padding:15px 15px 13px}#posts .popular-thread-title{font-size:22px}}
 
 </style>
-<style>.allsports-back-top{position:fixed;right:22px;bottom:22px;z-index:9999;width:48px;height:48px;border:1px solid #d5ff3f;border-radius:50%;background:#d5ff3f;color:#10150b;font-size:25px;font-weight:900;line-height:1;box-shadow:0 5px 22px #0009;cursor:pointer;opacity:0;visibility:hidden;transform:translateY(10px);transition:opacity .2s,transform .2s,visibility .2s}.allsports-back-top.visible{opacity:1;visibility:visible;transform:translateY(0)}.allsports-back-top:hover{background:#fff;border-color:#fff}</style><style>
-/* ALLSPORTS COMMUNITY REDESIGN — conserva paleta y funcionalidades */
-:root{--community-radius:16px}
-html{scroll-padding-top:90px}
-body{background:var(--bg)}
-header{position:sticky!important;background:rgba(9,13,18,.92)!important;border-bottom:1px solid #ffffff18!important}
-.top{min-height:72px}
-.logo{letter-spacing:1.5px}
-nav a,nav button{border-radius:9px;transition:background .2s,color .2s}
-nav a:hover,nav button:hover{background:#ffffff0b}
-.nav-cta{border-radius:999px!important;padding:12px 19px!important}
-.btn{border-radius:9px;transition:transform .18s,filter .18s}
-.btn:hover{transform:translateY(-2px);filter:brightness(1.06)}
-.hero{min-height:490px!important;border-bottom:1px solid var(--line)}
-.hero:before{background:linear-gradient(90deg,#070b10f5 0%,#070b10c9 52%,#070b1045 100%),linear-gradient(0deg,#090d12 0%,transparent 55%)}
-.hero-inner{padding-top:105px!important;padding-bottom:60px!important}
-.hero h1{max-width:760px}
-.hero-copy{max-width:560px}
-section.content{padding:58px 0}
-.section-top{margin-bottom:22px}
-.section-top h2{letter-spacing:-.5px}
-.panel,.forum-categories,.forum-main,.home-live-panel{border-radius:var(--community-radius)!important}
-.panel{padding:22px}
-#comunidad .panel{background:linear-gradient(145deg,#141e27,#10171e);border-color:#34414d}
-#comunidad .auth-panel{position:sticky;top:90px}
-.composer textarea,.auth-panel input,.auth-panel textarea{border-radius:10px!important}
-.post{padding:18px 0 5px}
-.post-top{align-items:center}
-.post-tag{border:1px solid #d5ff3f40;background:#d5ff3f0d;border-radius:999px;padding:5px 9px}
-.post-meta{margin-top:9px}
-.forum-section{background:transparent!important;border-top:0!important}
-.forum-section>.wrap>.section-top{align-items:center;margin-bottom:24px}
-.forum-section>.wrap>.section-top p{max-width:420px}
-.forum-shell{gap:18px;align-items:start}
-.forum-categories,.forum-main{background:linear-gradient(145deg,#141e27,#10171e)!important;border:1px solid #2c3945!important;border-radius:18px!important;padding:20px!important;box-shadow:0 18px 55px #0002}
-.forum-categories{position:sticky;top:90px}
-.forum-categories h3,.forum-main h3{letter-spacing:.3px}
-.forum-category{border:1px solid #ffffff0a!important;border-radius:10px!important;background:#1a2631!important;padding:12px 14px!important;transition:border-color .18s,background .18s,transform .18s}
-.forum-category:hover,.forum-category.active{background:#d5ff3f12!important;border-color:#d5ff3f80!important;color:var(--lime)!important;transform:translateX(2px)}
-.forum-subforums{padding:5px 0 12px 12px!important}
-.forum-subforums button{border-radius:7px;padding:8px 10px!important}
-.forum-subforums button:hover,.forum-subforums button.active{background:#ffffff08}
-.forum-heading{align-items:center!important;border-bottom:1px solid #ffffff12!important;padding-bottom:18px!important}
-.forum-heading h3{font-size:clamp(27px,3vw,36px)!important}
-.forum-heading p{font-size:13px!important;line-height:1.6}
-.forum-compose{background:#0b1117!important;border:1px solid #394956!important;border-radius:14px!important;padding:18px!important}
-.forum-compose textarea,.forum-compose select,.media-input,.media-link{border-radius:9px!important}
-.forum-compose textarea{min-height:115px!important;padding:14px!important}
-.forum-compose-row{gap:10px!important}
-.forum-post{border:1px solid #ffffff12!important;border-radius:14px!important;background:#111a22!important;padding:18px!important;margin:12px 0!important;transition:border-color .18s,transform .18s}
-.forum-post:hover{border-color:#d5ff3f55!important;transform:translateY(-1px)}
-.forum-post h4{font-size:23px!important;line-height:1.15}
-.forum-post-meta{line-height:1.6}
-.forum-replies{background:#0b1117!important;border:1px solid #ffffff12!important;border-radius:12px!important;padding:14px!important}
-.forum-reply{background:#17222b!important;border:1px solid #ffffff08}
-.forum-reply-form textarea{border-radius:9px!important}
-.forum-search{border-radius:11px!important;overflow:hidden}
-.forum-search input{border-radius:0!important}
-.forum-media-image{border-radius:12px!important}
-.chat-launch{border-radius:999px!important}
-.chat-panel{border-radius:16px!important;overflow:hidden}
-.home-live-section{background:#0d131a!important}
-.home-live-panel{border:1px solid #2c3945!important}
-.sport-card,.news-feature,.news-card{border-radius:14px!important}
-@media(max-width:850px){
- .forum-shell{grid-template-columns:1fr!important}
- .forum-categories{position:static!important}
- .forum-category{margin:0!important}
- #comunidad .auth-panel{position:static}
-}
-@media(max-width:620px){
- header{position:sticky!important}
- .top{padding:10px 0!important;gap:8px!important}
- nav{padding-bottom:2px}
- .hero{min-height:560px!important}
- .hero-inner{padding-top:95px!important;padding-bottom:45px!important}
- .hero h1{font-size:clamp(60px,17vw,88px)!important}
- section.content{padding:38px 0!important}
- .forum-categories,.forum-main{padding:14px!important;border-radius:14px!important}
- .forum-post{padding:14px!important}
- .forum-compose-row{grid-template-columns:1fr!important}
- .forum-compose-row button{grid-column:auto!important}
- .forum-heading{align-items:flex-start!important}
-}
-</style></head>
+<style>.allsports-back-top{position:fixed;right:22px;bottom:22px;z-index:9999;width:48px;height:48px;border:1px solid #d5ff3f;border-radius:50%;background:#d5ff3f;color:#10150b;font-size:25px;font-weight:900;line-height:1;box-shadow:0 5px 22px #0009;cursor:pointer;opacity:0;visibility:hidden;transform:translateY(10px);transition:opacity .2s,transform .2s,visibility .2s}.allsports-back-top.visible{opacity:1;visibility:visible;transform:translateY(0)}.allsports-back-top:hover{background:#fff;border-color:#fff}</style></head>
 <body>
 <header><div class="wrap top"><a class="logo" href="./"><i>◆</i> ALLSPORTS</a><nav aria-label="Navegación"><a class="news-nav active" href="./">INICIO</a><a class="news-nav" href="./foro/">FORO</a><a href="#noticias" class="news-nav">NOTICIAS</a><a href="#cuenta" class="news-nav">CREA UNA CUENTA</a><a href="./foro/#foro" class="nav-cta">ÚNETE A LA COMUNIDAD ↗</a></nav></div></header>
 <main>
@@ -584,16 +500,4 @@ async function fetchEuroCompetition(code){const year=new Date().getFullYear()-(n
 async function refreshLiveBasketballScores(){try{const results=await Promise.allSettled([fetchEuroCompetition("E"),fetchEuroCompetition("U")]);let html="",failed=0;for(let i=0;i<results.length;i++){const result=results[i];if(result.status!=="fulfilled"){failed++;console.warn("Marcadores de baloncesto:",result.reason?.message||result.reason);continue;}const {code,games,spanishCodes}=result.value;const now=Date.now(),today=liveBasketDayKey(now);const relevant=games.filter(game=>{const date=game.utcDate||game.date||game.localDate;if(!date||liveBasketDayKey(date)!==today)return false;if(code==="U"&&!spanishCodes.has(game.local?.club?.code)&&!spanishCodes.has(game.road?.club?.code))return false;const start=Date.parse(date);if(!Number.isFinite(start))return false;const age=now-start;return game.played===true?age>=0&&age<=2*60*60*1000+10*60*1000:age>=0?age<3*60*60*1000:start-now<=18*60*60*1000;}).sort((a,b)=>Date.parse(a.utcDate||a.date||a.localDate)-Date.parse(b.utcDate||b.date||b.localDate));if(!relevant.length)continue;const title=code==="E"?"Euroliga":"EuroCup · equipos españoles";html+='<section class="live-league"><h4>'+title+'</h4>'+relevant.map(game=>liveBasketGameHtml(game,now,title)).join("")+'</section>';}liveBasketballHtml=html||(failed===2?'<p class="live-empty">No se han podido consultar los marcadores europeos de baloncesto.</p>':"");}catch(error){console.warn("Marcadores de baloncesto:",error?.message||error);liveBasketballHtml='<p class="live-empty">No se han podido consultar los marcadores europeos de baloncesto.</p>';}renderAllLiveScores();}
 refreshLiveScores();refreshLiveBasketballScores();setInterval(refreshLiveScores,60000);setInterval(refreshLiveBasketballScores,60000);
 </script>
-<button class="allsports-back-top" id="allsportsBackTop" type="button" aria-label="Volver arriba" title="Volver arriba">↑</button><script>(()=>{const b=document.getElementById('allsportsBackTop');if(!b)return;const update=()=>b.classList.toggle('visible',window.scrollY>420);window.addEventListener('scroll',update,{passive:true});b.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));update();})();</script>
-<script>
-/* La comunidad es la portada: resultados y actualidad permanecen accesibles más abajo. */
-(()=>{const arrange=()=>{const main=document.querySelector('main'),hero=main?.querySelector('.hero'),forum=document.getElementById('foro'),community=document.getElementById('comunidad'),scores=document.getElementById('marcadores'),news=document.getElementById('noticias'),sports=document.getElementById('deportes');if(!main||!hero||!forum)return;
- let anchor=hero.nextElementSibling;
- if(scores)main.insertBefore(scores,forum);
- main.insertBefore(forum,anchor);
- if(community)forum.after(community);
- const heading=forum.querySelector('.section-top h2');if(heading)heading.textContent='La comunidad empieza aquí.';
- const intro=forum.querySelector('.section-top p');if(intro)intro.textContent='Entra, encuentra tu deporte y participa. Los debates son el centro de ALLSPORTS.';
- if(news){news.querySelector('.section-top h2')?.replaceChildren(document.createTextNode('Actualidad deportiva'));news.style.paddingTop='46px';}
-};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',arrange,{once:true});else arrange();})();
-</script></body></html>
+<button class="allsports-back-top" id="allsportsBackTop" type="button" aria-label="Volver arriba" title="Volver arriba">↑</button><script>(()=>{const b=document.getElementById('allsportsBackTop');if(!b)return;const update=()=>b.classList.toggle('visible',window.scrollY>420);window.addEventListener('scroll',update,{passive:true});b.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));update();})();</script></body></html>
