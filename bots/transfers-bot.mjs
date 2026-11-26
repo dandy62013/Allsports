@@ -10,16 +10,33 @@ const host=x=>{try{return new URL(x).hostname.replace(/^www\./,"").toLowerCase()
 const official=(h,d)=>h===d||h.endsWith("."+d);
 const decode=x=>String(x||"").replace(/&amp;/g,"&").replace(/&quot;/g,'"').replace(/&lt;/g,"<").replace(/&gt;/g,">");
 const get=(x,n)=>{const m=x.match(new RegExp("<"+n+"[^>]*>([\\s\\S]*?)</"+n+">","i"));return m?decode(m[1].replace(/^<!\[CDATA\[|\]\]>$/g,"").trim()):""};
-const relevant=x=>{
- const t=String(x||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
- // Los clubes multideportivos publican noticias de hockey, balonmano, basket, etc.
- // No deben entrar en el feed de fichajes de fútbol aunque el título use "salida".
- if(/hockey|hierba|junior hc|balonmano|basket|baloncesto|waterpolo|rugby|futbol sala|futsal|atletismo|pelota vasca/.test(t))return false;
- if(/patrocin|sponsor|colaborador|colaboracion|partner|socio comercial|acuerdo comercial|proveedor|convenio|alianza|fundacion|campana|publicidad|equipacion|merchandising|iluminacion|instalaciones|terreno de juego|cesped|estadio|tecnologia|operativa deportiva|firma de autografos|autografos|acto promocional|evento con|clinica|academia/.test(t))return false;
- if(/renuev|renovacion/.test(t)&&!/contrato|jugador|futbolista|tecnico|entrenador|portero|delantero|centrocampista|defensa/.test(t))return false;
- // "Salida complicada" puede ser una previa de un partido; solo aceptar salidas de plantilla expresas.
- const transferExit=/\b(salida|sale|saldria|abandona|despedida)\b/.test(t)&&/jugador|futbolista|plantilla|equipo|club|contrato|delantero|centrocampista|defensa|portero/.test(t);
- return /fichaj|incorpora|contrata|firma|renueva|renovacion|cesion|traspas|rescind|vuelve al|regresa al/.test(t)||transferExit;
+const personPattern="([A-ZÁÉÍÓÚÑ][\\p{L}.'’\\-]+(?:\\s+[A-ZÁÉÍÓÚÑ][\\p{L}.'’\\-]+){0,3})";
+const transferTarget=raw=>{
+ const t=String(raw||"").replace(/\\s+/g," ").trim();
+ if(/\\b(?:alquiler|fotomat[oó]n|club de negocios|patrocin|sponsor|partner|socio comercial|colaborador|proveedor|fundaci[oó]n|empresa|acuerdo comercial|alianza comercial|renuevan su confianza|estructura del club|segunda parte|se impone|exhibici[oó]n|taconazo|golazo|cr[oó]nica|resumen|previa)\\b/i.test(t))return "";
+ const patterns=[
+  new RegExp("\\b(?:fichaje|renovaci[oó]n|incorporaci[oó]n|llegada)\\s+(?:de|del)\\s+"+personPattern,"u"),
+  new RegExp("\\b(?:ficha|incorpora|contrata|presenta|renueva|cede|traspasa|rescinde)\\b[\\s\\S]{0,65}?\\b(?:a|de|por|con)\\s+(?:su plantilla\\s+a\\s+|a la plantilla\\s+a\\s+|al jugador\\s+|al futbolista\\s+)?"+personPattern,"u"),
+  new RegExp("\\b"+personPattern+"\\s+(?:se incorpora|firma\\s+(?:su\\s+)?(?:primer\\s+)?(?:contrato|ficha profesional)|firma por|renueva(?:\\s+(?:su\\s+)?contrato)?|ampl[ií]a contrato|extiende contrato|llega al club|vuelve al club|regresa al club)\\b","u")
+ ];
+ for(const pattern of patterns){
+  const match=t.match(pattern);if(!match)continue;
+  const candidate=match[1].trim();
+  if(/\\b(?:club|femenino|femenina|negocios|alquiler|fotomat[oó]n|empresa|fundaci[oó]n|real|deportivo|atl[eé]tico|osasuna|betis|elche|m[aá]laga|levante|valencia|villarreal|sevilla|racing|rayo|celta|espanyol|barcelona|getafe|athletic)\\b/i.test(candidate))continue;
+  return candidate;
+ }
+ return "";
+};
+const relevant=x=>Boolean(transferTarget(x));
+const transferType=title=>{
+ const t=String(title||"").toLowerCase();
+ if(/renuev|renovaci[oó]n/.test(t))return "RENOVACIÓN";
+ if(/cedid|cesi[oó]n|cede/.test(t))return "CESIÓN";
+ if(/traspas/.test(t))return "TRASPASO";
+ if(/rescind/.test(t))return "RESCISIÓN";
+ if(/contrato|ficha profesional/.test(t))return "NUEVO CONTRATO";
+ if(/incorpora|se incorpora|llegada/.test(t))return "INCORPORACIÓN";
+ return "FICHAJE";
 };
 const shortTitle=(raw,club)=>{
  let t=String(raw||"").replace(/\s+-\s+[^-]+$/,"").replace(/\s+/g," ").trim();
@@ -42,7 +59,7 @@ const replies=await api(U+"/rest/v1/replies?select=content&post_id=eq."+thread.i
 const seen=new Set((replies||[]).flatMap(x=>[...String(x.content||"").matchAll(/\[\[AS-TRANSFER:([a-f0-9]{16})\]\]/g)].map(m=>m[1])));
 let added=0;
 for(const [club,domain] of clubs){
- const q='site:'+domain+' (fichaje OR incorpora OR renueva OR cesión OR traspaso OR firma OR salida) "'+club+'"';
+ const q='site:'+domain+' (fichaje OR incorpora OR contrata OR renueva OR renovación OR cesión OR cedido OR traspaso OR rescinde OR "contrato profesional" OR "firma por") "'+club+'"';
  const url="https://news.google.com/rss/search?q="+encodeURIComponent(q)+"&hl=es&gl=ES&ceid=ES:es";
  let xml;try{const r=await fetch(url);if(!r.ok)continue;xml=await r.text()}catch{continue}
  for(const m of xml.matchAll(/<item>([\s\S]*?)<\/item>/gi)){
@@ -54,7 +71,9 @@ for(const [club,domain] of clubs){
   const when=new Date(date),dateText=Number.isNaN(when.getTime())?"Fecha no indicada":when.toLocaleString("es-ES",{timeZone:"Europe/Madrid",dateStyle:"medium",timeStyle:"short"});
   const cleanTitle=shortTitle(title,club);
   const imageUrl=imageFrom(item);
-  const text=["🟢 "+club+" | "+cleanTitle,"FECHA | "+dateText,"COMUNICADO OFICIAL | [Leer noticia]("+link+")","","— ALLSPORTS Informador","[[AS-TRANSFER:"+id+"]]"].join("\n").slice(0,990);
+  const target=transferTarget(title);
+  if(!target)continue;
+  const text=["🟢 "+club.toUpperCase()+" | "+transferType(title)+": "+target.toUpperCase(),"JUGADOR/A | "+target,"DETALLE | "+cleanTitle,"FECHA | "+dateText,"COMUNICADO OFICIAL | [Leer noticia]("+link+")","","— ALLSPORTS Informador","[[AS-TRANSFER:"+id+"]]"].join("\n").slice(0,990);
   const replyPayload={user_id:uid,content:text,...(imageUrl?{media_url:imageUrl,media_type:"image"}:{})};
   await api(U+"/rest/v1/replies",{method:"POST",headers:{...A,Prefer:"return=minimal"},body:JSON.stringify({...replyPayload,post_id:thread.id})});
   seen.add(id);added++;
