@@ -18,7 +18,7 @@ const [pRows,rRows]=await Promise.all([
  json(SUPABASE_URL+"/rest/v1/replies?select=id,post_id,content,created_at&user_id=eq."+userId+"&created_at=gte."+encodeURIComponent(since)+"&order=created_at.desc&limit=3000",{headers:auth})
 ]);
 const posts=Array.isArray(pRows)?pRows:[],replies=Array.isArray(rRows)?rRows:[];
-const now=Date.now(),from=new Date(now-3*86400000),to=new Date(now+190*86400000);
+const now=Date.now(),from=new Date(now-14*86400000),to=new Date(now+190*86400000);
 const madridDate=d=>new Intl.DateTimeFormat("en-CA",{timeZone:ZONE,year:"numeric",month:"2-digit",day:"2-digit"}).format(d);
 const madridTime=d=>new Date(d).toLocaleString("es-ES",{timeZone:ZONE,dateStyle:"full",timeStyle:"short"});
 const kickoffLabel=d=>new Date(d).toLocaleString("es-ES",{timeZone:ZONE,day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).replace(",", " ·");
@@ -30,12 +30,18 @@ async function createThread(id,title,venue,country,start,end,sessions,sourceUrl,
  const res=await json(SUPABASE_URL+"/rest/v1/posts",{method:"POST",headers:{...auth,Prefer:"return=representation"},body:JSON.stringify({user_id:userId,sport:"Motor",subforum:CONFIG.subforum,content:"🏁 "+CONFIG.name+" | "+title+" | "+(displayLabel||kickoffLabel(start))+"\n"+body,link_url:sourceUrl||null})});
  const row=Array.isArray(res)?res[0]:res;if(row?.id){posts.unshift(row);console.log("Hilo creado:",title)}return row?.id||null;
 }
-async function addReply(postId,kind,id,title,lines){
- if(!postId||hasReply(postId,kind,id))return false;
+async function addReply(postId,kind,id,title,lines,replaceExisting=false){
+ if(!postId)return false;
  const content=[marker(kind,id),title,...lines,"",FOOTER].join("\n");
  if(content.length>1000){console.log("Aviso: "+kind+" supera 1000 caracteres; se omite sin recortar.");return false}
+ const existing=replies.find(r=>r.post_id===postId&&(r.content||"").includes(marker(kind,id)));
+ if(existing){
+  if(!replaceExisting||existing.content===content)return false;
+  await json(SUPABASE_URL+"/rest/v1/replies?id=eq."+encodeURIComponent(existing.id),{method:"PATCH",headers:{...auth,Prefer:"return=minimal"},body:JSON.stringify({content})});
+  existing.content=content;console.log("Respuesta actualizada:",kind,id);return true;
+ }
  await json(SUPABASE_URL+"/rest/v1/replies",{method:"POST",headers:{...auth,Prefer:"return=minimal"},body:JSON.stringify({post_id:postId,user_id:userId,content})});
- replies.unshift({post_id:postId,content});console.log("Respuesta publicada:",kind,id);return true;
+ replies.unshift({post_id:postId,user_id:userId,content});console.log("Respuesta publicada:",kind,id);return true;
 }
 function dateWithin(d){const t=new Date(d).getTime();return Number.isFinite(t)&&t>=from.getTime()&&t<=to.getTime()}
 function fmtRows(rows,mapper){return rows.map(mapper).filter(Boolean)}
@@ -78,16 +84,16 @@ async function runMoto(){
    if(lines.length&&await addReply(post.id,"PARRILLA",key,"PARRILLA DE SALIDA",lines))grids++;
   }
   const race=ordered.filter(s=>["RAC","RACE"].includes(String(s.type||"").toUpperCase())).sort((a,b)=>new Date(b.date)-new Date(a.date))[0];
-  if(race&&new Date(race.date).getTime()<now&&String(race.status||"").toLowerCase()==="official"){
+  if(race&&new Date(race.date).getTime()<now){
    const cls=await json(base+"/results/session/"+encodeURIComponent(race.id)+"/classification?seasonYear="+season.year+"&test=false",{headers:h}).catch(()=>null);
    const rows=Array.isArray(cls?.classification)?cls.classification:[];
    if(rows.length){
     const lines=fmtRows(rows.sort((a,b)=>(a.position||999)-(b.position||999)).slice(0,28),x=>{const rider=x.rider?.full_name||x.rider?.name;if(!rider)return null;return (x.position||"—")+". "+(x.rider?.number||"")+" "+rider+" · "+(x.team?.name||"")+(x.points!=null?" · "+x.points+" pts":"")});
-    if(lines.length&&await addReply(post.id,"RESULTADO",key,"RESULTADO FINAL",lines))results++;
+    if(lines.length&&await addReply(post.id,"RESULTADO",key,"RESULTADO FINAL",lines,true))results++;
     const table=await json(base+"/results/standings?seasonUuid="+encodeURIComponent(season.id)+"&categoryUuid="+encodeURIComponent(category.id),{headers:h}).catch(()=>null);
     const standingRows=Array.isArray(table?.classification)?table.classification:[];
     const out=fmtRows(standingRows.slice(0,25),x=>{const rider=x.rider?.full_name||x.rider?.name;if(!rider)return null;return (x.position||"—")+". "+rider+" · "+(x.points??"—")+" pts"});
-    if(out.length&&await addReply(post.id,"CLASIFICACION",key,"CLASIFICACIÓN DEL CAMPEONATO",out))standings++;
+    if(out.length&&await addReply(post.id,"CLASIFICACION",key,"CLASIFICACIÓN DEL CAMPEONATO",out,true))standings++;
    }
   }
  }
@@ -99,32 +105,35 @@ async function runF1(){
  const boards=await Promise.all([...months].map(m=>json(base+"/scoreboard?dates="+m).catch(e=>{console.log("Calendario F1 no disponible:",m,e.message);return null})));
  const events=[...new Map(boards.flatMap(b=>Array.isArray(b?.events)?b.events:[]).map(e=>[String(e.id),e])).values()];
  let created=0,grids=0,results=0,standings=0;
+ const label=c=>[c?.type?.text,c?.type?.abbreviation,c?.type?.name].filter(Boolean).join(" ");
+ const state=c=>c?.status?.type?.state||(c?.status?.type?.completed?"post":"");
  for(const e of events){
-  const comp=e.competitions?.[0],date=e.date||comp?.date;if(!date||!dateWithin(date))continue;
+  const competitions=e.competitions||[],comp=competitions[0],date=e.date||comp?.date;if(!date||!dateWithin(date))continue;
   const venue=comp?.venue?.fullName||e.venue?.fullName||"Circuito por confirmar",address=comp?.venue?.address||{},country=address.country||"",title=e.name||e.shortName||"Gran Premio";
   const key=String(e.id);let post=findPost(key);
   if(!post&&new Date(date).getTime()-now<=5*86400000&&new Date(date).getTime()>=now-86400000){
-   const schedule=(e.competitions||[]).map(c=>(c.type?.text||"SESIÓN")+" | "+madridTime(c.date||date)).join("\n");
+   const schedule=competitions.map(c=>(label(c)||"SESIÓN")+" | "+madridTime(c.date||date)).join("\n");
    const id=await createThread(key,title,venue,country,date,comp?.date||date,schedule,"https://www.espn.com/racing/");
    if(id){created++;post=posts.find(p=>p.id===id)}
   }
   if(!post)continue;
-  const summary=await json(base+"/summary?event="+encodeURIComponent(e.id)).catch(()=>null);
-  const competitors=comp?.competitors||summary?.competitions?.[0]?.competitors||[];
-  const state=e.status?.type?.state||comp?.status?.type?.state;
-  if(competitors.length){
-   const ordered=[...competitors].sort((a,b)=>(a.order||a.position||999)-(b.order||b.position||999));
-   const grid=fmtRows(ordered,x=>{const name=x.athlete?.displayName||x.driver?.displayName||x.team?.displayName||x.displayName;if(!name)return null;return (x.order||x.position||"—")+". "+name});
-   if(state!=="post"&&grid.length&&await addReply(post.id,"PARRILLA",key,"PARRILLA DE SALIDA",grid))grids++;
-   if(state==="post"){
-    const result=fmtRows(ordered,x=>{const name=x.athlete?.displayName||x.driver?.displayName||x.team?.displayName||x.displayName;if(!name)return null;return (x.order||x.position||"—")+". "+name+(x.score?" · "+x.score:"")});
-    if(result.length&&await addReply(post.id,"RESULTADO",key,"RESULTADO FINAL",result))results++;
-   }
+  const qualifyingComp=competitions.find(c=>/qualif/i.test(label(c)));
+  const raceComp=competitions.find(c=>/\brace\b|^rac$/i.test(label(c)));
+  if(qualifyingComp&&state(qualifyingComp)==="post"){
+   const qRows=qualifyingComp.competitors||[];
+   const grid=fmtRows([...qRows].sort((a,b)=>(a.order||a.position||999)-(b.order||b.position||999)),x=>{const name=x.athlete?.displayName||x.driver?.displayName||x.team?.displayName||x.displayName;if(!name)return null;return (x.order||x.position||"—")+". "+name});
+   if(grid.length&&await addReply(post.id,"PARRILLA",key,"PARRILLA DE SALIDA",grid,true))grids++;
   }
-  if(state==="post"){
+  if(raceComp&&state(raceComp)==="post"){
+   const summary=await json(base+"/summary?event="+encodeURIComponent(e.id)).catch(()=>null);
+   const summaryRace=(summary?.competitions||[]).find(c=>/\brace\b|^rac$/i.test(label(c)));
+   const competitors=raceComp.competitors?.length?raceComp.competitors:(summaryRace?.competitors||[]);
+   const ordered=[...competitors].sort((a,b)=>(a.order||a.position||999)-(b.order||b.position||999));
+   const result=fmtRows(ordered,x=>{const name=x.athlete?.displayName||x.driver?.displayName||x.team?.displayName||x.displayName;if(!name)return null;return (x.order||x.position||"—")+". "+name+(x.score?" · "+x.score:"")});
+   if(result.length&&await addReply(post.id,"RESULTADO",key,"RESULTADO FINAL",result,true))results++;
    const st=await json(base+"/standings").catch(()=>null),entries=st?.children||st?.standings?.entries||st?.standings||[];
    const lines=fmtRows((Array.isArray(entries)?entries:[]).slice(0,25),x=>{const a=x.athlete||x.driver||x.team||{},name=a.displayName||a.fullName||x.displayName;if(!name)return null;const stat=x.stats?.find(y=>/points/i.test(y.name||y.abbreviation||""));return (x.rank||x.position||"—")+". "+name+(stat?.value!=null?" · "+stat.value+" pts":"")});
-   if(lines.length&&await addReply(post.id,"CLASIFICACION",key,"CLASIFICACIÓN DEL CAMPEONATO",lines))standings++;
+   if(lines.length&&await addReply(post.id,"CLASIFICACION",key,"CLASIFICACIÓN DEL CAMPEONATO",lines,true))standings++;
   }
  }
  console.log("FÓRMULA 1: "+created+" hilos; "+grids+" parrillas; "+results+" resultados; "+standings+" clasificaciones.");
