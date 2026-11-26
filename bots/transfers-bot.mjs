@@ -12,8 +12,8 @@ const decode=x=>String(x||"").replace(/&amp;/g,"&").replace(/&quot;/g,'"').repla
 const get=(x,n)=>{const m=x.match(new RegExp("<"+n+"[^>]*>([\\s\\S]*?)</"+n+">","i"));return m?decode(m[1].replace(/^<!\[CDATA\[|\]\]>$/g,"").trim()):""};
 const personPattern="([A-ZÁÉÍÓÚÑ][\\p{L}.'’\\-]+(?:\\s+[A-ZÁÉÍÓÚÑ][\\p{L}.'’\\-]+){0,3})";
 const transferTarget=raw=>{
- const t=String(raw||"").replace(/\\s+/g," ").trim();
- if(/\\b(?:alquiler|fotomat[oó]n|club de negocios|patrocin|sponsor|partner|socio comercial|colaborador|proveedor|fundaci[oó]n|empresa|acuerdo comercial|alianza comercial|renuevan su confianza|estructura del club|segunda parte|se impone|exhibici[oó]n|taconazo|golazo|cr[oó]nica|resumen|previa)\\b/i.test(t))return "";
+ const t=String(raw||"").replace(/\s+/g," ").trim();
+ if(/\b(?:alquiler|fotomat[oó]n|club de negocios|patrocin|sponsor|partner|socio comercial|colaborador|proveedor|fundaci[oó]n|empresa|acuerdo comercial|alianza comercial|renuevan su confianza|estructura del club|segunda parte|se impone|exhibici[oó]n|taconazo|golazo|cr[oó]nica|resumen|previa)\b/i.test(t))return "";
  const patterns=[
   new RegExp("\\b(?:fichaje|renovaci[oó]n|incorporaci[oó]n|llegada)\\s+(?:de|del)\\s+"+personPattern,"u"),
   new RegExp("\\b(?:ficha|incorpora|contrata|presenta|renueva|cede|traspasa|rescinde)\\b[\\s\\S]{0,65}?\\b(?:a|de|por|con)\\s+(?:su plantilla\\s+a\\s+|a la plantilla\\s+a\\s+|al jugador\\s+|al futbolista\\s+)?"+personPattern,"u"),
@@ -22,7 +22,7 @@ const transferTarget=raw=>{
  for(const pattern of patterns){
   const match=t.match(pattern);if(!match)continue;
   const candidate=match[1].trim();
-  if(/\\b(?:club|femenino|femenina|negocios|alquiler|fotomat[oó]n|empresa|fundaci[oó]n|real|deportivo|atl[eé]tico|osasuna|betis|elche|m[aá]laga|levante|valencia|villarreal|sevilla|racing|rayo|celta|espanyol|barcelona|getafe|athletic)\\b/i.test(candidate))continue;
+  if(/\b(?:club|femenino|femenina|negocios|alquiler|fotomat[oó]n|empresa|fundaci[oó]n|real|deportivo|atl[eé]tico|osasuna|betis|elche|m[aá]laga|levante|valencia|villarreal|sevilla|racing|rayo|celta|espanyol|barcelona|getafe|athletic)\b/i.test(candidate))continue;
   return candidate;
  }
  return "";
