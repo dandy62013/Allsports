@@ -5,7 +5,7 @@ async function api(url,opt={}){const r=await fetch(url,{...opt,headers:{...H,...
 const s=await api(U+"/auth/v1/token?grant_type=password",{method:"POST",body:JSON.stringify({email:E,password:P})}),uid=s.user?.id;
 if(!s.access_token||!uid)throw Error("No se pudo iniciar sesión.");
 const A={Authorization:"Bearer "+s.access_token};
-const clubs=[["Athletic Club","athletic-club.eus"],["Atlético de Madrid","atleticodemadrid.com"],["Osasuna","osasuna.es"],["Celta","rccelta.es"],["Alavés","deportivoalaves.com"],["Elche","elchecf.es"],["Barcelona","fcbarcelona.com"],["Getafe","getafecf.com"],["Levante","levanteud.com"],["Málaga","malagacf.com"],["Racing","realracingclub.es"],["Rayo","rayovallecano.es"],["Deportivo","rcdeportivo.es"],["Espanyol","rcdespanyol.com"],["Betis","realbetisbalompie.es"],["Real Madrid","realmadrid.com"],["Real Sociedad","realsociedad.eus"],["Sevilla","sevillafc.es"],["Valencia","valenciacf.com"],["Villarreal","villarrealcf.es"]];
+const clubs=[["Liverpool","liverpoolfc.com"],["Manchester City","mancity.com"],["Manchester United","manutd.com"],["Arsenal","arsenal.com"],["Chelsea","chelseafc.com"],["Tottenham","tottenhamhotspur.com"],["Bayern Múnich","fcbayern.com"],["Borussia Dortmund","bvb.de"],["Paris Saint-Germain","psg.fr"],["Inter de Milán","inter.it"],["Juventus","juventus.com"],["AC Milan","acmilan.com"],["Benfica","slbenfica.pt"],["Porto","fcporto.pt"],["Ajax","ajax.nl"],["Athletic Club","athletic-club.eus"],["Atlético de Madrid","atleticodemadrid.com"],["Osasuna","osasuna.es"],["Celta","rccelta.es"],["Alavés","deportivoalaves.com"],["Elche","elchecf.es"],["Barcelona","fcbarcelona.com"],["Getafe","getafecf.com"],["Levante","levanteud.com"],["Málaga","malagacf.com"],["Racing","realracingclub.es"],["Rayo","rayovallecano.es"],["Deportivo","rcdeportivo.es"],["Espanyol","rcdespanyol.com"],["Betis","realbetisbalompie.es"],["Real Madrid","realmadrid.com"],["Real Sociedad","realsociedad.eus"],["Sevilla","sevillafc.es"],["Valencia","valenciacf.com"],["Villarreal","villarrealcf.es"]];
 const host=x=>{try{return new URL(x).hostname.replace(/^www\./,"").toLowerCase()}catch{return""}};
 const official=(h,d)=>h===d||h.endsWith("."+d);
 const decode=x=>String(x||"").replace(/&amp;/g,"&").replace(/&quot;/g,'"').replace(/&lt;/g,"<").replace(/&gt;/g,">");
@@ -51,31 +51,20 @@ const imageFrom=item=>{
  return "";
 };
 const hash=x=>{let h=2166136261;for(const c of x){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return(h>>>0).toString(16).padStart(8,"0")+(Math.imul(h^0x45d9f3b,0x27d4eb2d)>>>0).toString(16).padStart(8,"0")};
-const posts=await api(U+"/rest/v1/posts?select=id,content&user_id=eq."+uid+"&sport=eq.Mercado%20de%20fichajes&subforum=eq.General&limit=100",{headers:A});
-let thread=(posts||[]).find(x=>(x.content||"").includes("[[AS-TRANSFER:MAIN]]"));
-if(!thread){const content="⚽ MERCADO DE FICHAJES | Primera División\n[[AS-TRANSFER:MAIN]]\n\nFichajes, salidas, cesiones y renovaciones confirmados oficialmente por los clubes de Primera División. Sin rumores.\n\n— ALLSPORTS Informador";const made=await api(U+"/rest/v1/posts",{method:"POST",headers:{...A,Prefer:"return=representation"},body:JSON.stringify({user_id:uid,sport:"Mercado de fichajes",subforum:"General",content})});thread=made[0];}
-if(!thread?.id)throw Error("No se encontró el hilo permanente.");
-const replies=await api(U+"/rest/v1/replies?select=id,content&post_id=eq."+thread.id+"&limit=1000",{headers:A});
-const seen=new Set((replies||[]).flatMap(x=>[...String(x.content||"").matchAll(/\[\[AS-TRANSFER:([a-f0-9]{16})\]\]/g)].map(m=>m[1])));
-let updated=0;
-for(const reply of replies||[]){
- const raw=String(reply.content||"");
- if(raw.includes("JUGADOR/A |"))continue;
- const first=raw.split(/\r?\n/).find(line=>line.startsWith("🟢 "));
- if(!first)continue;
- const split=first.slice(3).indexOf(" | ");if(split<0)continue;
- const club=first.slice(3,3+split).trim(),title=first.slice(3+split+3).trim(),target=transferTarget(title);
- if(!target)continue;
- const dateLine=raw.split(/\r?\n/).find(line=>line.startsWith("FECHA | "));
- const officialLine=raw.split(/\r?\n/).find(line=>line.startsWith("COMUNICADO OFICIAL | "));
- const markerMatch=raw.match(/\[\[AS-TRANSFER:([a-f0-9]{16})\]\]/i);
- if(!dateLine||!officialLine||!markerMatch)continue;
- const migrated=["🟢 "+club.toUpperCase()+" | "+transferType(title)+": "+target.toUpperCase(),"JUGADOR/A | "+target,"DETALLE | "+shortTitle(title,club),dateLine,officialLine,"","— ALLSPORTS Informador","[[AS-TRANSFER:"+markerMatch[1]+"]]"].join("\n").slice(0,990);
- if(migrated===raw)continue;
- await api(U+"/rest/v1/replies?id=eq."+encodeURIComponent(reply.id),{method:"PATCH",headers:{...A,Prefer:"return=minimal"},body:JSON.stringify({content:migrated})});
- updated++;
-}
+const MARKET_SUBFORUMS=["Masculino · Primera División","Masculino · Segunda División","Masculino · Fútbol internacional","Femenino · Mercado de fichajes"];
+const secondDivisionClubs=new Set(["Málaga","Racing","Deportivo"]);
+const internationalClubNames=new Set(["Liverpool","Manchester City","Manchester United","Arsenal","Chelsea","Tottenham","Bayern Múnich","Borussia Dortmund","Paris Saint-Germain","Inter de Milán","Juventus","AC Milan","Benfica","Porto","Ajax"]);
+const marketCategory=(club,title)=>{
+ const t=String(title||"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase();
+ if(/\\b(femenino|femenina|women|womens|ladies)\\b/.test(t))return MARKET_SUBFORUMS[3];
+ if(internationalClubNames.has(club))return MARKET_SUBFORUMS[2];
+ if(secondDivisionClubs.has(club))return MARKET_SUBFORUMS[1];
+ return MARKET_SUBFORUMS[0];
+};
+const posts=await api(U+"/rest/v1/posts?select=id,content,subforum&user_id=eq."+uid+"&sport=eq.Mercado%20de%20fichajes&limit=1000",{headers:A});
+const seen=new Set((posts||[]).flatMap(x=>[...String(x.content||"").matchAll(/\\[\\[AS-TRANSFER:([a-f0-9]{16})\\]\\]/g)].map(m=>m[1])));
 let added=0;
+
 for(const [club,domain] of clubs){
  const q='site:'+domain+' (fichaje OR incorpora OR contrata OR renueva OR renovación OR cesión OR cedido OR traspaso OR rescinde OR "contrato profesional" OR "firma por") "'+club+'"';
  const url="https://news.google.com/rss/search?q="+encodeURIComponent(q)+"&hl=es&gl=ES&ceid=ES:es";
@@ -92,10 +81,11 @@ for(const [club,domain] of clubs){
   const target=transferTarget(title);
   if(!target)continue;
   const text=["🟢 "+club.toUpperCase()+" | "+transferType(title)+": "+target.toUpperCase(),"JUGADOR/A | "+target,"DETALLE | "+cleanTitle,"FECHA | "+dateText,"COMUNICADO OFICIAL | [Leer noticia]("+link+")","","— ALLSPORTS Informador","[[AS-TRANSFER:"+id+"]]"].join("\n").slice(0,990);
-  const replyPayload={user_id:uid,content:text,...(imageUrl?{media_url:imageUrl,media_type:"image"}:{})};
-  await api(U+"/rest/v1/replies",{method:"POST",headers:{...A,Prefer:"return=minimal"},body:JSON.stringify({...replyPayload,post_id:thread.id})});
-  seen.add(id);added++;
+  const subforum=marketCategory(club,title);
+   const postPayload={user_id:uid,sport:"Mercado de fichajes",subforum,content:text,link_url:link,...(imageUrl?{media_url:imageUrl,media_type:"image"}:{})};
+   await api(U+"/rest/v1/posts",{method:"POST",headers:{...A,Prefer:"return=minimal"},body:JSON.stringify(postPayload)});
+   seen.add(id);added++;
   console.log("Publicado:",club,title,"(solo mercado general)");
  }
 }
-console.log("Mercado de fichajes: "+clubs.length+" clubes comprobados; "+updated+" noticias antiguas actualizadas; "+added+" noticias nuevas en el hilo general.");
+console.log("Mercado de fichajes: "+clubs.length+" clubes comprobados; "+added+" noticias nuevas distribuidas en "+MARKET_SUBFORUMS.length+" subforos.");
