@@ -88,7 +88,7 @@ async function runMoto(){
    const cls=await json(base+"/results/session/"+encodeURIComponent(race.id)+"/classification?seasonYear="+season.year+"&test=false",{headers:h}).catch(()=>null);
    const rows=Array.isArray(cls?.classification)?cls.classification:[];
    if(rows.length){
-    const lines=fmtRows(rows.sort((a,b)=>(a.position||999)-(b.position||999)).slice(0,28),x=>{const rider=x.rider?.full_name||x.rider?.name;if(!rider)return null;return (x.position||"—")+". "+(x.rider?.number||"")+" "+rider+" · "+(x.team?.name||"")+(x.points!=null?" · "+x.points+" pts":"")});
+    const lines=fmtRows(rows.sort((a,b)=>(a.position||999)-(b.position||999)).slice(0,28),x=>{const rider=x.rider?.full_name||x.rider?.name;if(!rider)return null;return (x.position||"—")+". "+(x.rider?.number?"#"+x.rider.number+" ":"")+rider+(x.points!=null?" · "+x.points+" pts":"")});
     if(lines.length&&await addReply(post.id,"RESULTADO",key,"RESULTADO FINAL",lines,true))results++;
     const table=await json(base+"/results/standings?seasonUuid="+encodeURIComponent(season.id)+"&categoryUuid="+encodeURIComponent(category.id),{headers:h}).catch(()=>null);
     const standingRows=Array.isArray(table?.classification)?table.classification:[];
