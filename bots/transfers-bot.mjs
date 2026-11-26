@@ -62,8 +62,24 @@ const marketCategory=(club,title)=>{
  if(secondDivisionClubs.has(club))return MARKET_SUBFORUMS[1];
  return MARKET_SUBFORUMS[0];
 };
-const posts=await api(U+"/rest/v1/posts?select=id,content,subforum&user_id=eq."+uid+"&sport=eq.Mercado%20de%20fichajes&limit=1000",{headers:A});
-const seen=new Set((posts||[]).flatMap(x=>[...String(x.content||"").matchAll(/\[\[AS-TRANSFER:([a-f0-9]{16})\]\]/g)].map(m=>m[1])));
+const [posts,replies]=await Promise.all([
+ api(U+"/rest/v1/posts?select=id,content,subforum&user_id=eq."+uid+"&sport=eq.Mercado%20de%20fichajes&order=created_at.asc&limit=1000",{headers:A}),
+ api(U+"/rest/v1/replies?select=id,post_id,content&user_id=eq."+uid+"&order=created_at.asc&limit=5000",{headers:A})
+]);
+const seen=new Set((replies||[]).flatMap(x=>[...String(x.content||"").matchAll(/\[\[AS-TRANSFER:([a-f0-9]{16})\]\]/g)].map(m=>m[1])));
+const threadBySubforum=new Map();
+for(const subforum of MARKET_SUBFORUMS){
+ let thread=(posts||[]).find(p=>p.subforum===subforum&&String(p.content||"").includes("[[AS-TRANSFER-THREAD]]"));
+ if(!thread)thread=(posts||[]).find(p=>p.subforum===subforum&&/mercado de fichajes/i.test(String(p.content||"").split("\n")[0]));
+ if(!thread){
+  const title="🔄 MERCADO DE FICHAJES | "+subforum.toUpperCase();
+  const body=[title,"Todas las noticias y movimientos de "+subforum+". Publicaremos aquí los fichajes, incorporaciones, cesiones y renovaciones confirmadas.","","Sigue el hilo y comenta cada movimiento.","","— ALLSPORTS Informador","[[AS-TRANSFER-THREAD]]"].join("\n");
+  const created=await api(U+"/rest/v1/posts",{method:"POST",headers:{...A,Prefer:"return=representation"},body:JSON.stringify({user_id:uid,sport:"Mercado de fichajes",subforum,content:body})});
+  thread=Array.isArray(created)?created[0]:created;
+  if(thread?.id){posts.unshift(thread);console.log("Hilo de mercado creado:",subforum);}
+ }
+ if(thread?.id)threadBySubforum.set(subforum,thread);
+}
 let added=0;
 
 for(const [club,domain] of clubs){
@@ -83,10 +99,12 @@ for(const [club,domain] of clubs){
   if(!target)continue;
   const text=["🟢 "+club.toUpperCase()+" | "+transferType(title)+": "+target.toUpperCase(),"JUGADOR/A | "+target,"DETALLE | "+cleanTitle,"FECHA | "+dateText,"COMUNICADO OFICIAL | [Leer noticia]("+link+")","","— ALLSPORTS Informador","[[AS-TRANSFER:"+id+"]]"].join("\n").slice(0,990);
   const subforum=marketCategory(club,title);
-   const postPayload={user_id:uid,sport:"Mercado de fichajes",subforum,content:text,link_url:link,...(imageUrl?{media_url:imageUrl,media_type:"image"}:{})};
-   await api(U+"/rest/v1/posts",{method:"POST",headers:{...A,Prefer:"return=minimal"},body:JSON.stringify(postPayload)});
+   const thread=threadBySubforum.get(subforum);
+   if(!thread?.id)continue;
+   await api(U+"/rest/v1/replies",{method:"POST",headers:{...A,Prefer:"return=minimal"},body:JSON.stringify({user_id:uid,post_id:thread.id,content:text})});
    seen.add(id);added++;
+  console.log("Publicado en hilo:",subforum,"|",club,"|",target);
   console.log("Publicado:",club,title,"(solo mercado general)");
  }
 }
-console.log("Mercado de fichajes: "+clubs.length+" clubes comprobados; "+added+" noticias nuevas distribuidas en "+MARKET_SUBFORUMS.length+" subforos.");
+console.log("Mercado de fichajes: "+clubs.length+" clubes comprobados; "+added+" noticias añadidas como respuestas en "+threadBySubforum.size+" hilos de mercado.");
