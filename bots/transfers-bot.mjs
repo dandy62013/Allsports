@@ -55,14 +55,14 @@ const MARKET_SUBFORUMS=["Masculino · Primera División","Masculino · Segunda D
 const secondDivisionClubs=new Set(["Albacete","Almería","Andorra","Burgos","Cádiz","Castellón","Celta Fortuna","Ceuta","Córdoba","Eibar","Eldense","Girona","Granada","Las Palmas","Leganés","Mallorca","Oviedo","Real Sociedad B","Sabadell","Sporting","Tenerife","Valladolid"]);
 const internationalClubNames=new Set(["Liverpool","Manchester City","Manchester United","Arsenal","Chelsea","Tottenham","Bayern Múnich","Borussia Dortmund","Paris Saint-Germain","Inter de Milán","Juventus","AC Milan","Benfica","Porto","Ajax"]);
 const marketCategory=(club,title)=>{
- const t=String(title||"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase();
- if(/\\b(femenino|femenina|women|womens|ladies)\\b/.test(t))return MARKET_SUBFORUMS[3];
+ const t=String(title||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+ if(/\b(femenino|femenina|women|womens|ladies)\b/.test(t))return MARKET_SUBFORUMS[3];
  if(internationalClubNames.has(club))return MARKET_SUBFORUMS[2];
  if(secondDivisionClubs.has(club))return MARKET_SUBFORUMS[1];
  return MARKET_SUBFORUMS[0];
 };
 const posts=await api(U+"/rest/v1/posts?select=id,content,subforum&user_id=eq."+uid+"&sport=eq.Mercado%20de%20fichajes&limit=1000",{headers:A});
-const seen=new Set((posts||[]).flatMap(x=>[...String(x.content||"").matchAll(/\\[\\[AS-TRANSFER:([a-f0-9]{16})\\]\\]/g)].map(m=>m[1])));
+const seen=new Set((posts||[]).flatMap(x=>[...String(x.content||"").matchAll(/\[\[AS-TRANSFER:([a-f0-9]{16})\]\]/g)].map(m=>m[1])));
 let added=0;
 
 for(const [club,domain] of clubs){
