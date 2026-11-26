@@ -55,8 +55,26 @@ const posts=await api(U+"/rest/v1/posts?select=id,content&user_id=eq."+uid+"&spo
 let thread=(posts||[]).find(x=>(x.content||"").includes("[[AS-TRANSFER:MAIN]]"));
 if(!thread){const content="⚽ MERCADO DE FICHAJES | Primera División\n[[AS-TRANSFER:MAIN]]\n\nFichajes, salidas, cesiones y renovaciones confirmados oficialmente por los clubes de Primera División. Sin rumores.\n\n— ALLSPORTS Informador";const made=await api(U+"/rest/v1/posts",{method:"POST",headers:{...A,Prefer:"return=representation"},body:JSON.stringify({user_id:uid,sport:"Mercado de fichajes",subforum:"General",content})});thread=made[0];}
 if(!thread?.id)throw Error("No se encontró el hilo permanente.");
-const replies=await api(U+"/rest/v1/replies?select=content&post_id=eq."+thread.id+"&limit=1000",{headers:A});
+const replies=await api(U+"/rest/v1/replies?select=id,content&post_id=eq."+thread.id+"&limit=1000",{headers:A});
 const seen=new Set((replies||[]).flatMap(x=>[...String(x.content||"").matchAll(/\[\[AS-TRANSFER:([a-f0-9]{16})\]\]/g)].map(m=>m[1])));
+let updated=0;
+for(const reply of replies||[]){
+ const raw=String(reply.content||"");
+ if(raw.includes("JUGADOR/A |"))continue;
+ const first=raw.split(/\r?\n/).find(line=>line.startsWith("🟢 "));
+ if(!first)continue;
+ const split=first.slice(3).indexOf(" | ");if(split<0)continue;
+ const club=first.slice(3,3+split).trim(),title=first.slice(3+split+3).trim(),target=transferTarget(title);
+ if(!target)continue;
+ const dateLine=raw.split(/\r?\n/).find(line=>line.startsWith("FECHA | "));
+ const officialLine=raw.split(/\r?\n/).find(line=>line.startsWith("COMUNICADO OFICIAL | "));
+ const markerMatch=raw.match(/\[\[AS-TRANSFER:([a-f0-9]{16})\]\]/i);
+ if(!dateLine||!officialLine||!markerMatch)continue;
+ const migrated=["🟢 "+club.toUpperCase()+" | "+transferType(title)+": "+target.toUpperCase(),"JUGADOR/A | "+target,"DETALLE | "+shortTitle(title,club),dateLine,officialLine,"","— ALLSPORTS Informador","[[AS-TRANSFER:"+markerMatch[1]+"]]"].join("\n").slice(0,990);
+ if(migrated===raw)continue;
+ await api(U+"/rest/v1/replies?id=eq."+encodeURIComponent(reply.id),{method:"PATCH",headers:{...A,Prefer:"return=minimal"},body:JSON.stringify({content:migrated})});
+ updated++;
+}
 let added=0;
 for(const [club,domain] of clubs){
  const q='site:'+domain+' (fichaje OR incorpora OR contrata OR renueva OR renovación OR cesión OR cedido OR traspaso OR rescinde OR "contrato profesional" OR "firma por") "'+club+'"';
@@ -80,4 +98,4 @@ for(const [club,domain] of clubs){
   console.log("Publicado:",club,title,"(solo mercado general)");
  }
 }
-console.log("Mercado de fichajes: "+clubs.length+" clubes comprobados; "+added+" noticias nuevas en el hilo general.");
+console.log("Mercado de fichajes: "+clubs.length+" clubes comprobados; "+updated+" noticias antiguas actualizadas; "+added+" noticias nuevas en el hilo general.");
