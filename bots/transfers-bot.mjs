@@ -13,7 +13,7 @@ const get=(x,n)=>{const m=x.match(new RegExp("<"+n+"[^>]*>([\\s\\S]*?)</"+n+">",
 const personPattern="([A-ZÁÉÍÓÚÑ][\\p{L}.'’\\-]+(?:\\s+[A-ZÁÉÍÓÚÑ][\\p{L}.'’\\-]+){0,3})";
 const transferTarget=raw=>{
  const t=String(raw||"").replace(/\s+/g," ").trim();
- if(/\b(?:alquiler|fotomat[oó]n|club de negocios|patrocin|sponsor|partner|socio comercial|colaborador|proveedor|fundaci[oó]n|empresa|acuerdo comercial|alianza comercial|renuevan su confianza|estructura del club|segunda parte|se impone|exhibici[oó]n|taconazo|golazo|cr[oó]nica|resumen|previa)\b/i.test(t))return "";
+ if(/\b(?:alquiler|fotomat[oó]n|club de negocios|patrocin|sponsor|partner|socio comercial|colaborador|proveedor|fundaci[oó]n|empresa|acuerdo comercial|alianza comercial|renuevan su confianza|estructura del club|segunda parte|se impone|exhibici[oó]n|taconazo|golazo|cr[oó]nica|resumen|previa|resultado|victoria|derrota|remonta|golea|empata|partido|jornada|clasificaci[oó]n|eliminatoria|supera|conquista|marcador|reparto de puntos)\b/i.test(t))return "";
  const patterns=[
   new RegExp("\\b(?:fichaje|renovaci[oó]n|incorporaci[oó]n|llegada)\\s+(?:de|del)\\s+"+personPattern,"u"),
   new RegExp("\\b(?:ficha|incorpora|contrata|presenta|renueva|cede|traspasa|rescinde)\\b[\\s\\S]{0,65}?\\b(?:a|de|por|con)\\s+(?:su plantilla\\s+a\\s+|a la plantilla\\s+a\\s+|al jugador\\s+|al futbolista\\s+)?"+personPattern,"u"),
