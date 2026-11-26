@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#090d12">
+<meta name="description" content="ALLSPORTS: vive el deporte, comparte tu pasión.">
+<title>ALLSPORTS — Vive el deporte</title>
+<link rel="preconnect" href="https://images.unsplash.com"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#090d12;--surface:#111820;--line:#27313b;--white:#f6f7f4;--muted:#a2abb3;--lime:#d5ff3f;--orange:#ff6138}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--white);font:15px 'DM Sans',sans-serif}a{color:inherit;text-decoration:none}button,select,textarea{font:inherit}.wrap{width:min(1240px,calc(100% - 48px));margin:auto}
+header{height:76px;position:absolute;z-index:10;top:0;left:0;right:0;border-bottom:1px solid #ffffff25;background:#080c12a8;backdrop-filter:blur(12px)}.top{height:100%;display:flex;align-items:center;justify-content:space-between;gap:25px}.logo{font:900 31px 'Barlow Condensed',sans-serif;letter-spacing:1px}.logo i{font-style:normal;color:var(--lime)}nav{display:flex;align-items:center;gap:4px}nav button{background:none;border:0;color:#d1d6d9;padding:11px 13px;cursor:pointer;font-weight:700;font-size:13px}nav button:hover,nav button.active{color:var(--lime)}.nav-cta{background:var(--lime);color:#111!important;padding:11px 17px;border-radius:3px;margin-left:10px}
+.hero{min-height:560px;display:flex;align-items:end;position:relative;overflow:hidden;background:#151d26 url('https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=2200&q=88') center 42%/cover no-repeat}.hero:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#070b10f2 0%,#070b10b8 48%,#070b1030 100%),linear-gradient(0deg,#090d12 0%,transparent 42%)}.hero-inner{position:relative;padding:135px 0 78px;width:100%}.kicker{display:flex;align-items:center;gap:11px;text-transform:uppercase;letter-spacing:3px;font-size:11px;font-weight:800;color:var(--lime)}.kicker:before{content:"";height:2px;width:34px;background:var(--lime)}h1,h2,h3,p{margin-top:0}.hero h1{font:900 clamp(60px,8vw,112px)/.84 'Barlow Condensed',sans-serif;letter-spacing:-2px;text-transform:uppercase;max-width:720px;margin:18px 0}.hero h1 span{color:var(--lime)}.hero-copy{max-width:490px;color:#d4d9dd;font-size:17px;line-height:1.7}.hero-actions{display:flex;gap:12px;margin-top:29px;flex-wrap:wrap}.hero-invite{margin:13px 0 0;color:#d4d9dd;font-size:12px;font-weight:600;letter-spacing:.2px}.btn{display:inline-flex;align-items:center;justify-content:center;padding:14px 22px;border:1px solid #ffffff65;color:white;background:#ffffff0c;font-weight:800;text-transform:uppercase;font-size:12px;letter-spacing:1px;cursor:pointer;border-radius:2px}.btn.primary{background:var(--lime);color:#111;border-color:var(--lime)}.hero-stamp{position:absolute;right:0;bottom:115px;font:800 12px 'Barlow Condensed',sans-serif;letter-spacing:2px;writing-mode:vertical-rl;color:#ffffffb0}
+.ticker{display:flex;justify-content:center;background:var(--lime);color:#111;overflow:hidden;white-space:nowrap;font:800 18px 'Barlow Condensed',sans-serif;letter-spacing:2px;padding:13px 0;text-transform:uppercase}.ticker span{padding:0 28px}.ticker b{color:#667a1d}
+section.content{padding:82px 0}.section-top{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:26px}.overline{font-size:11px;color:var(--lime);font-weight:800;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:8px}.section-top h2{font:800 clamp(38px,5vw,58px)/.95 'Barlow Condensed',sans-serif;text-transform:uppercase;margin:0}.section-top p{color:var(--muted);max-width:370px;margin:0;font-size:13px;line-height:1.7}
+.sports-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}.sport-card{height:300px;position:relative;overflow:hidden;display:flex;align-items:end;padding:19px;background:#202a34 center/cover no-repeat;border:1px solid #ffffff20;transition:transform .25s,border-color .25s}.sport-card:before{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#070a0eeF 0%,#070a0e1c 70%)}.sport-card:hover{transform:translateY(-5px);border-color:var(--lime)}.sport-card .sport-content{position:relative}.sport-card small{color:var(--lime);font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase}.sport-card strong{display:block;font:800 34px 'Barlow Condensed',sans-serif;text-transform:uppercase}.sport-card em{font-style:normal;font-size:11px;color:#c1c8ce}.football{background-image:url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=700&q=82')}.basket{background-image:url('https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=700&q=82')}.tennis{background-image:url('https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?auto=format&fit=crop&w=700&q=82')}.motor{background-image:url('https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=700&q=85')}.other{background-image:url('https://images.unsplash.com/photo-1510249649286-aaa2eca125cd?auto=format&fit=crop&w=900&q=85')}.athletics{background-image:url('https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=700&q=82')}
+.manifesto{padding:74px 0;background:#141d25 url('https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=2000&q=85') center/cover no-repeat;position:relative}.manifesto:before{content:"";position:absolute;inset:0;background:#080d12d9}.manifesto .wrap{position:relative;display:flex;align-items:center;justify-content:space-between;gap:35px}.manifesto h2{font:900 clamp(45px,7vw,86px)/.9 'Barlow Condensed',sans-serif;text-transform:uppercase;margin:10px 0;max-width:650px}.manifesto h2 span{color:var(--lime)}.manifesto p{color:#c3cbd1;max-width:380px;line-height:1.7}
+.news-nav{color:var(--lime);padding:11px 10px;font-size:13px;font-weight:800}.news-section{background:#0d131a;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.news-filters{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 22px}.news-filters button{border:1px solid #35414c;background:transparent;color:#c7d0d7;padding:9px 14px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;cursor:pointer}.news-filters button.active,.news-filters button:hover{background:var(--lime);border-color:var(--lime);color:#10150b}.news-layout{display:grid;grid-template-columns:1.25fr 1fr;gap:16px}.news-feature,.news-card{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--line)}.news-feature.news-no-image:before{background:linear-gradient(0deg,rgba(3,7,11,.86),rgba(3,7,11,.22))}.news-card.news-no-image:before{background:linear-gradient(0deg,rgba(3,7,11,.82),rgba(3,7,11,.24))}.news-feature{min-height:390px;display:flex;align-items:end;background:#18232d url('https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=1200&q=85') center/cover no-repeat}.news-feature:before{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(3,7,11,.78) 0%,rgba(3,7,11,.34) 48%,rgba(3,7,11,.08) 100%)}.news-feature>div{position:relative;z-index:1}.news-feature-content{position:relative;padding:28px}.news-feature h3{color:#fff;text-shadow:0 2px 12px #000}.news-feature p{color:#f0f3f5;text-shadow:0 1px 8px #000}.news-label{display:inline-block;background:var(--lime);color:#111;padding:6px 9px;font-size:10px;font-weight:900;letter-spacing:1.5px;text-transform:uppercase}.news-meta{font-size:10px;color:#aeb9c2;text-transform:uppercase;letter-spacing:1.2px;font-weight:700;margin-top:10px}.news-feature h3{font:800 clamp(32px,4vw,48px)/.98 'Barlow Condensed',sans-serif;text-transform:uppercase;margin:14px 0 10px}.news-feature p{color:#d1d8dd;line-height:1.6;font-size:13px;max-width:560px}.news-read{display:inline-block;color:var(--lime);font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-top:7px}.news-list{display:grid;grid-template-columns:1fr 1fr;gap:12px}.news-card{min-height:188px;padding:19px;display:flex;flex-direction:column;justify-content:space-between;transition:border-color .2s,transform .2s;background-size:cover;background-position:center;isolation:isolate}.news-card:before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(0deg,rgba(3,7,11,.72),rgba(3,7,11,.30))}.news-card>div{position:relative;z-index:1}.news-card h3{color:#fff;text-shadow:0 2px 10px #000}.news-card p{color:#e1e7eb}.news-card .news-source{color:#e1e7eb}.news-card:hover{border-color:var(--lime);transform:translateY(-3px)}.news-card h3{font:700 23px/1.02 'Barlow Condensed',sans-serif;text-transform:uppercase;margin:12px 0}.news-card p{font-size:11px;line-height:1.5;color:var(--muted);margin-bottom:8px}.news-card[hidden]{display:none}.news-source{font-size:10px;color:#8e9aa4;text-transform:uppercase;letter-spacing:1px}.news-footnote{font-size:11px;color:var(--muted);margin:16px 0 0}@media(max-width:900px){.news-layout{grid-template-columns:1fr}.news-feature{min-height:340px}}@media(max-width:620px){.news-nav{white-space:nowrap;font-size:11px;padding:8px 9px}.news-list{grid-template-columns:1fr}.news-card{min-height:160px}.news-feature-content{padding:20px}.news-feature{min-height:370px}}
+.community{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:18px}.panel{background:var(--surface);border:1px solid var(--line);padding:24px}.panel h3{font:700 25px 'Barlow Condensed',sans-serif;text-transform:uppercase;margin-bottom:15px}.composer textarea{width:100%;min-height:110px;resize:vertical;background:#090f15;border:1px solid #34414d;padding:14px;color:white;outline:none}.composer textarea:focus{border-color:var(--lime)}.compose-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px}.compose-row select{background:#1c2731;border:1px solid #3b4854;color:white;padding:12px}.post{border-top:1px solid var(--line);padding:17px 0 3px;margin-top:16px}.post-top{display:flex;justify-content:space-between;gap:12px}.post-tag{font-size:11px;color:var(--lime);font-weight:800;text-transform:uppercase;letter-spacing:1px}.post p{white-space:pre-wrap;overflow-wrap:anywhere;color:#d8dfe4;margin:9px 0}.post-meta,.muted{font-size:12px;color:var(--muted)}.empty{padding:20px 0;color:var(--muted)}.sidebox+.sidebox{margin-top:14px}.sidebox p{color:var(--muted);font-size:13px;line-height:1.7}.sport-links{display:grid;grid-template-columns:1fr 1fr;gap:8px}.sport-links a{background:#1a2631;padding:12px;font-size:12px;font-weight:700}.sport-links a:hover{color:var(--lime)}.live-label{display:inline-block;background:#263b24;color:var(--lime);padding:5px 8px;font-size:10px;font-weight:800;letter-spacing:1px;margin-bottom:10px}
+
+/* Foro ALLSPORTS */
+#comunidad .composer{display:none}
+.forum-section{background:#0d131a;border-top:1px solid var(--line)}
+.forum-shell{display:grid;grid-template-columns:280px minmax(0,1fr);gap:16px}
+.forum-categories,.forum-main{background:var(--surface);border:1px solid var(--line);padding:20px}
+.forum-categories h3,.forum-main h3{font:700 25px 'Barlow Condensed',sans-serif;text-transform:uppercase;margin-bottom:14px}
+.forum-category{display:block;width:100%;text-align:left;background:#18232d;border:1px solid transparent;color:#e8edf0;padding:12px;margin:0 0 7px;cursor:pointer;font-weight:800}
+.forum-category:hover,.forum-category.active{border-color:var(--lime);color:var(--lime)}
+.forum-subforums{padding:0 0 10px 12px;display:grid;gap:5px}
+.forum-subforums button{border:0;background:none;color:#aeb9c2;text-align:left;padding:6px 8px;cursor:pointer;font-size:12px}
+.forum-subforums button:hover,.forum-subforums button.active{color:var(--lime)}
+.forum-heading{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:15px;margin-bottom:16px}
+.forum-heading h3{font-size:32px;margin:0}
+.forum-heading p{font-size:12px;color:var(--muted);margin:5px 0 0}
+.forum-compose{background:#0b1117;border:1px solid var(--line);padding:15px;margin-bottom:18px}
+.forum-compose textarea,.forum-compose select{width:100%;background:#090f15;border:1px solid #35414c;color:white;padding:11px;margin-bottom:9px}
+.forum-compose textarea{min-height:85px;resize:vertical}
+.forum-compose-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px}
+.app-view{display:none}.app-view.active{display:block}
+.media-label{display:block;color:var(--muted);font-size:11px;font-weight:700;margin:10px 0 6px}.media-input,.media-link{display:block;width:100%;background:#090f15;border:1px solid #35414c;color:white;padding:10px;margin-bottom:10px}.media-input{font-size:12px}.forum-media-image{display:block;width:auto;max-width:100%;max-height:460px;object-fit:contain;margin:12px 0;border:1px solid var(--line)}.forum-link-card{display:block;padding:12px;margin:12px 0;background:#17232d;border:1px solid #34414d;color:var(--lime);overflow-wrap:anywhere}.forum-video{width:100%;max-width:680px;aspect-ratio:16/9;border:0;margin:12px 0;background:#000}
+.forum-post{border-top:1px solid var(--line);padding:16px 0}
+.forum-post h4{font:700 21px 'Barlow Condensed',sans-serif;margin:7px 0;color:#f5f7f8}
+.forum-post p{white-space:pre-wrap;overflow-wrap:anywhere;color:#d8dfe4;margin:8px 0}
+.forum-post-meta{font-size:11px;color:var(--muted)}
+.forum-replies{margin-top:17px;padding:13px 15px;background:rgba(255,255,255,.025);border:1px solid var(--line);border-radius:10px}.forum-replies h5{margin:0 0 10px;color:var(--lime);font:700 14px 'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.8px}.forum-reply-list{display:grid;gap:9px;margin-bottom:12px}.forum-reply{padding:10px 12px;background:rgba(255,255,255,.035);border-radius:7px}.forum-reply strong{font-size:12px;color:#f4f6f7}.forum-reply p{margin:5px 0;white-space:pre-wrap;overflow-wrap:anywhere}.forum-reply small,.forum-reply-hint{font-size:10px;color:var(--muted)}.forum-reply-form textarea{width:100%;min-height:58px;resize:vertical;padding:10px;background:#10161b;border:1px solid var(--line);border-radius:7px;color:white;font:inherit}.forum-reply-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px}.forum-reply-actions .btn{padding:8px 13px;font-size:11px}
+.forum-post-tag{font-size:10px;color:var(--lime);font-weight:800;letter-spacing:1px;text-transform:uppercase}
+@media(max-width:800px){.forum-shell{grid-template-columns:1fr}.forum-categories{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.forum-categories h3{grid-column:1/-1}.forum-category{margin:0}.forum-subforums{grid-column:1/-1}.forum-compose-row{grid-template-columns:1fr 1fr}.forum-compose-row button{grid-column:1/-1}}
+footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-size:12px}.foot{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}.foot strong{font:800 22px 'Barlow Condensed',sans-serif;color:white}
+@media(max-width:900px){.sports-grid{grid-template-columns:repeat(3,1fr)}.sport-card{height:250px}.community{grid-template-columns:1fr}.manifesto .wrap{display:block}.manifesto p{margin-top:20px}.hero-stamp{display:none}}
+@media(max-width:620px){.wrap{width:calc(100% - 30px)}header{height:auto;position:absolute}.top{padding:13px 0;align-items:flex-start;flex-direction:column;gap:5px}nav{width:100%;overflow:auto;flex-wrap:nowrap}nav button{white-space:nowrap;padding:8px 9px;font-size:11px}.nav-cta{margin-left:0}.hero{min-height:690px;background-position:58% center}.hero-inner{padding:175px 0 80px}.hero h1{font-size:clamp(69px,18vw,105px)}.hero-copy{font-size:14px}.section-top{display:block}.section-top p{margin-top:12px}.sports-grid{grid-template-columns:repeat(2,1fr);gap:8px}.sport-card{height:220px;padding:14px}.sport-card strong{font-size:29px}.content{padding:58px 0!important}.manifesto{padding:58px 0}.panel{padding:17px}.foot{display:block}.foot span{display:block;margin-top:8px}}
+
+.chat-launch{position:fixed;right:24px;bottom:84px;z-index:30;border:0;border-radius:999px;background:var(--lime);color:#10150b;padding:15px 20px;font-weight:900;box-shadow:0 8px 30px #0008;cursor:pointer}.chat-panel{position:fixed;right:24px;bottom:146px;width:min(360px,calc(100vw - 30px));height:440px;max-height:70vh;z-index:31;background:#111820;border:1px solid #46535f;box-shadow:0 18px 60px #000b;display:none;flex-direction:column}.chat-panel.open{display:flex}.chat-head{padding:16px;background:#1a2631;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}.chat-head strong{font:800 22px 'Barlow Condensed',sans-serif}.chat-head small{display:block;color:var(--lime);font-size:10px;letter-spacing:1px;margin-top:3px}.chat-close{background:none;border:0;color:white;font-size:22px;cursor:pointer}.chat-log{padding:14px;overflow:auto;flex:1;display:flex;flex-direction:column;gap:10px}.chat-bubble{max-width:90%;padding:10px 12px;border-radius:9px;background:#202d38;color:#e7edf0;font-size:13px;line-height:1.5;white-space:pre-wrap}.chat-bubble.user{align-self:flex-end;background:var(--lime);color:#10150b}.chat-form{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line)}.chat-form input{min-width:0;flex:1;background:#090f15;border:1px solid #35414c;padding:11px;color:white}.chat-form button{background:var(--lime);border:0;padding:0 14px;font-weight:900;cursor:pointer}.chat-note{padding:0 14px 10px;color:#9ba7b1;font-size:10px;line-height:1.4}
+
+.auth-panel{margin-bottom:14px}.auth-panel .auth-tabs{display:flex;gap:8px;margin:0 0 14px}.auth-panel .auth-tabs button{flex:1;background:#1a2631;border:1px solid #35414c;color:#dce3e8;padding:10px;font-weight:800;cursor:pointer}.auth-panel .auth-tabs button.active{background:var(--lime);border-color:var(--lime);color:#10150b}.auth-panel label{display:block;color:#b9c4cc;font-size:11px;font-weight:800;margin:10px 0 5px}.auth-panel input,.auth-panel textarea{width:100%;background:#090f15;border:1px solid #35414c;color:white;padding:11px;outline:none}.auth-panel input:focus,.auth-panel textarea:focus{border-color:var(--lime)}.auth-panel .auth-submit{width:100%;margin-top:13px}.auth-status{font-size:12px;line-height:1.5;color:var(--lime);margin:12px 0 0;overflow-wrap:anywhere}.auth-account{display:none}.auth-account.show{display:block}.auth-form[hidden]{display:none}
+.forum-reply-attach{display:inline-flex;align-items:center;gap:8px;color:var(--lime);font-size:12px;font-weight:700;cursor:pointer;margin:7px 10px 7px 0}.forum-reply-attach input{max-width:190px;color:var(--muted);font-size:11px}.forum-reply-link{width:100%;margin:5px 0 9px;padding:10px;background:#0b1118;border:1px solid var(--line);border-radius:3px;color:var(--white);font:inherit;font-size:12px}.forum-reply .forum-media-image{display:block;max-width:min(100%,420px);max-height:300px;object-fit:contain;margin:9px 0;border-radius:4px}.forum-reply .forum-video{display:block;width:min(100%,560px);aspect-ratio:16/9;border:0;margin:9px 0}.forum-message-tools{display:flex;gap:14px;margin-top:8px}.forum-text-button{border:0;background:none;color:var(--lime);padding:4px 0;font-size:11px;font-weight:800;cursor:pointer}.forum-text-button:disabled{opacity:.5}.forum-edit-area{display:block;width:100%;min-height:75px;margin:9px 0;padding:10px;background:#10161b;border:1px solid var(--line);color:white;font:inherit}.forum-pagination{display:flex;align-items:center;justify-content:center;gap:14px;padding:12px 0 18px;color:var(--muted);font-size:11px}.forum-pagination .btn{padding:8px 12px;font-size:10px}.forum-pagination .btn:disabled{opacity:.35;cursor:not-allowed}.forum-link-card{display:flex;align-items:center;gap:12px}.forum-link-icon{width:48px;height:48px;object-fit:contain;border-radius:6px;background:#fff;padding:5px}.forum-link-info{display:grid;gap:5px;min-width:0}.forum-link-info strong{color:#f4f6f7;font-size:13px;line-height:1.35}.forum-link-info small{color:var(--muted);font-size:10px}.forum-topic-row{display:flex;align-items:center;gap:13px;padding:14px 12px;border-bottom:1px solid var(--line);background:#111a22}.forum-topic-row:hover{background:#17232d}.forum-topic-main{min-width:0;flex:1}.forum-topic-open{display:block;border:0;background:none;color:#f4f6f7;text-align:left;padding:0;font:700 19px 'Barlow Condensed',sans-serif;cursor:pointer}.forum-topic-open:hover{color:var(--lime)}.forum-topic-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;color:var(--muted);font-size:11px}.forum-topic-count{white-space:nowrap;color:var(--lime);font-size:11px;font-weight:800}.forum-back{margin:0 0 16px}.forum-avatar{width:34px;height:34px;flex:0 0 34px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;overflow:hidden;background:#293844;border:1px solid #52616d;color:var(--lime);font-weight:900;font-size:13px;text-transform:uppercase}.forum-avatar img{width:100%;height:100%;object-fit:cover}.forum-avatar-large{width:68px;height:68px;flex-basis:68px;font-size:22px}.profile-avatar-editor{display:flex;align-items:center;gap:13px;margin:14px 0;padding:12px;background:#111a22;border:1px solid var(--line)}.profile-avatar-editor label{margin:0 0 6px}.profile-avatar-editor input{display:block;max-width:100%;font-size:11px}.profile-avatar-editor small{display:block;color:var(--muted);font-size:10px;margin-top:5px}.forum-post-meta{display:flex;align-items:center;gap:8px}.forum-reply-head{display:flex;align-items:center;gap:8px}.forum-reply blockquote{margin:8px 0;padding:9px 12px;border-left:3px solid var(--lime);background:#101a22;border-radius:0 6px 6px 0;color:#c8d2d9;white-space:pre-wrap;overflow-wrap:anywhere}.forum-emoji-tools{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:6px 0 9px}.forum-emoji-toggle,.forum-emoji{border:1px solid #35414c;background:#17232d;color:white;border-radius:6px;padding:6px 9px;cursor:pointer}.forum-emoji-toggle{color:var(--lime);font-size:11px;font-weight:800}.forum-emoji-panel{display:flex;flex-wrap:wrap;gap:4px;padding:7px;background:#0b1117;border:1px solid var(--line);border-radius:7px}.forum-emoji{font-size:18px;padding:4px 7px}.forum-emoji:hover,.forum-emoji-toggle:hover{border-color:var(--lime)}.popular-thread-title{font-family:var(--display-font,'Barlow Condensed',sans-serif);font-size:23px;line-height:1.12;font-weight:800;color:var(--text,#f4f6f8);margin:12px 0 8px;letter-spacing:.01em}
+
+/* Marcadores LIVE en portada */
+#homeView.active #marcadores{display:block!important;visibility:visible!important;opacity:1!important;position:relative!important;z-index:1!important;min-height:150px!important}
+#homeView.active #marcadores .wrap{display:block!important;visibility:visible!important}
+#homeView.active #marcadores .home-live-heading{display:flex!important;visibility:visible!important}
+#homeView.active #marcadores .home-live-panel{display:block!important;visibility:visible!important;min-height:54px}
+
+.home-live-section{padding:42px 0 48px;background:#0d131a;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.home-live-heading{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:18px}.home-live-heading h2{font:900 clamp(34px,4vw,48px)/.95 'Barlow Condensed',sans-serif;text-transform:uppercase;margin:0}.home-live-heading h2 span{color:var(--lime)}.home-live-status{font-size:10px;font-weight:800;letter-spacing:1.2px;color:#aeb9c2;padding-bottom:5px}.home-live-status i{display:inline-block;width:8px;height:8px;border-radius:50%;background:#d5ff3f;box-shadow:0 0 10px #d5ff3f;margin-right:7px}.home-live-panel{background:var(--surface);border:1px solid var(--line);padding:16px}.home-live-matches{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:14px}.home-live-matches:empty{display:none}.home-live-matches .live-league{min-width:0;border:1px solid #2c3944;border-radius:7px;padding:12px;background:#0d141b}.home-live-matches .live-league h4{font:800 13px 'Barlow Condensed',sans-serif;color:var(--lime);text-transform:uppercase;letter-spacing:1px;margin:0 0 7px}.home-live-matches .live-match{padding:9px 0;border-top:1px solid #ffffff12}.home-live-matches .live-match:first-of-type{border-top:0}.home-live-matches .live-match-competition{font-size:9px;color:var(--lime);font-weight:800;letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px}.home-live-matches .live-match-top{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.5px;margin-bottom:6px}.home-live-matches .live-match-top .is-live{color:#ff6b58}.home-live-matches .live-team-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;font-size:11px;font-weight:700;padding:2px 0}.home-live-matches .live-team-name{display:flex;align-items:center;gap:6px;min-width:0}.home-live-matches .live-team-name img{width:17px;height:17px;object-fit:contain}.home-live-matches .live-team-name span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.home-live-matches .live-score{font:800 14px 'Barlow Condensed',sans-serif;font-variant-numeric:tabular-nums}.home-live-matches .live-empty,.home-live-matches .live-loading{font-size:12px;color:var(--muted);line-height:1.5;padding:8px 0}.home-live-panel .live-updated{font-size:9px;color:var(--muted);margin-top:12px;text-align:right}
+@media(max-width:620px){.home-live-section{padding:34px 0}.home-live-heading{align-items:start;flex-direction:column;gap:8px}.home-live-panel{padding:11px}.home-live-matches{grid-template-columns:1fr}}
+
+/* Marcador compacto: acompaña la cabecera sin cubrir el banner ni ocupar media pantalla */
+.home-live-section{padding:15px 0 17px!important;background:#0d131a;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.home-live-heading{align-items:center!important;margin:0 0 9px!important}
+.home-live-heading h2{font-size:clamp(21px,2.5vw,27px)!important;line-height:1!important}
+.home-live-heading .overline{font-size:9px;margin-bottom:3px}
+.home-live-status{font-size:9px;padding:0}
+.home-live-panel{padding:9px 11px!important}
+.home-live-matches{display:flex!important;gap:9px!important;overflow-x:auto;overflow-y:hidden;padding-bottom:3px;scroll-snap-type:x proximity}
+.home-live-matches .live-league{flex:0 0 min(285px,82vw);scroll-snap-align:start;padding:9px 11px!important}
+.home-live-panel .live-updated{margin-top:5px!important;font-size:9px}
+@media(max-width:620px){.home-live-section{padding:12px 0!important}.home-live-heading{flex-direction:row!important;align-items:center!important}.home-live-heading h2{font-size:22px!important}.home-live-panel{padding:7px!important}.home-live-matches .live-league{flex-basis:84vw}}
+
+
+
+/* Portada: tarjetas renovadas para los temas populares */
+#comunidad .section-top[style] h2{font-size:clamp(32px,4vw,42px)!important;letter-spacing:.2px}
+#comunidad .section-top[style] .btn{padding:11px 16px;border-color:#46535f;border-radius:4px;transition:background .2s,border-color .2s,color .2s}
+#comunidad .section-top[style] .btn:hover{background:var(--lime);border-color:var(--lime);color:#10150b}
+#posts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:15px}
+#posts .post{position:relative;min-width:0;margin:0;padding:17px 18px 15px;background:linear-gradient(145deg,#17232d 0%,#111820 78%);border:1px solid #2b3945;border-radius:7px;transition:transform .2s,border-color .2s,background .2s;overflow:hidden}
+#posts .post:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lime);opacity:.72}
+#posts .post:hover{transform:translateY(-2px);border-color:#82934b;background:linear-gradient(145deg,#1b2934 0%,#121b24 78%)}
+#posts .post-top{align-items:center;flex-wrap:wrap;gap:8px}
+#posts .post-top strong{font-size:11px;font-weight:800;color:#e9eef1;letter-spacing:.25px}
+#posts .post-tag{display:inline-flex;align-items:center;max-width:100%;padding:5px 8px;border:1px solid #43532a;border-radius:3px;background:#26351b;color:var(--lime);font-size:9px;letter-spacing:.8px}
+#posts .popular-thread-title{font-size:clamp(21px,2vw,25px);line-height:1.08;margin:13px 0 8px}
+#posts .post p{font-size:12px;line-height:1.6;color:#bfc9d0;margin:0 0 11px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+#posts .post-meta{font-size:10px;color:#95a2ac;padding-top:10px;border-top:1px solid #ffffff12}
+#posts .forum-text-button{display:inline-flex;align-items:center;margin-top:10px;padding:7px 0;color:var(--lime);font-size:10px;letter-spacing:.7px;text-transform:uppercase}
+#posts .forum-text-button:hover{color:#fff}
+#posts .empty{grid-column:1/-1;margin:0;padding:24px;background:#111a22;border:1px dashed #354451;border-radius:7px;line-height:1.6}
+@media(max-width:620px){#posts{grid-template-columns:1fr;gap:10px}#posts .post{padding:15px 15px 13px}#posts .popular-thread-title{font-size:22px}}
+
+</style>
+<style>.allsports-back-top{position:fixed;right:22px;bottom:22px;z-index:9999;width:48px;height:48px;border:1px solid #d5ff3f;border-radius:50%;background:#d5ff3f;color:#10150b;font-size:25px;font-weight:900;line-height:1;box-shadow:0 5px 22px #0009;cursor:pointer;opacity:0;visibility:hidden;transform:translateY(10px);transition:opacity .2s,transform .2s,visibility .2s}.allsports-back-top.visible{opacity:1;visibility:visible;transform:translateY(0)}.allsports-back-top:hover{background:#fff;border-color:#fff}</style></head>
+<body>
+<header><div class="wrap top"><a class="logo" href="./"><i>◆</i> ALLSPORTS</a><nav aria-label="Navegación"><a class="news-nav active" href="./">INICIO</a><a class="news-nav" href="./foro/">FORO</a><a href="#noticias" class="news-nav">NOTICIAS</a><a href="#cuenta" class="news-nav">CREA UNA CUENTA</a><a href="./foro/#foro" class="nav-cta">ÚNETE A LA COMUNIDAD ↗</a></nav></div></header>
+<main>
+<section class="home-live-section" id="marcadores">
+ <div class="wrap">
+  <div class="home-live-heading"><div><span class="overline">Sigue la acción</span><h2>Marcadores <span>LIVE</span></h2></div><div class="home-live-status"><i></i> ACTUALIZACIÓN AUTOMÁTICA</div></div>
+  <div class="home-live-panel">
+   <div id="forumLiveMatches" class="home-live-matches"><p class="live-loading">Consultando marcadores…</p></div>
+   <div class="live-updated" id="forumLiveUpdated">Actualización automática cada minuto</div>
+  </div>
+ </div>
+</section>
+<section class="hero"><div class="wrap hero-inner"><div class="kicker">La casa de todos los deportes</div><h1>NO SOLO<br>LO MIRES.<br><span>VÍVELO.</span></h1><p class="hero-copy">La pasión no entiende de disciplinas. El lugar donde la afición se encuentra, las opiniones cuentan y cada deporte tiene su sitio.</p><div class="hero-actions"><a class="btn primary" href="./foro/#foro">Entra en la comunidad ↗</a><a class="btn" href="#deportes">Explora los deportes ↓</a></div><div class="hero-stamp">ALLSPORTS · DESDE LA GRADA HASTA LA CANCHA</div></div></section> 
+
+on>
+
+<div id="homeView" class="app-view active">
+
+<div class="ticker"><span>FÚTBOL <b>✳</b> BALONCESTO <b>✳</b> TENIS <b>✳</b> MOTOR <b>✳</b> Y TODO LO QUE TE APASIONA <b>✳</b></span></div>
+
+<section class="content news-section" id="noticias"><div class="wrap">
+<div class="section-top"><div><div class="overline">Lo que está pasando</div><h2>Actualidad deportiva.</h2></div><p>Titulares deportivos actualizados automáticamente desde fuentes informativas.</p></div>
+<div class="news-filters" aria-label="Filtrar noticias"><button class="active" data-news-filter="Todos">Todas</button><button data-news-filter="Fútbol">Fútbol</button><button data-news-filter="Baloncesto">Baloncesto</button><button data-news-filter="Tenis">Tenis</button><button data-news-filter="Motor">Motor</button><button data-news-filter="Otros deportes">Otros deportes</button></div>
+<div class="news-layout" id="newsLayout"><div class="news-feature"><div class="news-feature-content"><span class="news-label">Actualidad deportiva</span><h3>Cargando noticias…</h3><p>Estamos consultando las últimas publicaciones deportivas.</p></div></div><div class="news-list"></div></div><p class="news-footnote">La selección se renueva automáticamente cada cuatro horas. Cada titular enlaza con la publicación original y muestra su medio.</p>
+</div></section>
+<section class="content wrap" id="deportes"><div class="section-top"><div><div class="overline">Elige tu terreno de juego</div><h2>¿De qué va lo tuyo?</h2></div><p>Elige tu deporte y entra directamente en sus debates. Aquí hay espacio para cada afición.</p></div><div class="sports-grid">
+<a class="sport-card football" href="#comunidad" data-sport="Fútbol"><div class="sport-content"><small>01 / EL DEPORTE REY</small><strong>Fútbol</strong><em>Ligas · Equipos · Afición</em></div></a>
+<a class="sport-card basket" href="#comunidad" data-sport="Baloncesto"><div class="sport-content"><small>02 / SIN LÍMITES</small><strong>Baloncesto</strong><em>NBA · ACB · Euroliga</em></div></a>
+<a class="sport-card tennis" href="#comunidad" data-sport="Tenis"><div class="sport-content"><small>03 / PUNTO A PUNTO</small><strong>Tenis</strong><em>Grand Slams · Circuito</em></div></a>
+<a class="sport-card motor" href="#comunidad" data-sport="Motor"><div class="sport-content"><small>04 / A TODO GAS</small><strong>Motor</strong><em>F1 · MotoGP · Rally</em></div></a>
+<a class="sport-card athletics" href="#comunidad" data-sport="Atletismo"><div class="sport-content"><small>05 / VELOCIDAD Y RESISTENCIA</small><strong>Atletismo</strong><em>Pista · Ruta · Campo</em></div></a>
+<a class="sport-card other" href="./foro/#foro"><div class="sport-content"><small>06 / MUCHO MÁS</small><strong>Otros</strong><em>Ver todas las categorías</em></div></a>
+</div></section>
+<section class="content wrap" id="comunidad"><div class="section-top"><div><div class="overline">La conversación empieza aquí</div><h2>La grada es tuya.</h2></div><p>Opina, debate y comparte tu pasión con otros aficionados.</p></div><div class="community"><section class="panel"><div class="composer"><h3>Lanza el debate</h3><textarea id="msg" maxlength="10000" placeholder="¿Qué tienes que decir del mundo del deporte?"></textarea><div class="compose-row"><select id="sport" aria-label="Selecciona deporte"><option>Fútbol</option><option>Baloncesto</option><option>Tenis</option><option>Motor</option><option>Otros</option></select><button class="btn primary" id="send">Publicar debate ↗</button></div></div><div class="section-top" style="margin:30px 0 10px"><div><div class="overline">Los debates con más participación</div><h2 style="font-size:34px">Foros populares</h2></div><button class="btn" data-filter="Todos">Ver todos</button></div><div id="posts" aria-live="polite"></div></section>
+<aside>
+<div class="panel sidebox auth-panel" id="cuenta">
+<span class="live-label">CUENTA ALLSPORTS</span><h3>Únete a la grada</h3>
+<div id="authGuest">
+<div class="auth-tabs"><button type="button" class="active" id="showRegister">Registrarme</button><button type="button" id="showLogin">Entrar</button></div>
+<form class="auth-form" id="registerForm">
+<label for="regUsername">Apodo público</label><input id="regUsername" maxlength="24" required autocomplete="nickname" placeholder="Ej. Aficionado26">
+<label for="regEmail">Correo electrónico</label><input id="regEmail" type="email" required autocomplete="email" placeholder="tu correo">
+<label for="regPassword">Contraseña</label><input id="regPassword" type="password" minlength="8" required autocomplete="new-password" placeholder="Mínimo 8 caracteres">
+<button class="btn primary auth-submit" type="submit">Crear cuenta ↗</button>
+</form>
+<form class="auth-form" id="loginForm" hidden>
+<label for="loginEmail">Correo electrónico</label><input id="loginEmail" type="email" required autocomplete="email" placeholder="tu correo">
+<label for="loginPassword">Contraseña</label><input id="loginPassword" type="password" required autocomplete="current-password" placeholder="Tu contraseña">
+<button class="btn primary auth-submit" type="submit">Iniciar sesión ↗</button>
+</form>
+<p class="muted">Registro gratuito. Usa un apodo: no necesitas mostrar tu identidad real.</p>
+</div>
+<div class="auth-account" id="authAccount">
+<p>Has iniciado sesión como <strong id="accountUsername"></strong>.</p>
+ <div class="profile-avatar-editor"><div id="profileAvatarPreview" class="forum-avatar forum-avatar-large">?</div><div><label for="profileAvatarFile">Mi foto de avatar</label><input id="profileAvatarFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif"><small>JPG, PNG, WEBP o GIF · máximo 2 MB</small></div></div>
+<label for="profileBio">Mi biografía</label><textarea id="profileBio" rows="2" maxlength="160" placeholder="Cuéntale algo a la comunidad"></textarea>
+<label for="profileSignature">Mi firma</label><input id="profileSignature" maxlength="100" placeholder="Tu frase deportiva">
+<button class="btn primary auth-submit" id="saveProfile" type="button">Guardar perfil</button>
+<button class="btn auth-submit" id="logoutButton" type="button">Cerrar sesión</button>
+</div>
+<p class="auth-status" id="authStatus" role="status" aria-live="polite">Conectando con el sistema de cuentas…</p>
+</div>
+
+<div class="panel sidebox"><h3>Esto acaba de empezar.</h3><p>Noticias, perfiles, resultados y nuevas funciones llegarán en las próximas fases.</p></div>
+</aside></div>
+</section>
+</div>
+
+<div id="forumView" class="app-view">
+<section class="content forum-section" id="foro">
+ <div class="wrap">
+  <div class="section-top"><div><div class="overline">La comunidad ALLSPORTS</div><h2>El foro de la afición.</h2></div><p>Entra en cada deporte, elige un subforo y abre un tema para compartir tu opinión.</p></div>
+  <div class="forum-shell">
+   <aside class="forum-categories"><h3>Todos los deportes</h3><div id="forumCategoryList"></div></aside>
+   <section class="forum-main">
+    <div class="forum-heading"><div><h3 id="forumCurrentTitle">Todos los debates</h3><p id="forumCurrentDescription">Explora las conversaciones de la comunidad.</p></div></div>
+    <div class="forum-compose">
+     <h3>Crear un nuevo tema</h3>
+     <textarea id="forumMessage" maxlength="10000" placeholder="¿Qué quieres debatir?"></textarea>
+      <div id="forumTopicEmoji"></div>
+     <label class="media-label" for="forumImage">Añadir una foto (JPG, PNG, WEBP o GIF · máximo 10 MB)</label>
+     <input id="forumImage" class="media-input" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
+     <label class="media-label" for="forumLink">Enlace a vídeo, noticia o red social</label>
+     <input id="forumLink" class="media-link" type="url" inputmode="url" placeholder="https://…">
+     <div class="forum-compose-row">
+      <select id="forumSport" aria-label="Categoría del foro"></select>
+      <select id="forumSubforum" aria-label="Subforo"></select>
+      <button class="btn primary" id="forumPublish" type="button">Publicar tema ↗</button>
+     </div>
+     <p class="muted" id="forumStatus" aria-live="polite">Inicia sesión para publicar. La lectura es pública.</p>
+    </div>
+    <div id="forumTopics" aria-live="polite"></div>
+   </section>
+  </div>
+ </div>
+</section>
+</div>
+</main>
+
+<button class="chat-launch" id="chatLaunch" aria-expanded="false">💬 Pregunta a ALLSPORTS</button>
+<section class="chat-panel" id="chatPanel" aria-label="Asistente ALLSPORTS">
+<div class="chat-head"><div><strong>ALLSPORTS ASISTENTE</strong><small>AYUDA DEPORTIVA · VERSIÓN INICIAL</small></div><button class="chat-close" id="chatClose" aria-label="Cerrar chat">×</button></div>
+<div class="chat-log" id="chatLog" aria-live="polite"><div class="chat-bubble">¡Hola! Soy el asistente inicial de ALLSPORTS. Puedo orientarte sobre esta web, las noticias que publicamos y cómo participar en la comunidad. ¿Qué quieres saber?</div></div>
+<div class="chat-note">Asistente con IA. Los datos deportivos consultados en directo están disponibles para las competiciones conectadas.</div>
+<form class="chat-form" id="chatForm"><input id="chatInput" maxlength="300" placeholder="Escribe tu pregunta..." autocomplete="off" aria-label="Tu pregunta"><button type="submit">Enviar</button></form>
+</section>
+<footer><div class="wrap foot"><strong><i style="color:var(--lime);font-style:normal">◆</i> ALLSPORTS</strong><span>El deporte no se mira. Se vive.</span><span>Comunidad ALLSPORTS · Debates compartidos</span></div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://tzmigdagymfauatjivcl.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_gZ8cx30ZlxlVjlb00vo1nw_LyDC0yGH";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+const CHAT_API_URL = "https://allsports-chat.dandy62013.workers.dev/api/chat"; // Añade aquí la URL del Worker de Cloudflare cuando esté desplegado.
+let data=[];let forumReplies=[];let filter='Todos';const posts=document.getElementById('posts');
+function showPage(page,scrollTarget){const home=page!=='foro';document.getElementById('homeView').classList.toggle('active',home);document.getElementById('forumView').classList.toggle('active',!home);document.querySelectorAll('nav [data-page]').forEach(el=>el.classList.toggle('active',el.dataset.page===(home?'inicio':'foro')));if(home&&scrollTarget){setTimeout(()=>document.querySelector(scrollTarget)?.scrollIntoView({behavior:'smooth',block:'start'}),30);}else{window.scrollTo({top:0,behavior:'smooth'});}history.replaceState(null,'',home?'#inicio':'#foro');}
+document.querySelectorAll('nav [data-page]').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();const page=el.dataset.page;const target=el.getAttribute('href');showPage(page,page==='inicio'&&target&&target.startsWith('#')?target:null);}));
+
+function draw(){const counts=new Map();forumReplies.forEach(r=>counts.set(r.post_id,(counts.get(r.post_id)||0)+1));const visible=data.filter(x=>(filter==='Todos'||x.sport===filter)&&(counts.get(x.id)||0)>0).sort((a,b)=>(counts.get(b.id)||0)-(counts.get(a.id)||0)||new Date(b.created_at||0)-new Date(a.created_at||0)).slice(0,6);posts.replaceChildren();if(!visible.length){const p=document.createElement('p');p.className='empty';p.textContent='Todavía no hay debates con respuestas. Cuando la comunidad participe, aparecerán aquí los más populares.';posts.append(p);return}visible.forEach(x=>{const a=document.createElement('article');a.className='post';const top=document.createElement('div');top.className='post-top';const author=document.createElement('strong');author.textContent=x.profiles?.username||'Aficionado ALLSPORTS';const tag=document.createElement('span');tag.className='post-tag';tag.textContent=x.sport+(x.subforum&&x.subforum!=='General'?' · '+x.subforum:'');top.append(author,tag);const raw=String(x.content||'');const botPost=/— ALLSPORTS Bot · Datos: ESPN/.test(raw)||/\[\[AS[A-Z0-9_-]*:/.test(raw);const lines=raw.split(/\r?\n/).map(v=>v.replace(/\[\[AS[A-Z0-9_-]*:[^\]]+\]\]/g,'').trim()).filter(Boolean);const cleanLines=lines.filter(v=>!/^— ALLSPORTS Bot · Datos: ESPN$/.test(v));const heading=cleanLines[0]||'Debate de la comunidad';const title=document.createElement('h3');title.className='popular-thread-title';title.textContent=heading;title.style.cursor='pointer';title.title='Abrir el hilo y sus respuestas';title.addEventListener('click',()=>openForumThread(x));const p=document.createElement('p');p.textContent=cleanLines.slice(1).join(' ').trim()||(botPost?'Tema deportivo publicado por Informador.':'');if(!p.textContent)p.hidden=true;p.style.cursor='pointer';p.title='Abrir el hilo y sus respuestas';p.addEventListener('click',()=>openForumThread(x));const meta=document.createElement('div');meta.className='post-meta';const date=x.created_at?new Date(x.created_at).toLocaleString('es-ES',{dateStyle:'medium',timeStyle:'short'}):'Debate de la comunidad';meta.textContent=(counts.get(x.id)||0)+' respuestas · '+date;const open=document.createElement('button');open.type='button';open.className='forum-text-button';open.textContent='Ver hilo y respuestas →';open.addEventListener('click',()=>openForumThread(x));a.append(top,title,p,meta,open);posts.append(a)})}
+async function loadPosts(){posts.textContent='Cargando debates…';const {data:rows,error}=await supabaseClient.from('posts').select('id,user_id,sport,subforum,content,created_at,media_url,media_type,link_url,profiles(username,avatar_url)').order('created_at',{ascending:false});if(error){posts.textContent='No se pudieron cargar los debates: '+error.message;return;}data=rows||[];forumReplies=[];for(let from=0;;from+=1000){const replyResult=await supabaseClient.from('replies').select('id,post_id,user_id,content,created_at,media_url,media_type,link_url,profiles(username,avatar_url)').order('created_at',{ascending:true}).range(from,from+999);if(replyResult.error){console.error('No se pudieron cargar las respuestas para popularidad:',replyResult.error);forumReplies=[];break;}forumReplies.push(...(replyResult.data||[]));if(!replyResult.data||replyResult.data.length<1000)break;}draw();renderForumTopics();}
+function setFilter(v){filter=v;document.querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter===v));draw()}
+document.getElementById('send').addEventListener('click',async()=>{const field=document.getElementById('msg'),value=field.value.trim();if(!value){field.focus();return;}if(!currentUser){authMessage('Inicia sesión para publicar un debate.',true);document.getElementById('loginEmail').focus();return;}const button=document.getElementById('send');button.disabled=true;button.textContent='Publicando…';const {error}=await supabaseClient.from('posts').insert({user_id:currentUser.id,sport:document.getElementById('sport').value,content:value});button.disabled=false;button.textContent='Publicar debate ↗';if(error){authMessage('No se pudo publicar: '+error.message,true);return;}field.value='';authMessage('¡Debate publicado! Ya es visible para la comunidad.');await loadPosts();setFilter('Todos');});
+document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>setFilter(b.dataset.filter)));
+document.querySelectorAll('[data-sport]').forEach(card=>card.addEventListener('click',e=>{
+ e.preventDefault();
+ const sport=card.dataset.sport==='Otros'?'Comunidad':card.dataset.sport;
+ window.location.href='./foro/?sport='+encodeURIComponent(sport);
+}));loadPosts();
+
+
+/* Navegación y temas del foro */
+const forumStructure={
+ 'Fútbol':['General','La Liga','Segunda División','Copa del Rey','Premier League','Champions League','Europa League','Conference League','Nations League','Fútbol internacional'],
+ 'Mercado de fichajes':['General'],
+ 'Mercado de fichajes':['General'],
+ 'Baloncesto':['General','NBA','ACB','Euroliga','Baloncesto internacional'],
+ 'Motor':['General','Fórmula 1','MotoGP','Rally','Otras competiciones'],
+ 'Tenis':['General','ATP','WTA','Grand Slam'],
+ 'Otros':['General','Ciclismo','Atletismo','Balonmano','Otros deportes'],
+ 'Esports':['General','League of Legends','Valorant','Counter-Strike 2','EA Sports FC','Call of Duty','Rocket League','Otros esports'],
+ 'Ajedrez':['General','Torneos','Grandes maestros','Aperturas y estrategia','Ajedrez online'],
+ 'Deportes urbanos':['General','Skateboarding','BMX','Surf','Escalada','Parkour','Snowboard','Esquí freestyle'],
+ 'Deportes náuticos':['General','Remo','Vela','Regatas','Copa América','Piragüismo','Kayak','Otras competiciones'],
+ 'Mundial fútbol 2030':['General','Copa del Mundo','Clasificación y eliminatorias','Selecciones nacionales','Mundial de Clubes'],
+ 'Eurocopa fútbol 2028':['General','Fase de grupos','Fase eliminatoria','Selecciones nacionales'],
+ 'JJOO Los Ángeles 2028':['General','Los Ángeles 2028','Deportes olímpicos','Debate olímpico','Archivo histórico'],
+ 'Mundial Femenino 2027':['General','Grupos y selecciones','Fase eliminatoria','España','Noticias y debate'],
+ 'Mundial Baloncesto Masculino 2027':['General','Grupos y selecciones','Fase eliminatoria','España','Noticias y debate'],
+ 'Mundial Atletismo 2027':['General','Calendario y pruebas','Resultados','Atletas españoles','Noticias y debate'],
+ 'Comunidad':['General','Presentaciones','Debate general','Sugerencias']
+};
+let forumSport='Todos',forumSubforum='Todos',forumExpandedSport='';
+const forumCategoryList=document.getElementById('forumCategoryList');
+const forumTopics=document.getElementById('forumTopics');
+function renderForumCategories(){
+ forumCategoryList.replaceChildren();
+ const all=document.createElement('button');all.className='forum-category'+(forumSport==='Todos'?' active':'');all.textContent='Todos los debates';all.addEventListener('click',()=>selectForum('Todos','Todos'));forumCategoryList.append(all);
+ Object.entries(forumStructure).forEach(([sport,subs])=>{
+  const group=document.createElement('div');
+  const button=document.createElement('button');button.className='forum-category'+(forumSport===sport?' active':'');button.textContent=sport;button.addEventListener('click',()=>{if(forumExpandedSport===sport){forumExpandedSport='';renderForumCategories();}else{forumExpandedSport=sport;selectForum(sport,'Todos');}});group.append(button);
+  if(forumExpandedSport===sport){const sublist=document.createElement('div');sublist.className='forum-subforums';subs.forEach(sub=>{const sb=document.createElement('button');sb.textContent='↳ '+sub;sb.className=forumSubforum===sub?'active':'';sb.addEventListener('click',()=>selectForum(sport,sub));sublist.append(sb)});group.append(sublist);}
+  forumCategoryList.append(group);
+ });
+}
+function updateForumSubforums(){
+ const sport=document.getElementById('forumSport').value,select=document.getElementById('forumSubforum');select.replaceChildren();
+ (forumStructure[sport]||['General']).forEach(sub=>{const option=document.createElement('option');option.value=sub;option.textContent=sub;select.append(option)});
+}
+function selectForum(sport,subforum){
+ activeThreadId=null;forumSport=sport;forumSubforum=subforum;forumExpandedSport=sport==='Todos'?'':sport;renderForumCategories();
+ document.getElementById('forumCurrentTitle').textContent=sport==='Todos'?'Todos los debates':sport+(subforum!=='Todos'?' · '+subforum:'');
+ document.getElementById('forumCurrentDescription').textContent=sport==='Todos'?'Todos los temas publicados en ALLSPORTS.':'Conversaciones y temas de '+(subforum==='Todos'?sport:subforum)+'.';
+ renderForumTopics();
+}
+function openForumThread(post){const sport=post.sport||'Todos';const subforum=post.subforum||'General';selectForum(sport,sport==='Todos'?'Todos':subforum);activeThreadId=post.id;renderForumTopics();showPage('foro');}
+const forumReplyPages={};
+let activeThreadId=null;
+const FORUM_MESSAGES_PER_PAGE=20;
+function renderForumText(target,value){
+ target.replaceChildren();
+ const lines=String(value||'').split('\n');
+ let quoteLines=[];
+ const flushQuote=()=>{if(!quoteLines.length)return;const quote=document.createElement('blockquote');quote.textContent=quoteLines.join('\n').replace(/^> ?/gm,'');target.append(quote);quoteLines=[];};
+ lines.forEach(line=>{if(line.startsWith('>')){quoteLines.push(line);}else{flushQuote();if(line){const span=document.createElement('span');span.textContent=line;target.append(span);}target.append(document.createElement('br'));}});
+ flushQuote();
+}
+function addForumEmojiPicker(field,parent){
+ const tools=document.createElement('div');tools.className='forum-emoji-tools';
+ const toggle=document.createElement('button');toggle.type='button';toggle.className='forum-emoji-toggle';toggle.textContent='☺ Añadir emoji';
+ const panel=document.createElement('div');panel.className='forum-emoji-panel';panel.hidden=true;
+ ['😀','😂','🤣','😍','🤔','😢','😡','👏','🙌','💪','🔥','⚽','🏀','🎾','🏎️','🏆','❤️','👍','👎','💚'].forEach(emoji=>{const b=document.createElement('button');b.type='button';b.className='forum-emoji';b.textContent=emoji;b.setAttribute('aria-label','Insertar '+emoji);b.addEventListener('click',()=>{const start=field.selectionStart??field.value.length,end=field.selectionEnd??field.value.length;field.value=field.value.slice(0,start)+emoji+field.value.slice(end);field.focus();field.setSelectionRange(start+emoji.length,start+emoji.length);});panel.append(b);});
+ toggle.addEventListener('click',()=>{panel.hidden=!panel.hidden;toggle.textContent=panel.hidden?'☺ Añadir emoji':'Cerrar emojis';});
+ tools.append(toggle,panel);parent.append(tools);
+}
+function createForumAvatar(url,username){const avatar=document.createElement('span');avatar.className='forum-avatar';if(url){const img=document.createElement('img');img.src=url;img.alt='Avatar de '+(username||'aficionado');img.loading='lazy';img.onerror=()=>{avatar.textContent=(username||'A').trim().charAt(0).toUpperCase();};avatar.append(img);}else avatar.textContent=(username||'A').trim().charAt(0).toUpperCase();return avatar;}
+function setProfileAvatar(url){const preview=document.getElementById('profileAvatarPreview');if(!preview)return;preview.replaceChildren();if(url){const img=document.createElement('img');img.src=url;img.alt='Mi avatar';preview.append(img);}else preview.textContent=(document.getElementById('accountUsername')?.textContent||'A').trim().charAt(0).toUpperCase();}
+function renderForumTopics(){
+ forumTopics.replaceChildren();
+ const chosen=data.filter(x=>(forumSport==='Todos'||x.sport===forumSport)&&(forumSubforum==='Todos'||x.subforum===forumSubforum));
+ if(!activeThreadId){
+  if(!chosen.length){const p=document.createElement('p');p.className='empty';p.textContent='Todavía no hay temas en este subforo. ¡Puedes abrir el primero!';forumTopics.append(p);return;}
+  chosen.forEach(x=>{const row=document.createElement('article');row.className='forum-topic-row';const username=x.profiles?.username||'Aficionado ALLSPORTS';row.append(createForumAvatar(x.profiles?.avatar_url,username));const main=document.createElement('div');main.className='forum-topic-main';const open=document.createElement('button');open.type='button';open.className='forum-topic-open';open.textContent=(x.content||'').split(/\n/)[0].slice(0,100)||'Nuevo tema';open.addEventListener('click',()=>{activeThreadId=x.id;renderForumTopics();window.scrollTo({top:0,behavior:'smooth'});});const meta=document.createElement('div');meta.className='forum-topic-meta';meta.textContent=(x.sport||'')+' · '+(x.subforum||'General')+' · '+username+' · '+(x.created_at?new Date(x.created_at).toLocaleString('es-ES',{dateStyle:'medium',timeStyle:'short'}):'Fecha no disponible');main.append(open,meta);row.append(main);const count=document.createElement('span');count.className='forum-topic-count';const n=forumReplies.filter(r=>r.post_id===x.id).length;count.textContent=n+' '+(n===1?'respuesta':'respuestas');row.append(count);forumTopics.append(row);});return;
+ }
+ const selectedPost=chosen.find(x=>x.id===activeThreadId);if(!selectedPost){activeThreadId=null;renderForumTopics();return;}
+ const back=document.createElement('button');back.type='button';back.className='btn secondary forum-back';back.textContent='← Volver a los temas';back.addEventListener('click',()=>{activeThreadId=null;renderForumTopics();});forumTopics.append(back);
+ [selectedPost].forEach(x=>{
+ const article=document.createElement('article');article.className='forum-post';
+  const tag=document.createElement('div');tag.className='forum-post-tag';tag.textContent=x.sport+' · '+(x.subforum||'General');
+  const title=document.createElement('h4');title.textContent=(x.content||'').split(/\n/)[0].slice(0,100)||'Nuevo tema';
+  const body=document.createElement('p');body.textContent=x.content;
+  article.append(tag,title,body);renderForumAttachments(x,article);
+  const meta=document.createElement('div');meta.className='forum-post-meta';meta.append(createForumAvatar(x.profiles?.avatar_url,x.profiles?.username||'Aficionado ALLSPORTS'));const metaText=document.createElement('span');metaText.textContent=(x.profiles?.username||'Aficionado ALLSPORTS')+' · '+(x.created_at?new Date(x.created_at).toLocaleString('es-ES',{dateStyle:'medium',timeStyle:'short'}):'Fecha no disponible');
+  article.append(meta);
+  const thread=document.createElement('div');thread.className='forum-replies';
+  const replies=forumReplies.filter(r=>r.post_id===x.id);
+  const totalPages=Math.max(1,Math.ceil(replies.length/FORUM_MESSAGES_PER_PAGE));
+  const page=Math.min(forumReplyPages[x.id]||1,totalPages);forumReplyPages[x.id]=page;
+  const heading=document.createElement('h5');heading.textContent='Respuestas ('+replies.length+') · Página '+page+' de '+totalPages;thread.append(heading);
+  const list=document.createElement('div');list.className='forum-reply-list';
+  replies.slice((page-1)*FORUM_MESSAGES_PER_PAGE,page*FORUM_MESSAGES_PER_PAGE).forEach(r=>{
+   const item=document.createElement('div');item.className='forum-reply';
+   const author=document.createElement('strong');author.textContent=r.profiles?.username||'Aficionado ALLSPORTS';
+   const content=document.createElement('div');content.className='forum-reply-content';renderForumText(content,r.content);const replyHead=document.createElement('div');replyHead.className='forum-reply-head';replyHead.append(createForumAvatar(r.profiles?.avatar_url,author.textContent),author);item.append(replyHead,content);renderForumAttachments(r,item);
+   const date=document.createElement('small');date.textContent=r.created_at?new Date(r.created_at).toLocaleString('es-ES',{dateStyle:'medium',timeStyle:'short'}):'';item.append(date);
+   const tools=document.createElement('div');tools.className='forum-message-tools';
+   const quote=document.createElement('button');quote.type='button';quote.className='forum-text-button';quote.textContent='Citar';quote.addEventListener('click',()=>{field.value+=(field.value?'\n':'')+'> '+(r.profiles?.username||'Aficionado')+':\n'+r.content.split('\n').map(line=>'> '+line).join('\n')+'\n\n';field.focus();field.scrollIntoView({behavior:'smooth',block:'center'});});
+   tools.append(quote);
+   if(currentUser&&currentUser.id===r.user_id){
+    const edit=document.createElement('button');edit.type='button';edit.className='forum-text-button';edit.textContent='Editar';
+    edit.addEventListener('click',()=>{if(item.querySelector('.forum-edit-area'))return;const area=document.createElement('textarea');area.className='forum-edit-area';area.maxLength=10000;area.value=r.content;const save=document.createElement('button');save.type='button';save.className='btn secondary';save.textContent='Guardar';const cancel=document.createElement('button');cancel.type='button';cancel.className='forum-text-button';cancel.textContent='Cancelar';tools.after(area,save,cancel);edit.disabled=true;save.addEventListener('click',async()=>{const value=area.value.trim();if(!value){area.focus();return;}save.disabled=true;save.textContent='Guardando…';const {error}=await supabaseClient.from('replies').update({content:value}).eq('id',r.id).eq('user_id',currentUser.id);if(error){save.disabled=false;save.textContent='Guardar';hint.textContent='No se pudo editar: '+error.message;return;}await loadPosts();});cancel.addEventListener('click',()=>{area.remove();save.remove();cancel.remove();edit.disabled=false;});});
+    tools.append(edit);
+   }
+   item.append(tools);list.append(item);
+  });
+  thread.append(list);
+  if(totalPages>1){const pager=document.createElement('div');pager.className='forum-pagination';const prev=document.createElement('button');prev.type='button';prev.className='btn secondary';prev.textContent='← Anterior';prev.disabled=page===1;prev.addEventListener('click',()=>{forumReplyPages[x.id]=page-1;renderForumTopics();});const label=document.createElement('span');label.textContent='Página '+page+' de '+totalPages;const next=document.createElement('button');next.type='button';next.className='btn secondary';next.textContent='Siguiente →';next.disabled=page===totalPages;next.addEventListener('click',()=>{forumReplyPages[x.id]=page+1;renderForumTopics();});pager.append(prev,label,next);thread.append(pager);}
+  const form=document.createElement('form');form.className='forum-reply-form';
+  const field=document.createElement('textarea');field.maxLength=10000;field.rows=2;field.placeholder='Escribe una respuesta…';field.setAttribute('aria-label','Escribe una respuesta');
+  addForumEmojiPicker(field,form);
+   const fileLabel=document.createElement('label');fileLabel.className='forum-reply-attach';fileLabel.textContent='Añadir foto';const file=document.createElement('input');file.type='file';file.accept='image/jpeg,image/png,image/webp,image/gif';fileLabel.append(file);
+  const link=document.createElement('input');link.type='url';link.placeholder='Pega un enlace (vídeo, noticia o red social)';link.className='forum-reply-link';link.setAttribute('aria-label','Enlace para la respuesta');
+  const actions=document.createElement('div');actions.className='forum-reply-actions';
+  const hint=document.createElement('span');hint.className='forum-reply-hint';hint.textContent='Participa en la conversación';
+  const send=document.createElement('button');send.type='submit';send.className='btn secondary';send.textContent='Responder ↗';actions.append(hint,send);form.append(field,fileLabel,link,actions);
+  form.addEventListener('submit',async e=>{e.preventDefault();const content=field.value.trim(),picked=file.files[0],rawLink=link.value.trim();if(!content&&!picked&&!rawLink){field.focus();return;}if(!currentUser){hint.textContent='Inicia sesión en Inicio para responder.';return;}let link_url=null;if(rawLink){try{const u=new URL(rawLink);if(!['http:','https:'].includes(u.protocol))throw new Error();link_url=u.href;}catch{hint.textContent='El enlace debe empezar por https:// o http://';return;}}if(picked){if(!['image/jpeg','image/png','image/webp','image/gif'].includes(picked.type)){hint.textContent='Formato no permitido. Usa JPG, PNG, WEBP o GIF.';return;}if(picked.size>10*1024*1024){hint.textContent='La foto no puede superar 10 MB.';return;}}send.disabled=true;send.textContent='Enviando…';hint.textContent='Publicando respuesta…';let media_url=null,media_type=null;if(picked){const safeName=picked.name.toLowerCase().replace(/[^a-z0-9._-]/g,'-');const path=currentUser.id+'/'+Date.now()+'-'+safeName;const {error:uploadError}=await supabaseClient.storage.from('forum-media').upload(path,picked,{upsert:false,contentType:picked.type});if(uploadError){send.disabled=false;send.textContent='Responder ↗';hint.textContent='No se pudo subir la foto: '+uploadError.message;return;}media_url=supabaseClient.storage.from('forum-media').getPublicUrl(path).data.publicUrl;media_type='image';}else if(link_url){const host=new URL(link_url).hostname.toLowerCase();media_type=/youtube|youtu\\.be|vimeo|tiktok|instagram|twitch|x\\.com|twitter/.test(host)?'video':'link';}const {error}=await supabaseClient.from('replies').insert({post_id:x.id,user_id:currentUser.id,content:content||'Contenido compartido',media_url,media_type,link_url});send.disabled=false;send.textContent='Responder ↗';if(error){hint.textContent='No se pudo enviar: '+error.message;return;}forumReplyPages[x.id]=Math.max(1,Math.ceil((replies.length+1)/FORUM_MESSAGES_PER_PAGE));await loadPosts();});
+  thread.append(form);article.append(thread);forumTopics.append(article);
+ });
+}
+addForumEmojiPicker(document.getElementById('forumMessage'),document.getElementById('forumTopicEmoji'));
+ document.getElementById('forumSport').innerHTML=Object.keys(forumStructure).map(s=>'<option value="'+s+'">'+s+'</option>').join('');
+document.getElementById('forumSport').addEventListener('change',updateForumSubforums);
+updateForumSubforums();renderForumCategories();renderForumTopics();
+function renderForumAttachments(post,container){
+ if(post.media_type==='image'&&post.media_url){const img=document.createElement('img');img.className='forum-media-image';img.src=post.media_url;img.alt='Imagen adjunta al debate';img.loading='lazy';container.append(img);}
+ if(post.link_url){
+  const url=post.link_url;let parsed;try{parsed=new URL(url);}catch{return;}
+  if(!['http:','https:'].includes(parsed.protocol))return;
+  const host=parsed.hostname.replace(/^www\./,'').toLowerCase();let videoId='';
+  if(host==='youtu.be')videoId=parsed.pathname.split('/').filter(Boolean)[0]||'';
+  if(host==='youtube.com'||host==='m.youtube.com'||host==='youtube-nocookie.com')videoId=parsed.searchParams.get('v')||((parsed.pathname.match(/^\/(?:embed|shorts)\/([^/?]+)/)||[])[1]||'');
+  if(videoId&&/^[A-Za-z0-9_-]{6,20}$/.test(videoId)){const frame=document.createElement('iframe');frame.className='forum-video';frame.src='https://www.youtube-nocookie.com/embed/'+videoId;frame.title='Vídeo compartido';frame.loading='lazy';frame.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';frame.allowFullscreen=true;frame.referrerPolicy='strict-origin-when-cross-origin';container.append(frame);}
+  else{const card=document.createElement('a');card.className='forum-link-card';card.href=url;card.target='_blank';card.rel='noopener noreferrer';const icon=document.createElement('img');icon.className='forum-link-icon';icon.alt='';icon.loading='lazy';icon.src='https://www.google.com/s2/favicons?domain='+encodeURIComponent(host)+'&sz=96';const info=document.createElement('span');info.className='forum-link-info';const heading=document.createElement('strong');const slug=decodeURIComponent(parsed.pathname.split('/').filter(Boolean).pop()||'').replace(/[-_]+/g,' ').replace(/\\.[a-z0-9]{2,5}$/i,'').trim();heading.textContent=slug?slug.charAt(0).toUpperCase()+slug.slice(1):host;const domain=document.createElement('small');domain.textContent=host;info.append(heading,domain);card.append(icon,info);container.append(card);}
+ }
+}
+
+document.getElementById('forumPublish').addEventListener('click',async()=>{
+ const field=document.getElementById('forumMessage'),content=field.value.trim(),sport=document.getElementById('forumSport').value,subforum=document.getElementById('forumSubforum').value,status=document.getElementById('forumStatus'),button=document.getElementById('forumPublish'),file=document.getElementById('forumImage').files[0],linkRaw=document.getElementById('forumLink').value.trim();
+ if(!content&&!file&&!linkRaw){field.focus();status.textContent='Escribe algo o añade una foto o un enlace.';return;}
+ if(!currentUser){status.textContent='Inicia sesión en el apartado de cuenta para publicar.';return;}
+ let link_url=null; if(linkRaw){try{const u=new URL(linkRaw);if(!['http:','https:'].includes(u.protocol))throw new Error();link_url=u.href;}catch{status.textContent='El enlace no parece válido. Debe empezar por https:// o http://';return;}}
+ if(file){const allowed=['image/jpeg','image/png','image/webp','image/gif'];if(!allowed.includes(file.type)){status.textContent='Ese formato de imagen no está permitido.';return;}if(file.size>10*1024*1024){status.textContent='La imagen supera el máximo de 10 MB.';return;}}
+ button.disabled=true;button.textContent='Publicando…';status.textContent='Preparando el tema…';
+ let media_url=null,media_type=null;
+ if(file){const safeName=file.name.toLowerCase().replace(/[^a-z0-9._-]/g,'-');const path=currentUser.id+'/'+Date.now()+'-'+safeName;const {error:uploadError}=await supabaseClient.storage.from('forum-media').upload(path,file,{upsert:false,contentType:file.type});if(uploadError){button.disabled=false;button.textContent='Publicar tema ↗';status.textContent='No se pudo subir la foto: '+uploadError.message;return;}const {data:publicData}=supabaseClient.storage.from('forum-media').getPublicUrl(path);media_url=publicData.publicUrl;media_type='image';}
+ else if(link_url){const h=new URL(link_url).hostname.toLowerCase();media_type=/youtube|youtu\.be|vimeo|tiktok|instagram|twitch|x\.com|twitter/.test(h)?'video':'link';}
+ const {error}=await supabaseClient.from('posts').insert({user_id:currentUser.id,sport,subforum,content:content||'Contenido compartido',media_url,media_type,link_url});
+ button.disabled=false;button.textContent='Publicar tema ↗';
+ if(error){status.textContent='No se pudo publicar: '+error.message;return;}
+ field.value='';document.getElementById('forumImage').value='';document.getElementById('forumLink').value='';status.textContent='Tema publicado. Ya está disponible en el foro.';await loadPosts();selectForum(sport,subforum);
+});
+
+// Registro, inicio de sesión y perfil de ALLSPORTS
+const authStatus=document.getElementById('authStatus');
+const authGuest=document.getElementById('authGuest');
+const authAccount=document.getElementById('authAccount');
+let currentUser=null;
+function authMessage(message,isError=false){authStatus.textContent=message;authStatus.style.color=isError?'#ff8b70':'var(--lime)';}
+function showAuthMode(mode){const register=mode==='register';document.getElementById('registerForm').hidden=!register;document.getElementById('loginForm').hidden=register;document.getElementById('showRegister').classList.toggle('active',register);document.getElementById('showLogin').classList.toggle('active',!register);}
+document.getElementById('showRegister').addEventListener('click',()=>showAuthMode('register'));
+document.getElementById('showLogin').addEventListener('click',()=>showAuthMode('login'));
+async function refreshAccount(user){
+ currentUser=user||null;
+ authGuest.style.display=user?'none':'block';
+ authAccount.classList.toggle('show',!!user);
+ if(!user){authMessage('Puedes crear una cuenta gratuita o iniciar sesión.');return;}
+ const {data:profile,error}=await supabaseClient.from('profiles').select('username,bio,signature,avatar_url').eq('id',user.id).maybeSingle();
+ if(error){authMessage('Sesión iniciada. No se pudo cargar el perfil: '+error.message,true);return;}
+ document.getElementById('accountUsername').textContent=profile?.username||user.email;
+ document.getElementById('profileBio').value=profile?.bio||'';
+ document.getElementById('profileSignature').value=profile?.signature||'';
+  setProfileAvatar(profile?.avatar_url||'');
+ authMessage('¡Bienvenido a ALLSPORTS!');await loadPosts();
+}
+document.getElementById('registerForm').addEventListener('submit',async e=>{
+ e.preventDefault();
+ const username=document.getElementById('regUsername').value.trim();
+ const email=document.getElementById('regEmail').value.trim();
+ const password=document.getElementById('regPassword').value;
+ if(!/^[A-Za-z0-9_]{3,24}$/.test(username)){authMessage('El apodo debe tener entre 3 y 24 caracteres: letras, números o guion bajo.',true);return;}
+ authMessage('Creando tu cuenta…');
+ const {error}=await supabaseClient.auth.signUp({email,password,options:{data:{username},emailRedirectTo:window.location.origin+window.location.pathname}});
+ if(error){authMessage(error.message,true);return;}
+ authMessage('¡Registro iniciado! Revisa tu correo y confirma la cuenta antes de entrar.');
+ e.target.reset();
+});
+document.getElementById('loginForm').addEventListener('submit',async e=>{
+ e.preventDefault();authMessage('Iniciando sesión…');
+ const {error}=await supabaseClient.auth.signInWithPassword({email:document.getElementById('loginEmail').value.trim(),password:document.getElementById('loginPassword').value});
+ if(error){authMessage(error.message,true);return;}
+ e.target.reset();
+});
+document.getElementById('logoutButton').addEventListener('click',async()=>{const {error}=await supabaseClient.auth.signOut();if(error){authMessage(error.message,true);return;}authMessage('Has cerrado sesión.');});
+document.getElementById('profileAvatarFile').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;if(!currentUser){authMessage('Inicia sesión para subir un avatar.',true);return;}if(!['image/jpeg','image/png','image/webp','image/gif'].includes(file.type)){authMessage('Usa JPG, PNG, WEBP o GIF.',true);e.target.value='';return;}if(file.size>2*1024*1024){authMessage('El avatar no puede superar 2 MB.',true);e.target.value='';return;}authMessage('Subiendo avatar…');const ext=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'')||'jpg';const path=currentUser.id+'/avatar-'+Date.now()+'.'+ext;const {error:uploadError}=await supabaseClient.storage.from('forum-media').upload(path,file,{upsert:false,contentType:file.type});if(uploadError){authMessage('No se pudo subir el avatar: '+uploadError.message,true);return;}const url=supabaseClient.storage.from('forum-media').getPublicUrl(path).data.publicUrl;const {error}=await supabaseClient.from('profiles').update({avatar_url:url}).eq('id',currentUser.id);if(error){authMessage('La foto se subió, pero no se pudo guardar en el perfil: '+error.message,true);return;}setProfileAvatar(url);authMessage('Avatar actualizado.');await loadPosts();});
+document.getElementById('saveProfile').addEventListener('click',async()=>{
+ if(!currentUser)return;
+ const bio=document.getElementById('profileBio').value.trim(),signature=document.getElementById('profileSignature').value.trim();
+ const {error}=await supabaseClient.from('profiles').update({bio,signature}).eq('id',currentUser.id);
+ if(error){authMessage('No se pudo guardar el perfil: '+error.message,true);return;}
+ authMessage('Perfil guardado correctamente.');
+});
+supabaseClient.auth.onAuthStateChange((_event,session)=>{queueMicrotask(()=>refreshAccount(session?.user||null));});
+supabaseClient.auth.getSession().then(({data,error})=>{if(error)authMessage(error.message,true);else refreshAccount(data.session?.user||null);});
+
+
+const newsLayout=document.getElementById('newsLayout');
+let allNews=[],newsFilter='Todos';
+function normalizeNewsCategory(value,title=''){const raw=String(value||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');const t=String(title||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');if(/baloncesto|basket|nba|euroliga|acb|baskonia|unicaja|hezonja|eurobasket/.test(raw)||/baloncesto|nba|euroliga|acb|baskonia|unicaja|hezonja|eurobasket/.test(t))return 'Baloncesto';if(/futbol|laliga|champions|premier|seleccion|copa del rey|liga f|mundial de clubes/.test(raw)||/futbol|laliga|champions|premier|seleccion|copa del rey|liga f/.test(t))return 'Fútbol';if(/tenis|atp|wta/.test(raw)||/tenis|atp|wta|alcaraz|sinner|swiatek/.test(t))return 'Tenis';if(/motor|formula 1|f1|motogp|rally/.test(raw)||/formula 1|f1|motogp|rally|gran premio/.test(t))return 'Motor';return 'Otros deportes';}
+function newsSportIcon(category){return {'Fútbol':'⚽','Baloncesto':'🏀','Tenis':'🎾','Motor':'🏁','Otros deportes':'🏆'}[category]||'🏆';}
+function formatNewsDate(value){if(!value)return 'Fecha no disponible';const d=new Date(value);return Number.isNaN(d.getTime())?'Fecha no disponible':d.toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'});}
+function makeNewsLink(item,featured){const category=normalizeNewsCategory(item.category,item.title);const link=document.createElement('a');link.href=item.url;link.target='_blank';link.rel='noopener noreferrer';link.className=featured?'news-feature':'news-card';link.dataset.newsCategory=category;const fallbackImages={'Fútbol':'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1200&q=85','Baloncesto':'https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=1200&q=85','Tenis':'https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?auto=format&fit=crop&w=1200&q=85','Motor':'https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=1200&q=85','Otros deportes':'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1200&q=85'};const fallback=fallbackImages[category]||fallbackImages['Otros deportes'];const image=typeof item.image==='string'&&/^https?:\/\//i.test(item.image)?item.image:'';const applyImage=url=>{link.style.backgroundImage='linear-gradient(0deg,rgba(3,7,11,.65),rgba(3,7,11,.12)),url("'+url.replace(/["\\]/g,'')+'")';};if(image){applyImage(image);const probe=new Image();probe.onload=()=>{};probe.onerror=()=>applyImage(fallback);probe.src=image;}else{applyImage(fallback);}const content=document.createElement('div');const label=document.createElement('span');label.className='news-label';label.textContent=category+(featured?' · Destacado':'');content.append(label);const meta=document.createElement('div');meta.className='news-meta';meta.textContent=(item.source||'Fuente deportiva')+' · '+formatNewsDate(item.published);content.append(meta);const title=document.createElement('h3');let cleanTitle=String(item.title||'');const source=String(item.source||'');for(const separator of [' - ',' – ',' — ',' | ']){const suffix=separator+source;if(source&&cleanTitle.toLowerCase().endsWith(suffix.toLowerCase())){cleanTitle=cleanTitle.slice(0,-suffix.length);break;}}title.textContent=cleanTitle.trim()||item.title;content.append(title);if(item.description){const desc=document.createElement('p');desc.textContent=item.description;content.append(desc);}const read=document.createElement('span');read.className=featured?'news-read':'news-source';read.textContent='Leer en '+(item.source||'la fuente')+' ↗';if(featured)content.append(read);else{const bottom=document.createElement('div');bottom.append(read);content.append(bottom);}link.append(content);return link;}
+function renderNews(){const chosen=allNews.filter(item=>newsFilter==='Todos'||normalizeNewsCategory(item.category,item.title)===newsFilter);newsLayout.replaceChildren();if(!chosen.length){const empty=document.createElement('p');empty.className='muted';empty.textContent='No hay noticias disponibles en esta categoría ahora mismo.';newsLayout.append(empty);return;}newsLayout.append(makeNewsLink(chosen[0],true));const list=document.createElement('div');list.className='news-list';chosen.slice(1,7).forEach(item=>list.append(makeNewsLink(item,false)));newsLayout.append(list);}
+const fallbackNews=[{title:"España, ante Chequia: un rival incómodo, pero que nunca ha ganado a 'La Roja'",url:'https://www.rtve.es/deportes/20261110/espana-republica-checa-historial-selecciones-futbol/17308669.shtml',source:'RTVE',published:'2026-11-10T20:32:00Z',description:'La selección española masculina mantiene un balance de seis victorias y dos empates ante Chequia. RTVE ofrece la previa del próximo duelo de la Nations League.',category:'Fútbol'},{title:'El Real Madrid sentencia al París FC y consigue su primera victoria en Champions',url:'https://www.rtve.es/deportes/20261110/real-madrid-sentencia-paris-fc-alfredo-di-stefano-consigue-primera-victoria-champions/17308761.shtml',source:'RTVE',published:'2026-11-10T20:04:00Z',description:'Caruso, Beerensteyn y Caicedo marcaron el 3-0 del conjunto blanco en la cuarta jornada de la Champions femenina.',category:'Fútbol'},{title:'Iyana Martín lidera la remontada de España ante la República Checa en su camino al Eurobasket 2027',url:'https://www.rtve.es/deportes/20261110/espana-republica-checa-directo-hoy-partido-baloncesto-clasificacion-eurobasket-2027-resumen-resultado/17308714.shtml',source:'RTVE / EFE',published:'2026-11-10T21:48:00Z',description:'España venció 73-71 en Oviedo con 18 puntos de Iyana Martín, protagonista del triunfo en la clasificación para el Eurobasket 2027.',category:'Baloncesto'}];
+async function loadNews(){const sources=['./news.json?ts='+Date.now(),'https://raw.githubusercontent.com/dandy62013/Allsports/main/news.json?ts='+Date.now()];let lastError;for(const url of sources){try{const response=await fetch(url,{cache:'no-store'});if(!response.ok)throw new Error('HTTP '+response.status);const data=await response.json();if(!Array.isArray(data.items))throw new Error('Formato de noticias no válido');allNews=data.items;renderNews();return;}catch(error){lastError=error;}}allNews=fallbackNews;renderNews();const note=document.createElement('p');note.className='news-footnote';note.textContent='Mostrando las últimas noticias guardadas. No se ha podido conectar con el feed para actualizarlas.';newsLayout.append(note);console.warn('ALLSPORTS news feed:',lastError);}
+document.querySelectorAll('[data-news-filter]').forEach(button=>button.addEventListener('click',()=>{newsFilter=button.dataset.newsFilter;document.querySelectorAll('[data-news-filter]').forEach(b=>b.classList.toggle('active',b===button));renderNews();}));
+loadNews();
+
+const chatPanel=document.getElementById('chatPanel'),chatLaunch=document.getElementById('chatLaunch'),chatLog=document.getElementById('chatLog');
+function toggleChat(open){chatPanel.classList.toggle('open',open);chatLaunch.setAttribute('aria-expanded',String(open));if(open)document.getElementById('chatInput').focus()}
+chatLaunch.addEventListener('click',()=>toggleChat(!chatPanel.classList.contains('open')));
+document.getElementById('chatClose').addEventListener('click',()=>toggleChat(false));
+function chatReply(q){const s=q.toLowerCase();if(/noticia|actualidad|titular/.test(s))return 'En la sección Noticias encontrarás titulares recientes y enlaces a los medios originales.';if(/public|debate|comunidad|opinar/.test(s))return 'Ve a “La grada es tuya”, inicia sesión, escribe tu mensaje, elige el deporte y pulsa “Publicar debate”. Los debates se comparten con toda la comunidad.';if(/deporte|seccion|categor/.test(s))return 'En ALLSPORTS encontrarás secciones de fútbol, baloncesto, tenis, motor y otros deportes.';return 'Estoy preparado para responder preguntas deportivas cuando se conecte el servicio de IA. Mientras tanto puedo orientarte sobre cómo usar ALLSPORTS.'}
+document.getElementById('chatForm').addEventListener('submit',async e=>{e.preventDefault();const input=document.getElementById('chatInput'),q=input.value.trim();if(!q)return;const u=document.createElement('div');u.className='chat-bubble user';u.textContent=q;chatLog.append(u);input.value='';const a=document.createElement('div');a.className='chat-bubble';a.textContent='Pensando…';chatLog.append(a);chatLog.scrollTop=chatLog.scrollHeight;try{if(!CHAT_API_URL){a.textContent=chatReply(q)+' Para activar respuestas libres, falta desplegar el servicio Cloudflare indicado en cloudflare/SETUP.md.';}else{const response=await fetch(CHAT_API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q})});const result=await response.json();if(!response.ok)throw new Error(result.error||'Error de conexión');a.textContent=result.answer||'No he recibido respuesta.';}}catch(error){a.textContent='Error del asistente: '+(error?.message||'No se pudo conectar')+'.';}chatLog.scrollTop=chatLog.scrollHeight});
+
+</script>
+<script>
+/* Marcadores en directo: solo panel lateral, sin publicar en los foros */
+const LIVE_FOOTBALL_LEAGUES=[
+ {name:"Selecciones · Clasificación Copa Africana 2027",slug:"caf.nations_qual",priority:true},
+ {name:"Primera División",slug:"esp.1"},{name:"Segunda División",slug:"esp.2"},
+ {name:"Liga F",slug:"esp.w.1"},{name:"Premier League",slug:"eng.1"},
+ {name:"Champions League",slug:"uefa.champions"},{name:"Europa League",slug:"uefa.europa"},
+ {name:"Conference League",slug:"uefa.europa.conf"},
+ {name:"Selecciones · UEFA Nations League",slug:"uefa.nations"},
+ {name:"Selecciones · Clasificación Mundial UEFA",slug:"fifa.worldq.uefa"},
+ {name:"Selecciones · Clasificación Mundial CAF",slug:"fifa.worldq.caf"},
+ {name:"Selecciones · Clasificación Mundial AFC",slug:"fifa.worldq.afc"},
+ {name:"Selecciones · Clasificación Mundial CONCACAF",slug:"fifa.worldq.concacaf"},
+ {name:"Selecciones · Clasificación Mundial CONMEBOL",slug:"fifa.worldq.conmebol"},
+ {name:"Selecciones · Clasificación Mundial OFC",slug:"fifa.worldq.ofc"},
+ {name:"Selecciones · Amistosos internacionales",slug:"fifa.friendly"},
+ {name:"Selecciones · Eurocopa",slug:"uefa.euro"},
+ {name:"Selecciones · Clasificación Eurocopa",slug:"uefa.euroq"},
+ {name:"Selecciones · Copa Africana",slug:"caf.nations"},
+ {name:"Selecciones · Copa Oro",slug:"concacaf.gold"},
+ {name:"Selecciones · Nations League CONCACAF",slug:"concacaf.nations.league"},
+ {name:"Selecciones · Copa América",slug:"conmebol.america"},
+ {name:"Selecciones · Copa Asiática",slug:"afc.asian.cup"},
+ {name:"Selecciones · Mundial",slug:"fifa.world"},
+ {name:"Selección femenina de España · Nations League",slug:"uefa.w.nations",women:true},
+ {name:"Selección femenina de España · Eurocopa",slug:"uefa.weuro",women:true},
+ {name:"Selección femenina de España · Amistosos",slug:"fifa.friendly.w",women:true},
+ {name:"Selección femenina de España · Mundial",slug:"fifa.wwc",women:true},
+ {name:"Selección femenina de España · Clasificación Mundial",slug:"fifa.wworldq.uefa",women:true},
+ {name:"Selección femenina de España · Juegos Olímpicos",slug:"fifa.w.olympics",women:true}
+];
+const liveMatchesNode=document.getElementById("forumLiveMatches");
+const liveUpdatedNode=document.getElementById("forumLiveUpdated");
+function liveLocalDate(offsetDays=0){const d=new Date(Date.now()+offsetDays*86400000);const p=new Intl.DateTimeFormat("en-CA",{timeZone:"Europe/Madrid",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(d);const v=Object.fromEntries(p.map(x=>[x.type,x.value]));return v.year+v.month+v.day;}
+function liveStatus(c){const st=c.status||{},t=st.type||{};if(t.state==="in")return (st.displayClock||t.shortDetail||"EN JUEGO").toUpperCase();if(t.completed||t.state==="post")return "FINAL";if(t.state==="pre")return t.shortDetail||"PRÓXIMO";return t.shortDetail||t.description||"";}
+const LIVE_FINISHED_SEEN_PREFIX="allsports-live-final-seen:";const liveFinishedSeenMemory=new Map();function liveFinishedAt(event){const now=Date.now(),comp=event.competitions?.[0],status=comp?.status||event.status||{},type=status.type||{},kickoff=Date.parse(event.date||"");if(!Number.isFinite(kickoff)||now-kickoff>3*60*60*1000||kickoff>now+60000)return false;const candidates=[status.completedAt,type.completedAt,event.completedAt].map(v=>Date.parse(v||"")).filter(Number.isFinite);const actualFinish=candidates.find(v=>v<=now+60000);if(Number.isFinite(actualFinish))return now>=actualFinish&&now-actualFinish<600000;const id=String(event.id||event.uid||"");if(!id)return false;const key=LIVE_FINISHED_SEEN_PREFIX+id;let seen=0;try{seen=Number(localStorage.getItem(key))||0;}catch{}if(!seen)seen=Number(liveFinishedSeenMemory.get(key))||0;if(!seen){seen=now;liveFinishedSeenMemory.set(key,seen);try{localStorage.setItem(key,String(seen));}catch{}}return now>=seen&&now-seen<600000;}
+function liveMatchHtml(event,competitionName){const c=event.competitions?.[0];if(!c)return "";const teams=c.competitors||[],home=teams.find(x=>x.homeAway==="home")||teams[0],away=teams.find(x=>x.homeAway==="away")||teams[1];if(!home||!away)return "";const status=c.status||{},type=status.type||{},isLive=type.state==="in";const score=x=>x?.score??"–";const team=x=>'<div class="live-team-row"><div class="live-team-name">'+(x.logo?'<img src="'+x.logo.replace(/"/g,"&quot;")+'" alt="" loading="lazy">':"")+'<span>'+String(x.team?.shortDisplayName||x.team?.displayName||"Equipo").replace(/</g,"&lt;")+'</span></div><span class="live-score">'+String(score(x)).replace(/</g,"&lt;")+'</span></div>';const when=liveStatus(c);const comp=String(competitionName||"Competición").replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));return '<article class="live-match"><div class="live-match-top"><span>'+(isLive?'<span class="is-live">● '+when+'</span>':when)+'</span><span>'+(event.date?new Date(event.date).toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit",timeZone:"Europe/Madrid"}):"")+'</span></div>'+team(home)+team(away)+'</article>';}
+let liveFootballHtml="",liveBasketballHtml="";
+function renderAllLiveScores(){if(!liveMatchesNode)return;const parts=[liveFootballHtml,liveBasketballHtml].filter(Boolean);liveMatchesNode.innerHTML=parts.join("")||'<p class="live-empty">No hay partidos en directo ni próximos.</p>';}
+function isSpainNationalSide(competitor){const t=competitor?.team||{},name=String(t.displayName||t.name||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase(),abbr=String(t.abbreviation||"").toUpperCase();return abbr==="ESP"||/^spain(?:\s|$)/.test(name)||/^espana(?:\s|$)/.test(name);}
+async function refreshLiveScores(){if(!liveMatchesNode)return;const date=liveLocalDate();const results=await Promise.allSettled(LIVE_FOOTBALL_LEAGUES.map(async league=>{const url='https://site.api.espn.com/apis/site/v2/sports/soccer/'+league.slug+'/scoreboard?dates='+date+'&limit=100';const r=await fetch(url,{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);return {league,events:(await r.json()).events||[]};}));let html="",failures=0;for(const result of results){if(result.status!=="fulfilled"){failures++;console.warn("Marcador fútbol:",result.reason?.message||result.reason);continue;}const {league,events}=result.value;const now=Date.now();const relevant=events.filter(e=>{if(league.women&&!(e.competitions?.[0]?.competitors||[]).some(isSpainNationalSide))return false;const st=e.competitions?.[0]?.status?.type||{};const kickoff=Date.parse(e.date||"");if(st.state==="in")return Number.isFinite(kickoff)&&kickoff<=now+60000&&now-kickoff<=4*60*60*1000;if(st.state==="pre")return false;if(st.state==="post"||st.completed)return liveFinishedAt(e);return false;}).sort((a,b)=>{if(league.priority){const rank=e=>{const n=String(e.name||"").toLowerCase();return n.includes("zimbabwe")?0:n.includes("sudan")?1:n.includes("namibia")?2:3;};return rank(a)-rank(b)||Date.parse(a.date)-Date.parse(b.date);}return Date.parse(a.date)-Date.parse(b.date);});if(!relevant.length)continue;html+='<section class="live-league"><h4>'+league.name+'</h4>'+relevant.map(e=>liveMatchHtml(e,league.name)).join("")+'</section>';}liveFootballHtml=html||(failures===LIVE_FOOTBALL_LEAGUES.length?'<p class="live-empty">No se han podido consultar los marcadores de fútbol.</p>':"");renderAllLiveScores();if(liveUpdatedNode)liveUpdatedNode.textContent="Actualizado: "+new Date().toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"})+" · Próxima actualización en 1 min";}
+function liveBasketEscape(value){return String(value??"").replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));}
+function liveBasketDayKey(value){return new Intl.DateTimeFormat("en-CA",{timeZone:"Europe/Madrid",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(value)).replace(/-/g,"");}
+function liveBasketGameHtml(game,now,competitionName){const local=game.local||{},road=game.road||{},home=local.club||{},away=road.club||{};const start=Date.parse(game.utcDate||game.date||game.localDate||"");if(!home.name||!away.name||!Number.isFinite(start))return "";const age=now-start,status=String(game.gameStatus||"").toLowerCase(),isFinal=game.played===true||status==="result",isLive=status==="live"||(!isFinal&&age>=0&&age<3*60*60*1000);const label=isLive?"EN JUEGO":isFinal?"FINAL":"PRÓXIMO";const time=new Date(start).toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit",timeZone:"Europe/Madrid"});const team=(club,score)=>'<div class="live-team-row"><div class="live-team-name">'+(club.images?.crest?'<img src="'+liveBasketEscape(club.images.crest)+'" alt="" loading="lazy">':"")+'<span>'+liveBasketEscape(club.abbreviatedName||club.name)+'</span></div><span class="live-score">'+(score===null||score===undefined?"–":liveBasketEscape(score))+'</span></div>';return '<article class="live-match"><div class="live-match-competition">'+liveBasketEscape(competitionName||"Baloncesto")+'</div><div class="live-match-top"><span>'+(isLive?'<span class="is-live">● EN JUEGO</span>':label)+'</span><span>'+time+'</span></div>'+team(home,local.score)+team(away,road.score)+'</article>';}
+async function fetchEuroCompetition(code){const year=new Date().getFullYear()-(new Date().getMonth()<6?1:0),season=code+year,base='https://api-live.euroleague.net/v2/competitions/'+code+'/seasons/'+season;const gamesResponse=await fetch(base+'/games?limit=500',{cache:"no-store"});if(!gamesResponse.ok)throw new Error(code+' calendario HTTP '+gamesResponse.status);const gamesPayload=await gamesResponse.json();const games=gamesPayload.data||[];let spanishCodes=new Set();if(code==="U"){const clubsResponse=await fetch(base+'/clubs',{cache:"no-store"});if(!clubsResponse.ok)throw new Error('EuroCup equipos HTTP '+clubsResponse.status);const clubsPayload=await clubsResponse.json();spanishCodes=new Set((clubsPayload.data||[]).filter(c=>c.country?.code==="ESP").map(c=>c.code));}return {code,games,spanishCodes};}
+async function refreshLiveBasketballScores(){try{const results=await Promise.allSettled([fetchEuroCompetition("E"),fetchEuroCompetition("U")]);let html="",failed=0;for(let i=0;i<results.length;i++){const result=results[i];if(result.status!=="fulfilled"){failed++;console.warn("Marcadores de baloncesto:",result.reason?.message||result.reason);continue;}const {code,games,spanishCodes}=result.value;const now=Date.now(),today=liveBasketDayKey(now);const relevant=games.filter(game=>{const date=game.utcDate||game.date||game.localDate;if(!date||liveBasketDayKey(date)!==today)return false;if(code==="U"&&!spanishCodes.has(game.local?.club?.code)&&!spanishCodes.has(game.road?.club?.code))return false;const start=Date.parse(date);if(!Number.isFinite(start))return false;const age=now-start;return game.played===true?age>=0&&age<=2*60*60*1000+10*60*1000:age>=0?age<3*60*60*1000:start-now<=18*60*60*1000;}).sort((a,b)=>Date.parse(a.utcDate||a.date||a.localDate)-Date.parse(b.utcDate||b.date||b.localDate));if(!relevant.length)continue;const title=code==="E"?"Euroliga":"EuroCup · equipos españoles";html+='<section class="live-league"><h4>'+title+'</h4>'+relevant.map(game=>liveBasketGameHtml(game,now,title)).join("")+'</section>';}liveBasketballHtml=html||(failed===2?'<p class="live-empty">No se han podido consultar los marcadores europeos de baloncesto.</p>':"");}catch(error){console.warn("Marcadores de baloncesto:",error?.message||error);liveBasketballHtml='<p class="live-empty">No se han podido consultar los marcadores europeos de baloncesto.</p>';}renderAllLiveScores();}
+refreshLiveScores();refreshLiveBasketballScores();setInterval(refreshLiveScores,60000);setInterval(refreshLiveBasketballScores,60000);
+</script>
+<button class="allsports-back-top" id="allsportsBackTop" type="button" aria-label="Volver arriba" title="Volver arriba">↑</button><script>(()=>{const b=document.getElementById('allsportsBackTop');if(!b)return;const update=()=>b.classList.toggle('visible',window.scrollY>420);window.addEventListener('scroll',update,{passive:true});b.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));update();})();</script></body></html>
