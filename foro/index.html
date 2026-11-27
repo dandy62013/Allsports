@@ -386,6 +386,51 @@ header{position:sticky;top:0;background:#080c11ed;border-bottom:1px solid #d5ff3
 #foro .chat-launch{box-shadow:0 10px 32px #0008;border:1px solid var(--lime)}
 @media(max-width:900px){#foro .forum-shell{grid-template-columns:1fr}#foro .forum-categories{position:static}#forumCategoryGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){#foro{padding:28px 0 60px}#foro .forum-main{padding:14px}#forumCategoryGrid,#forumSubforumsGrid{grid-template-columns:1fr}#foro .forum-heading{align-items:flex-start;flex-direction:column}#foro .forum-compose-row>*{width:100%}}
+</style>
+<style id="allsports-reference-forum">
+:root{--bg:#191b1a;--surface:#252826;--line:#3a403b;--white:#f3f5f0;--muted:#aeb5ac;--lime:#c8ff00;--orange:#ff663d}
+body{background:#191b1a;color:var(--white)}
+header{height:66px;position:sticky;top:0;background:#252826;border-bottom:1px solid #3a403b;backdrop-filter:blur(14px)}
+.top{min-height:66px}.logo{font-size:27px}.logo i{color:var(--lime)}
+nav a,nav button{color:#d8ddd5;font-size:12px;font-weight:700}nav a:hover,nav a.active{color:var(--lime)}
+.nav-cta{background:#303632;color:var(--lime)!important;border:1px solid #4b554b;border-radius:30px;padding:10px 17px}
+.forum-section{background:#191b1a;border:0;padding:26px 0 80px}
+.forum-section>.wrap{width:min(1440px,100% - 36px)}
+.forum-section>.wrap>.section-top{display:none}
+.forum-shell{grid-template-columns:245px minmax(0,1fr);gap:0;min-height:calc(100vh - 100px);align-items:stretch}
+.forum-categories{background:#252826;border:0;border-right:1px solid #454b45;border-radius:0;padding:22px 14px;position:sticky;top:66px;height:calc(100vh - 66px);overflow:auto;box-shadow:none}
+.forum-categories h3,.forum-categories-mobile-head h3{font:800 12px 'DM Sans',sans-serif;color:#c5ccc2;letter-spacing:.1em;text-transform:uppercase}
+.forum-category{background:transparent;color:#d4dad1;border:0;border-radius:5px;padding:12px 13px;font-size:13px;font-weight:700;margin-bottom:3px}
+.forum-category:before{content:"✚";color:var(--lime);margin-right:9px}
+.forum-category:hover,.forum-category.active{background:var(--lime);color:#11150c;border-color:var(--lime)}
+.forum-category:hover:before,.forum-category.active:before{color:#11150c}
+.forum-subforums{padding-left:22px}.forum-subforums button{color:#b6beb4;font-size:12px}
+.forum-main{background:transparent;border:0;border-radius:0;padding:24px 28px;min-width:0;box-shadow:none}
+#forumCategoryLanding{position:relative;overflow:hidden;padding:0 0 22px}
+#forumCategoryLanding:before{content:"";display:flex;align-items:center;min-height:220px;margin:0 0 24px;padding:28px 8%;background:radial-gradient(circle at 8% 0%,#c8ff0038,transparent 36%),linear-gradient(135deg,#252b28,#171a18);border:1px solid #353d35;border-radius:12px;box-shadow:inset 0 0 0 1px #ffffff08;background-image:linear-gradient(90deg,transparent 49px,#ffffff08 50px),linear-gradient(0deg,transparent 49px,#ffffff08 50px),radial-gradient(circle at 8% 0%,#c8ff0038,transparent 36%),linear-gradient(135deg,#252b28,#171a18);background-size:50px 50px,50px 50px,auto,auto}
+#forumCategoryLanding:after{content:"PREGUNTA, COMPARTE Y ÚNETE A LA CONVERSACIÓN";position:absolute;top:78px;left:8%;max-width:85%;font:900 clamp(26px,4vw,48px)/1.02 'DM Sans',sans-serif;letter-spacing:-.04em;color:#fff;pointer-events:none}
+#forumCategoryLanding .forum-category-landing-title{font:900 15px 'DM Sans',sans-serif;color:var(--lime);letter-spacing:.14em;text-transform:uppercase;margin:0 0 7px}
+#forumCategoryLanding .forum-category-landing-subtitle{color:#c1c8be;font-size:13px;margin:0 0 16px}
+#forumCategoryGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#forumCategoryGrid>*{background:#252a27;border:1px solid #414a40;border-radius:8px;padding:17px;color:#f0f3ed}
+#forumCategoryGrid>*:hover{border-color:var(--lime);background:#2c332c}
+.forum-heading{border-bottom:1px solid #3b423b;padding-bottom:18px;margin-bottom:16px}
+.forum-heading h3{font:800 29px 'DM Sans',sans-serif;color:#f5f6f2}
+.forum-heading p{color:#aeb6ac}
+.forum-back-categories{color:var(--lime);background:transparent;border:0;font-size:12px;font-weight:800;padding:6px 0;cursor:pointer}
+.forum-search{background:#303431;border:1px solid #4a504a;border-radius:28px;padding:5px 12px;display:flex;align-items:center;gap:10px}
+.forum-search input{background:transparent;border:0;color:white;min-width:0;flex:1;padding:9px}
+.forum-compose{background:#252a27;border:1px solid #444c43;border-radius:10px;padding:18px;margin:18px 0}
+.forum-compose textarea,.forum-compose select,.media-input,.media-link{background:#1b201d;border:1px solid #4a5249;color:#f5f6f2;border-radius:6px;padding:12px}
+.forum-compose .btn.primary{background:#06b8ed;border-color:#06b8ed;color:#071115;border-radius:25px;text-transform:none}
+.forum-topics>*,#forumTopics>*{background:#252a27;border:1px solid #414841;border-radius:10px;padding:18px;margin:12px 0}
+.forum-post{border-color:#414841}.forum-post h4{font:800 21px 'DM Sans',sans-serif}
+.forum-post p,.forum-reply p{color:#d8ded5}
+.forum-replies{background:#1c211e;border-color:#3b433a}
+.forum-reply-form textarea{background:#171c19;border-color:#414a40;border-radius:7px}
+.chat-launch{background:var(--lime);color:#10140b;border-radius:28px}
+@media(max-width:800px){.forum-shell{grid-template-columns:1fr}.forum-categories{position:static;height:auto;border-right:0;border-bottom:1px solid #454b45}.forum-main{padding:20px 4px}.forum-section>.wrap{width:calc(100% - 24px)}}
+@media(max-width:560px){#forumCategoryLanding:before{min-height:170px}#forumCategoryLanding:after{top:55px;font-size:25px}#forumCategoryGrid{grid-template-columns:1fr}.forum-main{padding:15px 0}.forum-compose-row{grid-template-columns:1fr}.forum-categories{padding:14px}}
 </style></head>
 <body>
 <header><div class="wrap top"><a class="logo" href="../"><i>◆</i> ALLSPORTS</a><nav aria-label="Navegación"><a class="news-nav" href="../">INICIO</a><a class="news-nav active" href="./">FORO</a><a href="../#noticias" class="news-nav">NOTICIAS</a><a href="../#comunidad" class="nav-cta">ÚNETE ↗</a></nav></div></header>
